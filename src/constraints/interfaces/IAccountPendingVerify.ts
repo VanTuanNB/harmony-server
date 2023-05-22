@@ -4,7 +4,7 @@ export default interface IAccountPendingVerify {
     email: string;
     password: string;
     verificationCode: number;
-    verifyStatus: boolean;
+    verifyStatus?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
