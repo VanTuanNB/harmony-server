@@ -1,9 +1,14 @@
 import UserController from '@/controllers/user.controller';
+import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware';
 import { Router } from 'express';
 
 const router: Router = Router();
-
-// router.post('/signup', UserController.register);
-// router.get('/test', UserController.get);
+router.post('/checkGmail', UserController.checkGmail);
+router.post('/accountPending', UserController.createRequestAuthenticationEmail);
+router.post(
+    '/signupForm',
+    verificationEmailWithForm,
+    UserController.signupForm,
+);
 
 export default router;
