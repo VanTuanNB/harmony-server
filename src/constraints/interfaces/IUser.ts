@@ -1,3 +1,4 @@
+import IComposer from './IComposer';
 import IFavorite from './IFavorite';
 import IHistory from './IHistory';
 import IPlaylist from './IPlaylist';
@@ -7,14 +8,14 @@ export default interface IUser {
     email: string;
     name: string;
     refreshToken: string;
-    password?: string | null;
+    password?: string;
     avatar?: string;
-    locale?: string | null;
+    locale?: string;
     playlistId?: Array<Partial<IPlaylist>>;
     favoriteListId?: Partial<IFavorite>;
     historyId?: Partial<IHistory>;
     isRegistrationForm?: boolean;
-    composerId?: string;
+    composerId?: Partial<IComposer>;
     createdAt?: Date;
     updatedAt?: Date;
 }

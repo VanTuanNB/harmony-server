@@ -1,8 +1,13 @@
+import { NextFunction, Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+
 import transporter from '@/configs/nodemailer.config';
 import IAccountPendingVerify from '@/constraints/interfaces/IAccountPendingVerify';
 import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
 import UserModel from '@/models/user.model';
-import { NextFunction, Request, Response } from 'express';
+import UserValidation from '@/validations/user.validation';
+import generateToken from '@/utils/generateToken.util';
+import ValidatePayload from '@/helpers/validate.helper';
 
 export default class UserController {
     public static async checkGmail(
@@ -80,12 +85,26 @@ export default class UserController {
                 return res
                     .status(collectionValidateUser.status)
                     .json(collectionValidateUser);
-            const createUser = await UserModel.create({
+            const _id: string = uuidv4();
+            const { accessToken, refreshToken } = generateToken({
+                _id,
+                email: collectionValidateUser.data?.email as string,
+            });
+            const dataUser = new UserValidation({
+                _id,
                 email: collectionValidateUser.data?.email as string,
                 name: collectionValidateUser.data?.username as string,
-                password: collectionValidateUser.data?.password,
+                refreshToken,
+                password: collectionValidateUser.data?.password as string,
                 isRegistrationForm: true,
             });
+            const validation = await ValidatePayload(
+                dataUser,
+                'BAD_REQUEST',
+                true,
+            );
+            if (validation) return res.status(400).json(validation);
+            const createUser = await UserModel.create(dataUser);
             if (!createUser.success)
                 return res.status(createUser.status).json(createUser);
             const deletedCollectionVerifyEmail =
@@ -97,7 +116,13 @@ export default class UserController {
                     .status(deletedCollectionVerifyEmail.status)
                     .json(deletedCollectionVerifyEmail);
 
-            return res.status(createUser.status).json(createUser);
+            return res.status(createUser.status).json({
+                ...createUser,
+                data: {
+                    accessToken,
+                    refreshToken,
+                },
+            });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error });

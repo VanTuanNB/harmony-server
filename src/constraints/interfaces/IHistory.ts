@@ -1,4 +1,6 @@
+import ISong from './ISong';
+
 export default interface IHistory {
     _id: string;
-    listSong: { _id: string; ref: string }[];
+    listSong: Array<Partial<ISong>>;
 }

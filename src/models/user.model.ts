@@ -1,9 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import IUser from '@/constraints/interfaces/IUser';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import userSchema from '@/database/schemas/user.schema';
-import generateToken from '@/utils/generateToken.util';
 
 export default class UserModel {
     public static async getByEmail(
@@ -28,27 +25,15 @@ export default class UserModel {
         }
     }
     public static async create(
-        payload: Omit<IUser, '_id' | 'refreshToken'>,
-    ): Promise<CustomResponse<{ accessToken: string; refreshToken: string }>> {
+        payload: Omit<IUser, 'createdAt' | 'updatedAt'>,
+    ): Promise<CustomResponse<IUser>> {
         try {
-            const _id: string = uuidv4();
-            const { accessToken, refreshToken } = generateToken({
-                _id,
-                email: payload.email,
-            });
-            await userSchema.create({
-                _id,
-                refreshToken,
-                ...payload,
-            });
+            const created = await userSchema.create(payload);
             return {
                 status: 201,
                 success: true,
                 message: 'POST_USER_SUCCESSFULLY',
-                data: {
-                    accessToken,
-                    refreshToken,
-                },
+                data: created,
             };
         } catch (error) {
             console.log(error);
@@ -56,6 +41,28 @@ export default class UserModel {
                 status: 500,
                 success: false,
                 message: 'POST_USER_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public static async updateById(
+        _id: string,
+        payload: Partial<Omit<IUser, '_id'>>,
+    ): Promise<CustomResponse> {
+        try {
+            const updated = await userSchema.findByIdAndUpdate(_id, payload);
+            return {
+                status: 201,
+                success: true,
+                message: 'UPDATE_USER_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_USER_FAILED',
                 errors: error,
             };
         }
