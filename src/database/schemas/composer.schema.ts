@@ -6,9 +6,9 @@ const composerSchema = new Schema<IComposer>(
     {
         _id: { type: String, required: true },
         name: { type: String, required: true },
-        avatar: { type: String, required: true },
-        country: { type: String, required: true },
         slug: { type: String, required: true },
+        avatar: { type: String, default: null },
+        country: { type: String, default: 'vi' },
         albumsId: [
             {
                 type: String,
