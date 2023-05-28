@@ -32,6 +32,7 @@ export default class UserController {
             .json(createAndSendMailService);
     }
 
+    @IsRequirementReq(['email', 'verificationCode'], 'body')
     public static async signupForm(
         req: Request,
         res: Response,
