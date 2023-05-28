@@ -11,6 +11,31 @@ import UserFilter from '@/filters/user.filter';
 import ValidatePayload from '@/helpers/validate.helper';
 
 export default class UserService {
+    public static async getUserById(_id: string): Promise<CustomResponse> {
+        try {
+            const user = await UserModel.getById(_id);
+            if (!user)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'USER_NOT_EXIST',
+                };
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_BY_ID_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_USER_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async checkEmail(email: string): Promise<CustomResponse> {
         try {
             const userInDb = await UserModel.getByEmail(email);
