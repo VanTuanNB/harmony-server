@@ -5,7 +5,7 @@ import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware'
 
 const router: Router = Router();
 router.post('/checkGmail', UserController.checkGmail);
-router.post('/accountPending', UserController.createRequestAuthenticationEmail);
+router.post('/sendCode', UserController.createRequestAuthenticationEmail);
 router.post(
     '/signupForm',
     verificationEmailWithForm,

@@ -16,7 +16,11 @@ export default async function verificationEmailWithForm(
                 message: 'BAD_REQUEST_PAYLOAD_EMPTY',
             });
         const collectionUser = await UserModel.getByEmail(payload.email);
-        if (collectionUser.data?.email === payload.email)
+        if (
+            collectionUser &&
+            collectionUser.email === payload.email &&
+            !collectionUser.isRegistrationForm
+        )
             return res.status(400).json({
                 status: 400,
                 success: false,
@@ -25,10 +29,14 @@ export default async function verificationEmailWithForm(
         const currentGmail = await AccountPendingVerifyModel.getByEmail(
             payload.email,
         );
-        if (!currentGmail.success || !currentGmail.data)
-            return res.status(currentGmail.status).json(currentGmail);
+        if (!currentGmail)
+            return res.status(400).json({
+                status: 400,
+                success: false,
+                message: 'BAD_REQUEST',
+            });
         const isVerify =
-            payload.verificationCode === currentGmail.data?.verificationCode;
+            payload.verificationCode === currentGmail.verificationCode;
         if (!isVerify)
             return res.status(403).json({
                 status: 403,
