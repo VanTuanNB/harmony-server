@@ -12,3 +12,5 @@ export type { default as ISong } from './ISong';
 export type { default as ISongPath } from './ISongPath';
 export type { default as IAccountPendingVerify } from './IAccountPendingVerify';
 export type { default as IComposer } from './IComposer';
+export type { default as IFieldNameFiles } from './IFieldNameFiles';
+

@@ -1,9 +1,12 @@
 import multer from 'multer';
 import path from 'path';
+
+import { uploadFiledEnum } from '@/constraints/enums/index.enum';
+
 const diskStorageConfig = multer.diskStorage({
     destination: function (req, file, cb) {
         switch (file.fieldname) {
-            case 'thumbnail':
+            case uploadFiledEnum.Thumbnail:
                 cb(
                     null,
                     path.join(
@@ -14,7 +17,7 @@ const diskStorageConfig = multer.diskStorage({
                     ),
                 );
                 break;
-            case 'fileSong':
+            case uploadFiledEnum.FileSong:
                 cb(
                     null,
                     path.join(
