@@ -10,7 +10,7 @@ export default interface ISong {
     thumbnail: string;
     composerId: Partial<IComposer>;
     publish: Date;
-    albumId: Partial<IAlbum>;
+    albumId: Array<Partial<IAlbum>>;
     genresId: Array<Partial<IGenre>>;
     songPathId: Partial<ISongPath>;
     performers: Array<Partial<IComposer>>;

@@ -1,28 +1,42 @@
-import { ValidationArguments, registerDecorator } from 'class-validator';
-interface TypeProps {
-    name: string;
-    message: string;
-}
-export default function IsGenerateCollection<T>(payload: TypeProps) {
+import {
+    ValidationArguments,
+    ValidationOptions,
+    registerDecorator,
+} from 'class-validator';
+import regexUuidV4Validation from '@/utils/regexUuidv4.util';
+export default function IsGenerateCollection<T extends { _id: string }>(
+    validationOptions?: ValidationOptions,
+) {
     return function (object: Object, propertyName: string) {
         registerDecorator({
-            name: payload.name,
             target: object.constructor,
             propertyName,
+            options: validationOptions,
+            constraints: [],
             validator: {
-                validate(value: Partial<T> | any, args: ValidationArguments) {
+                validate(
+                    value: Pick<T, '_id'> | Pick<T, '_id'>[],
+                    args: ValidationArguments,
+                ) {
                     const object = args.object;
                     const property = (object as any)[propertyName];
-                    return (
-                        (value || value.length > 0) &&
-                        (typeof value._id === 'string' ||
-                            typeof value[0]._id === 'string')
-                    );
-                },
-                defaultMessage(args: ValidationArguments) {
-                    return payload.message;
+                    console.log(value);
+                    if (typeof value === 'string') {
+                        return false;
+                    } else {
+                        if (Array.isArray(value)) {
+                            return value.every((element: { _id: string }) =>
+                                regexUuidV4Validation(element._id),
+                            );
+                        } else {
+                            return regexUuidV4Validation(value._id);
+                        }
+                    }
                 },
             },
         });
     };
 }
+
+// ngày mai fix lỗi decorator này
+// validate data song post

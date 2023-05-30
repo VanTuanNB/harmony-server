@@ -16,7 +16,7 @@ const songSchema = new Schema<ISong>(
             },
         ],
         composerId: { type: String, required: true, ref: 'composer' },
-        albumId: { type: String, required: true, ref: 'album' },
+        albumId: [{ type: String, required: true, ref: 'album' }],
         genresId: [
             {
                 type: String,

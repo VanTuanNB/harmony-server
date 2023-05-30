@@ -39,7 +39,6 @@ export default class UserValidation implements TypeProps {
 
     @IsOptional()
     @IsGenerateCollection<IComposer>({
-        name: 'isComposer',
         message: 'Filed _id in collection Composer is empty',
     })
     composerId?: Partial<IComposer>;
@@ -58,21 +57,18 @@ export default class UserValidation implements TypeProps {
 
     @IsOptional()
     @IsGenerateCollection<IFavorite>({
-        name: 'isFavourite',
         message: 'Filed _id in collection Favorite is empty',
     })
     favoriteListId?: Partial<IFavorite>;
 
     @IsOptional()
     @IsGenerateCollection<IHistory>({
-        name: 'isHistory',
         message: 'Filed _id in collection History is empty',
     })
     historyId?: Partial<IHistory>;
 
     @IsOptional()
     @IsGenerateCollection<IFavorite>({
-        name: 'isPlaylist',
         message: 'Filed _id in collection Playlist is empty',
     })
     playlistId?: Partial<IPlaylist>[];
