@@ -4,6 +4,7 @@ import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import UserModel from '@/models/user.model';
 import generateToken from '@/utils/generateToken.util';
 
+
 export default class AuthService {
     public static async loginForm(payload: {
         email: string;
@@ -63,6 +64,42 @@ export default class AuthService {
                 message: 'LOGIN_FORM_FAILED',
                 errors: error,
             };
+        }
+    }
+
+    public static async loginGGFB(payload: {
+        email: string;
+    }): Promise<CustomResponse> {
+        try {
+            const user = await UserModel.getByEmail(payload.email)
+            if (!user) {
+                return{
+                    status: 400,
+                    success: false,
+                    message: 'Missing input',
+                }
+            } else {
+                const { accessToken, refreshToken } = generateToken({
+                    _id: user._id,
+                    email: user.email,
+                });
+                
+                return {
+                    status: 201,
+                    success: true,
+                    message: 'LOGIN_SUCCESSFULLY',
+                    data: {
+                        accessToken,
+                        refreshToken,
+                    },
+                }
+            }
+        } catch (errors) {
+           return {
+                status: 500,
+                success: false,
+                message: 'Faill at auth server'
+            }
         }
     }
 }
