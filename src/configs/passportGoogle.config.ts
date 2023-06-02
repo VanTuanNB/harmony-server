@@ -13,14 +13,14 @@ passport.use(new Strategy({
 },
     async (accessTokens, refreshTokens, profile, done) => {
         try {
-            let em = profile.emails?.[0].value as string;
+            const email = profile._json.email as string; 
             
-            const user = await UserModel.getByEmail(em)
+            const user = await UserModel.getByEmail(email)
             if (!user) {
                 const newUser = await UserModel.createPassport({ 
-                    name: profile.displayName,
-                    email: profile.emails?.[0].value as string,
-                    avatar: profile.photos?.[0].value,
+                    name: profile._json.name as string,
+                    email: profile._json.email as string,
+                    avatar: profile._json.picture,
                     locale: profile._json.locale,})
                 if (newUser) {
                     done(null, newUser);
