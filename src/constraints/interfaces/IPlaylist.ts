@@ -1,9 +1,9 @@
-import ISong from './ISong';
+
 
 export default interface IPlaylist {
     _id: string;
     title: string;
-    listSong: Array<Partial<ISong>>;
+    listSong: string[];
     createdAt?: Date;
     updatedAt?: Date;
 }

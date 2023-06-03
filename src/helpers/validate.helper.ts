@@ -7,13 +7,10 @@ export default async function ValidatePayload(
     message: string,
     showError: boolean = false,
 ): Promise<CustomResponse | null> {
-    console.log(message);
-    console.log(payload);
     const validation = await new Validator().validate(payload, {
         enableDebugMessages: true,
         strictGroups: true,
     });
-    console.log(validation);
     if (validation.length > 0) {
         return {
             status: 400,

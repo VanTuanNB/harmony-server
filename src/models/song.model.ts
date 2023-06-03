@@ -6,4 +6,9 @@ export default class SongModel {
         const created = await songSchema.create(payload);
         return created;
     }
+
+    public static async forceDelete(id: string): Promise<ISong | null> {
+        const forceDelete = await songSchema.findByIdAndDelete(id);
+        return forceDelete;
+    }
 }

@@ -4,7 +4,13 @@ import IGenre from '@/constraints/interfaces/IGenre';
 import ISong from '@/constraints/interfaces/ISong';
 import ISongPath from '@/constraints/interfaces/ISongPath';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+    IsDateString,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 
 interface TypeProps extends Omit<ISong, 'createdAt' | 'updatedAt'> {}
 export default class SongFilter implements TypeProps {
@@ -16,9 +22,9 @@ export default class SongFilter implements TypeProps {
     @IsString()
     title: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    thumbnail: string;
+    thumbnail?: string;
 
     @IsNotEmpty()
     @IsDateString()
@@ -28,45 +34,48 @@ export default class SongFilter implements TypeProps {
     @IsNumber()
     duration: number;
 
+    @IsOptional()
     @IsGenerateCollection<ISongPath>({
         message: 'Property songPathId missing key _id',
     })
-    songPathId: Partial<ISongPath>;
+    songPathReference?: string;
 
     @IsGenerateCollection<IComposer>({
         message: 'Property composerId missing key _id',
     })
-    composerId: Partial<IComposer>;
+    composerReference: string;
 
+    @IsOptional()
     @IsGenerateCollection<IAlbum>({
         message: 'Property albumId missing key _id in array type',
     })
-    albumId: Partial<IAlbum>[];
+    albumReference?: string[];
 
     @IsGenerateCollection<IAlbum>({
         message: 'Property genresId missing key _id in array type',
     })
-    genresId: Partial<IGenre>[];
+    genresReference: string[];
 
     @IsGenerateCollection<IAlbum>({
         message: 'Property performers missing key _id in array type',
     })
-    performers: Partial<IComposer>[];
+    performers: string[];
 
+    @IsOptional()
     @IsNumber()
     views?: number | undefined;
 
     constructor(params: TypeProps) {
         this._id = params._id;
         this.title = params.title;
-        this.albumId = params.albumId;
-        this.composerId = params.composerId;
+        this.albumReference = params.albumReference;
+        this.composerReference = params.composerReference;
         this.duration = params.duration;
-        this.genresId = params.genresId;
+        this.genresReference = params.genresReference;
         this.performers = params.performers;
         this.publish = params.publish;
         this.thumbnail = params.thumbnail;
-        this.songPathId = params.songPathId;
+        this.songPathReference = params.songPathReference;
         this.views = params.views;
     }
 }

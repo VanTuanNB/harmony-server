@@ -1,0 +1,21 @@
+[{
+  "_id": "242a5798-371c-4d73-bfdc-3554246583bd",
+  "path": "src/resources/music/files/713579f75a35750c250c60061645fe30",
+  "size": 3181703,
+  "type": "audio/mpeg",
+  "__v": 0
+},
+{
+  "_id": "8e75b3f6-6d38-435a-9186-0d7e25aecc9f",
+  "path": "src/resources/music/files/415ad4156c6b3a2177ee599e463af3af",
+  "size": 3181703,
+  "type": "audio/mpeg",
+  "__v": 0
+},
+{
+  "_id": "00cbb740-d0fe-42c4-8068-bd1024679f71",
+  "path": "src/resources/music/files/e9dcfc68eca4ffb4392c81a76a4f51a2",
+  "size": 3181703,
+  "type": "audio/mpeg",
+  "__v": 0
+}]

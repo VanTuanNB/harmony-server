@@ -7,6 +7,7 @@ const albumSchema = new Schema<IAlbum>(
         title: { type: String, required: true },
         publish: { type: Date, required: true },
         information: { type: String, default: '' },
+        composerReference: { type: String, required: true, ref: 'composer' },
         listSong: [
             {
                 type: String,

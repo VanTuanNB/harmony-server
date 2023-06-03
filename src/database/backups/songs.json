@@ -1,0 +1,80 @@
+[{
+  "_id": "10488737-023e-4440-b0e6-266809b943c3",
+  "title": "Phiêu Bồng 02",
+  "duration": 195.63102,
+  "publish": {
+    "$date": "2011-10-05T14:48:00.000Z"
+  },
+  "thumbnail": "2b349a0c-cd38-45cd-bf31-6c753aa56fe5",
+  "performers": [
+    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
+  ],
+  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
+  "albumReference": [
+    "42d956b3-1191-412d-b8fd-b9bb615b4046"
+  ],
+  "genresReference": [
+    "069d6560-34a1-4cde-a975-7ab106103ada"
+  ],
+  "songPathReference": "242a5798-371c-4d73-bfdc-3554246583bd",
+  "views": 0,
+  "createdAt": {
+    "$date": "2023-06-03T15:07:10.242Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-03T15:07:10.242Z"
+  },
+  "__v": 0
+},
+{
+  "_id": "5d2516c0-e1bd-4451-8726-ccf2c29c8d8b",
+  "title": "Phiêu Bồng",
+  "duration": 195.63102,
+  "publish": {
+    "$date": "2011-10-05T14:48:00.000Z"
+  },
+  "thumbnail": "99569c08-64cf-49d2-b319-7ae504f7a0b9",
+  "performers": [
+    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
+  ],
+  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
+  "albumReference": [],
+  "genresReference": [
+    "069d6560-34a1-4cde-a975-7ab106103ada"
+  ],
+  "songPathReference": "8e75b3f6-6d38-435a-9186-0d7e25aecc9f",
+  "views": 0,
+  "createdAt": {
+    "$date": "2023-06-03T15:08:31.172Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-03T15:08:31.172Z"
+  },
+  "__v": 0
+},
+{
+  "_id": "74685af7-6a95-40f6-b123-e9478d10b482",
+  "title": "Bạc Phận",
+  "duration": 195.63102,
+  "publish": {
+    "$date": "2011-10-05T14:48:00.000Z"
+  },
+  "thumbnail": "59da9611-ac0b-4e67-921b-5b7381ff1249",
+  "performers": [
+    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
+  ],
+  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
+  "albumReference": [],
+  "genresReference": [
+    "069d6560-34a1-4cde-a975-7ab106103ada"
+  ],
+  "songPathReference": "00cbb740-d0fe-42c4-8068-bd1024679f71",
+  "views": 0,
+  "createdAt": {
+    "$date": "2023-06-03T15:12:31.114Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-03T15:12:31.114Z"
+  },
+  "__v": 0
+}]

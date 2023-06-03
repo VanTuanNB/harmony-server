@@ -1,0 +1,19 @@
+[{
+  "_id": "42d956b3-1191-412d-b8fd-b9bb615b4046",
+  "title": "Ngày có em",
+  "publish": {
+    "$date": "2011-10-05T14:48:00.000Z"
+  },
+  "information": "",
+  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
+  "listSong": [
+    "10488737-023e-4440-b0e6-266809b943c3"
+  ],
+  "createdAt": {
+    "$date": "2023-06-03T14:49:37.426Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-03T15:07:10.287Z"
+  },
+  "__v": 0
+}]

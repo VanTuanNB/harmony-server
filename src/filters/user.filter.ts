@@ -10,7 +10,6 @@ import {
 
 import IFavorite from '@/constraints/interfaces/IFavorite';
 import IHistory from '@/constraints/interfaces/IHistory';
-import IPlaylist from '@/constraints/interfaces/IPlaylist';
 import IUser from '@/constraints/interfaces/IUser';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 import IComposer from '@/constraints/interfaces/IComposer';
@@ -41,7 +40,7 @@ export default class UserValidation implements TypeProps {
     @IsGenerateCollection<IComposer>({
         message: 'Filed _id in collection Composer is empty',
     })
-    composerId?: Partial<IComposer>;
+    composerReference?: string;
 
     @IsOptional()
     @IsBoolean()
@@ -59,19 +58,19 @@ export default class UserValidation implements TypeProps {
     @IsGenerateCollection<IFavorite>({
         message: 'Filed _id in collection Favorite is empty',
     })
-    favoriteListId?: Partial<IFavorite>;
+    favoriteListReference?: string;
 
     @IsOptional()
     @IsGenerateCollection<IHistory>({
         message: 'Filed _id in collection History is empty',
     })
-    historyId?: Partial<IHistory>;
+    historyReference?: string;
 
     @IsOptional()
     @IsGenerateCollection<IFavorite>({
         message: 'Filed _id in collection Playlist is empty',
     })
-    playlistId?: Partial<IPlaylist>[];
+    playlistReference?: string[];
 
     constructor(payload: TypeProps) {
         this._id = payload._id;
@@ -80,10 +79,10 @@ export default class UserValidation implements TypeProps {
         this.refreshToken = payload.refreshToken;
         this.password = payload.password;
         this.avatar = payload.avatar;
-        this.composerId = payload.composerId;
-        this.favoriteListId = payload.favoriteListId;
-        this.historyId = payload.historyId;
-        this.playlistId = payload.playlistId;
+        this.composerReference = payload.composerReference;
+        this.favoriteListReference = payload.favoriteListReference;
+        this.historyReference = payload.historyReference;
+        this.playlistReference = payload.playlistReference;
         this.isRegistrationForm = payload.isRegistrationForm;
         this.locale = payload.locale;
     }

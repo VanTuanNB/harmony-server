@@ -1,10 +1,9 @@
-import ISong from './ISong';
-
 export default interface IAlbum {
     _id: string;
     title: string;
     publish: Date;
-    listSong?: Array<Partial<ISong>>;
+    composerReference: string;
+    listSong?: string[];
     information?: string;
     createdAt?: Date;
     updatedAt?: Date;

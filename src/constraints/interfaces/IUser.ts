@@ -1,7 +1,4 @@
-import IComposer from './IComposer';
-import IFavorite from './IFavorite';
-import IHistory from './IHistory';
-import IPlaylist from './IPlaylist';
+
 
 export default interface IUser {
     _id: string;
@@ -11,11 +8,11 @@ export default interface IUser {
     password?: string;
     avatar?: string;
     locale?: string;
-    playlistId?: Array<Partial<IPlaylist>>;
-    favoriteListId?: Partial<IFavorite>;
-    historyId?: Partial<IHistory>;
+    playlistReference?: string[];
+    favoriteListReference?: string;
+    historyReference?: string;
     isRegistrationForm?: boolean;
-    composerId?: Partial<IComposer>;
+    composerReference?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

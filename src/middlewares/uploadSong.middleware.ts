@@ -13,20 +13,24 @@ export function uploadSong(req: Request, res: Response, next: NextFunction) {
     ]);
     return handleErroring(req, res, function (err: unknown) {
         if (err instanceof multer.MulterError) {
+            console.log(err);
             return res.status(400).json({
                 status: 400,
                 success: false,
-                message: `The field name is invalid ${req.file?.fieldname}`,
-                error: err,
+                message: `BAD_REQUEST_UPLOAD_FILE_NOT_EXITS_FIELDNAME_OR_INVALID_TYPE`,
+                error: JSON.stringify(err),
             });
         } else if (err) {
+            console.log(err);
             return res.status(400).json({
                 status: 400,
                 success: false,
-                message: `The field name is invalid ${req.file?.fieldname}`,
-                error: err,
+                message: `BAD_REQUEST_UPLOAD_FILE_NOT_EXITS_FIELDNAME_OR_INVALID_TYPE`,
+                error: JSON.stringify(err),
             });
         }
         next();
     });
 }
+
+// ngày mai code phần tạo api service nữa là done task

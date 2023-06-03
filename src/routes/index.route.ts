@@ -3,9 +3,15 @@ import { Router } from 'express';
 import authRouter from './auth.route';
 import useRouter from './user.route';
 import songRouter from './song.route';
+import composerRouter from './composer.route';
+import genreRouter from './genre.route';
+import albumRouter from './album.route';
 
 const rootRouter = Router();
 
+rootRouter.use('/genre', genreRouter);
+rootRouter.use('/album', albumRouter);
+rootRouter.use('/composer', composerRouter);
 rootRouter.use('/song', songRouter);
 rootRouter.use('/auth', authRouter);
 rootRouter.use('/user', useRouter);

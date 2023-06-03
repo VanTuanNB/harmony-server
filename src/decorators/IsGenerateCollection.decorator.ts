@@ -14,29 +14,23 @@ export default function IsGenerateCollection<T extends { _id: string }>(
             options: validationOptions,
             constraints: [],
             validator: {
-                validate(
-                    value: Pick<T, '_id'> | Pick<T, '_id'>[],
-                    args: ValidationArguments,
-                ) {
-                    const object = args.object;
-                    const property = (object as any)[propertyName];
-                    console.log(value);
-                    if (typeof value === 'string') {
-                        return false;
-                    } else {
+                validate(value: string | string[], args: ValidationArguments) {
+                    try {
+                        const object = args.object;
+                        const property = (object as any)[propertyName];
                         if (Array.isArray(value)) {
-                            return value.every((element: { _id: string }) =>
-                                regexUuidV4Validation(element._id),
+                            return value.every((element: string) =>
+                                regexUuidV4Validation(element),
                             );
                         } else {
-                            return regexUuidV4Validation(value._id);
+                            return regexUuidV4Validation(value);
                         }
+                    } catch (error) {
+                        console.log(error);
+                        return false;
                     }
                 },
             },
         });
     };
 }
-
-// ngày mai fix lỗi decorator này
-// validate data song post

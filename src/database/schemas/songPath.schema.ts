@@ -6,6 +6,7 @@ const songPathSchema = new Schema<ISongPath>(
         _id: { type: String, required: true },
         path: { type: String, required: true },
         size: { type: Number, required: true },
+        type: { type: String, required: true },
     },
     {
         _id: false,

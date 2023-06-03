@@ -7,15 +7,19 @@ const composerSchema = new Schema<IComposer>(
         _id: { type: String, required: true },
         name: { type: String, required: true },
         slug: { type: String, required: true },
-        avatar: { type: String, default: null },
+        avatar: {
+            type: String,
+            default:
+                'https://fullstack.edu.vn/static/media/fallback-avatar.155cdb2376c5d99ea151.jpg',
+        },
         country: { type: String, default: 'vi' },
-        albumsId: [
+        albumsReference: [
             {
                 type: String,
                 ref: 'album',
             },
         ],
-        songsId: [
+        songsReference: [
             {
                 type: String,
                 ref: 'song',

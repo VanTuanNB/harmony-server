@@ -1,20 +1,15 @@
-import IAlbum from './IAlbum';
-import IComposer from './IComposer';
-import IGenre from './IGenre';
-import ISongPath from './ISongPath';
-
 export default interface ISong {
     _id: string;
     title: string;
     duration: number;
-    thumbnail: string;
-    composerId: Partial<IComposer>;
+    thumbnail?: string;
+    composerReference: string;
+    songPathReference?: string;
     publish: Date;
-    albumId: Array<Partial<IAlbum>>;
-    genresId: Array<Partial<IGenre>>;
-    songPathId: Partial<ISongPath>;
-    performers: Array<Partial<IComposer>>;
+    albumReference?: string[];
+    genresReference: string[];
+    performers: Array<string>;
     views?: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

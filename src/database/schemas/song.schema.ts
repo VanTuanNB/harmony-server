@@ -7,7 +7,7 @@ const songSchema = new Schema<ISong>(
         title: { type: String, required: true },
         duration: { type: Number, required: true },
         publish: { type: Date, required: true },
-        thumbnail: { type: String, required: true },
+        thumbnail: { type: String, required: true, ref: 'thumbnail' },
         performers: [
             {
                 type: String,
@@ -15,16 +15,16 @@ const songSchema = new Schema<ISong>(
                 required: true,
             },
         ],
-        composerId: { type: String, required: true, ref: 'composer' },
-        albumId: [{ type: String, required: true, ref: 'album' }],
-        genresId: [
+        composerReference: { type: String, required: true, ref: 'composer' },
+        albumReference: [{ type: String, ref: 'album' }],
+        genresReference: [
             {
                 type: String,
                 ref: 'genre',
                 required: true,
             },
         ],
-        songPathId: { type: String, required: true, ref: 'songPath' },
+        songPathReference: { type: String, required: true, ref: 'songPath' },
         views: { type: Number, default: 0 },
     },
     {
