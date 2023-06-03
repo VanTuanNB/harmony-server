@@ -2,8 +2,6 @@ require('dotenv').config();
 import 'module-alias/register';
 import path from 'path';
 import fs from 'fs';
-
-import Database from '@/database/connect.db';
 import mongoose from 'mongoose';
 
 export default class SongMigration {

@@ -2,7 +2,6 @@ require('dotenv').config();
 import 'module-alias/register';
 import path from 'path';
 import fs from 'fs';
-
 import mongoose from 'mongoose';
 
 export default class ThumbnailMigration {

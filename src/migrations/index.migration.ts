@@ -1,6 +1,7 @@
 require('dotenv').config();
 import 'module-alias/register';
 import { exit } from 'process';
+
 import SongMigration from '@/migrations/song.migration';
 import ComposerMigration from '@/migrations/composer.migration';
 import UserMigration from '@/migrations/user.migration';
