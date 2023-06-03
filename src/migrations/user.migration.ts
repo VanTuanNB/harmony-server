@@ -3,12 +3,12 @@ import 'module-alias/register';
 import path from 'path';
 import fs from 'fs';
 
-import Database from '@/database/connect.db';
+import mongoose from 'mongoose';
 
 export default class UserMigration {
-    public static async create(): Promise<boolean> {
+    public static async create(db: mongoose.mongo.Db): Promise<boolean> {
         try {
-            const db = await Database.connect();
+            console.log(db);
             const filePath = path.join(
                 __dirname,
                 '../',
@@ -28,7 +28,7 @@ export default class UserMigration {
             const result = await db
                 .collection(collectionName)
                 .insertMany(fileData);
-            Database.disconnect();
+            console.log('Create user collection successfully');
             return result ? true : false;
         } catch (error) {
             console.error(error);

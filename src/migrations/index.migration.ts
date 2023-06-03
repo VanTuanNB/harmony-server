@@ -8,19 +8,21 @@ import SongPathMigration from '@/migrations/songPath.migration';
 import GenreMigration from '@/migrations/genre.migration';
 import AlbumMigration from '@/migrations/album.migration';
 import ThumbnailMigration from '@/migrations/thumbnail.migration';
+import Database from '@/database/connect.db';
 
 const createCollection = async (): Promise<void> => {
     try {
+        const db = await Database.connect();
         await Promise.all([
-            SongMigration.create(),
-            ComposerMigration.create(),
-            UserMigration.create(),
-            SongPathMigration.create(),
-            GenreMigration.create(),
-            AlbumMigration.create(),
-            ThumbnailMigration.create(),
+            SongMigration.create(db),
+            ComposerMigration.create(db),
+            UserMigration.create(db),
+            SongPathMigration.create(db),
+            GenreMigration.create(db),
+            AlbumMigration.create(db),
+            ThumbnailMigration.create(db),
         ]).finally(() => {
-            console.log('songs collection successfully created');
+            Database.disconnect();
         });
         exit();
     } catch (error) {

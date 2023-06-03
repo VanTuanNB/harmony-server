@@ -4,11 +4,11 @@ import path from 'path';
 import fs from 'fs';
 
 import Database from '@/database/connect.db';
+import mongoose from 'mongoose';
 
 export default class SongMigration {
-    public static async create(): Promise<boolean> {
+    public static async create(db: mongoose.mongo.Db): Promise<boolean> {
         try {
-            const db = await Database.connect();
             const filePath = path.join(
                 __dirname,
                 '../',
@@ -28,7 +28,7 @@ export default class SongMigration {
             const result = await db
                 .collection(collectionName)
                 .insertMany(songData);
-            Database.disconnect();
+            console.log('Created song collection successfully');
             return result ? true : false;
         } catch (error) {
             console.error(error);
