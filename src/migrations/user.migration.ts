@@ -8,7 +8,6 @@ import mongoose from 'mongoose';
 export default class UserMigration {
     public static async create(db: mongoose.mongo.Db): Promise<boolean> {
         try {
-            console.log(db);
             const filePath = path.join(
                 __dirname,
                 '../',
