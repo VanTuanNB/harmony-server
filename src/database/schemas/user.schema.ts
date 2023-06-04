@@ -4,7 +4,7 @@ import mongoose, { Schema } from 'mongoose';
 const userSchema = new Schema<IUser>(
     {
         _id: { type: String, required: true },
-        name: { type: String, required: true, maxlength: 20 },
+        name: { type: String, required: true, maxlength: 100 },
         email: { type: String, required: true },
         avatar: {
             type: String,
