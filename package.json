@@ -36,9 +36,11 @@
     "mongoose": "^7.1.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.2",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "uuid": "^9.0.0"
-},
-"devDependencies": {
+  },
+  "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.17",
     "@types/fluent-ffmpeg": "^2.1.21",
@@ -46,11 +48,12 @@
     "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.7",
     "@types/nodemailer": "^6.4.7",
+    "@types/passport-google-oauth20": "^2.0.11",
     "@types/uuid": "^9.0.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22"
-},
-"_moduleAliases": {
+  },
+  "_moduleAliases": {
     "@": "src/"
-}
+  }
 }
