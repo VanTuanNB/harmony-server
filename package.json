@@ -36,9 +36,10 @@
     "mongoose": "^7.1.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.2",
+    "sharp": "^0.32.1",
     "uuid": "^9.0.0"
-},
-"devDependencies": {
+  },
+  "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.17",
     "@types/fluent-ffmpeg": "^2.1.21",
@@ -49,8 +50,8 @@
     "@types/uuid": "^9.0.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22"
-},
-"_moduleAliases": {
+  },
+  "_moduleAliases": {
     "@": "src/"
-}
+  }
 }
