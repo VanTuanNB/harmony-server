@@ -1,3 +1,5 @@
+import { config } from 'dotenv';
+config();
 import { ISong } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import SongRepository from '@/repositories/song.repository';
@@ -9,9 +11,7 @@ import ThumbnailModel from '@/models/thumbnail.model';
 import SongPathModel from '@/models/songPath.model';
 import SongModel from '@/models/song.model';
 import ComposerModel from '@/models/composer.model';
-import GenreModel from '@/models/genre.model';
 import GenreService from './genre.service';
-import AlbumModel from '@/models/album.model';
 import AlbumService from './album.service';
 
 interface ITypeFiles {
@@ -70,7 +70,7 @@ export default class SongService {
                 type: files.fileSong.mimetype,
             });
             Object.assign(songFilter, {
-                thumbnail: createThumbnail._id,
+                thumbnail: `${process.env.SERVER_URL}:${process.env.PORT_SERVER}/api/v1/thumbnail/${createThumbnail._id}`,
                 songPathReference: createSongPath._id,
             });
             const createdSong = await SongModel.create(songFilter);

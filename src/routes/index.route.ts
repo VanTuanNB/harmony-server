@@ -6,9 +6,10 @@ import songRouter from './song.route';
 import composerRouter from './composer.route';
 import genreRouter from './genre.route';
 import albumRouter from './album.route';
+import thumbnailRouter from './thumnail.route';
 
 const rootRouter = Router();
-
+rootRouter.use('/thumbnail', thumbnailRouter);
 rootRouter.use('/genre', genreRouter);
 rootRouter.use('/album', albumRouter);
 rootRouter.use('/composer', composerRouter);
