@@ -33,7 +33,15 @@ passport.use(new Strategy({
             refreshToken: refreshToken
         })
         cb(null, newUser)
-    } else {
-        cb(null, user);
     }
+    if (user?.isRegistrationForm == false) {
+        cb(null, user)
+    } else {
+        return {
+            status: 400,
+            success: false,
+            message: 'The account you have registered by form',
+        }
+    }
+
 }))

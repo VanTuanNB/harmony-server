@@ -71,45 +71,41 @@ export default class AuthService {
     ) {
         try {
             const user = await UserModel.getByEmail(payload.email)
-            if (!user) {
-                return {
-                    status: 403,
-                    success: false,
-                    message: 'ACCOUNT_NOT_EXIST',
-                }
-            } else {
-                if (user.isRegistrationForm) {
-                    return {
-                        status: 401,
-                        success: false,
-                        message: 'ACCOUNT_ALREADY_EXISTS',
-                    };
-                }
-                const { accessToken, refreshToken } = generateToken({
-                    _id: user._id,
-                    email: user.email,
-                });
-
-                const updated = await UserModel.updateById(user._id, {
-                    refreshToken,
-                });
-
-                if (!updated)
-                    return {
-                        status: 500,
-                        success: false,
-                        message: 'LOGIN_FAILED',
-                    };
-                return {
-                    status: 200,
-                    success: true,
-                    message: 'LOGIN_SUCCESSFULLY',
-                    data: {
-                        accessToken,
-                        refreshToken,
-                    },
-                };
+            if (!user) return {
+                status: 403,
+                success: false,
+                message: 'ACCOUNT_NOT_EXIST',
             }
+
+            if (user.isRegistrationForm) return {
+                status: 401,
+                success: false,
+                message: 'ACCOUNT_ALREADY_EXISTS',
+            };
+
+            const { accessToken, refreshToken } = generateToken({
+                _id: user._id,
+                email: user.email,
+            });
+
+            const updated = await UserModel.updateById(user._id, {
+                refreshToken,
+            });
+
+            if (!updated) return {
+                status: 500,
+                success: false,
+                message: 'LOGIN_FAILED',
+            };
+            return {
+                status: 200,
+                success: true,
+                message: 'LOGIN_SUCCESSFULLY',
+                data: {
+                    accessToken,
+                    refreshToken,
+                },
+            };
         } catch (errors) {
             return {
                 status: 500,
