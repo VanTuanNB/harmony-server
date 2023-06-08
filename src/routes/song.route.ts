@@ -4,6 +4,9 @@ import { Router } from 'express';
 
 const router: Router = Router();
 
-router.route('/').post(uploadSong, SongController.create);
+router
+    .route('/')
+    .get(SongController.getAll)
+    .post(uploadSong, SongController.create);
 
 export default router;

@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import {
     CustomRequest,
@@ -19,6 +19,13 @@ const requirementFields = [
     'performers',
 ];
 export default class SongController {
+    public static async getAll(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const songs = await SongService.getAll();
+        return res.status(songs.status).json(songs);
+    }
     @IsRequirementReq(requirementFields, 'body')
     @IsRequirementTypeId(
         [

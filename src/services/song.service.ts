@@ -20,6 +20,25 @@ interface ITypeFiles {
 }
 
 export default class SongService {
+    public static async getAll(): Promise<CustomResponse<ISong[] | []>> {
+        try {
+            const songs = await SongModel.getAll();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALL_SONG_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALL_SONG_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async create(
         files: ITypeFiles,
         payload: Omit<
