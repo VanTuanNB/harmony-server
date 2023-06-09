@@ -9,4 +9,8 @@ router
     .get(SongController.getAll)
     .post(uploadSong, SongController.create);
 
+router
+    .route('/:id')
+    .get(SongController.getById)
+
 export default router;

@@ -39,6 +39,31 @@ export default class SongService {
             };
         }
     }
+    public static async getById(_id: string): Promise<CustomResponse<ISong | null>> {
+        try {
+            const song = await SongModel.getbyId(_id);
+            if(!song) return{
+                status: 400,
+                success: false,
+                message: 'GET_SONG_BY_ID_EXISTS',
+            };
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_BY_ID_SUCCESSFULLY',
+                data: song,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async create(
         files: ITypeFiles,
         payload: Omit<
