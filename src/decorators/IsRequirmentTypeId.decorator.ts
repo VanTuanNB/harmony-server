@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import regexUuidV4Validation from '@/utils/regexUuidv4.util';
+import handleDeleteFile from '@/helpers/deleteFile.helper';
+import IFieldNameFiles from '@/constraints/interfaces/IFieldNameFiles';
 
 type TypeRequest = 'body' | 'query' | 'params';
 
@@ -52,6 +54,12 @@ export default function IsRequirementTypeId(
                     if (isPassed) {
                         const result = originalMethod.apply(this, args);
                         return result;
+                    }
+                }
+                const files = req.files as IFieldNameFiles;
+                if (Object.keys(files).length > 0) {
+                    for (const keyFile in files) {
+                        handleDeleteFile(files[keyFile][0]);
                     }
                 }
                 return res.status(400).json({

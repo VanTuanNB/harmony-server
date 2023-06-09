@@ -6,7 +6,7 @@ const composerSchema = new Schema<IComposer>(
     {
         _id: { type: String, required: true },
         name: { type: String, required: true },
-        slug: { type: String, required: true },
+        nickname: { type: String, required: true },
         avatar: {
             type: String,
             default:
