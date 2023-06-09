@@ -19,7 +19,7 @@ export default class ComposerService {
                 };
             const _id: string = uuidv4();
             const randomEntryPointSlug = Math.floor(Math.random() * 1000);
-            const slug =
+            const nickname =
                 (user.name
                     .normalize('NFD')
                     .replace(/[^a-z0-9\s]/gi, '')
@@ -31,11 +31,11 @@ export default class ComposerService {
             const createdComposer = await ComposerModel.create({
                 _id,
                 name: user.name,
-                slug,
+                nickname,
                 avatar: user.avatar ?? undefined,
                 country: user.locale,
             });
-            UserModel.updateById(user._id, {
+            await UserModel.updateById(user._id, {
                 composerReference: createdComposer._id,
             });
 
@@ -52,6 +52,20 @@ export default class ComposerService {
                 message: 'POST_COMPOSER_FAILED',
                 errors: error,
             };
+        }
+    }
+    public static async updateFieldGenre(
+        id: string,
+        genreId: string,
+    ): Promise<boolean> {
+        try {
+            await ComposerModel.updatedField(id, {
+                albumsReference: [genreId],
+            });
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
         }
     }
 }
