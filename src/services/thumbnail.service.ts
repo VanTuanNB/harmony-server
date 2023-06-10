@@ -17,10 +17,8 @@ export default class ThumbnailService {
                     success: false,
                     message: 'GET_THUMBNAIL_FAILED_ID_NOT_FOUND',
                 };
-            const filePath: string = path.join(
-                __dirname.replace('/src/services', ''),
-                thumbnailImg.path,
-            );
+            const filePath = path.join(__dirname, '../../', thumbnailImg.path);
+            console.log(filePath);
             const thumbnailRepo =
                 await ThumbnailRepository.getInformationThumbnail(
                     filePath,
