@@ -2,6 +2,24 @@ import IComposer from '@/constraints/interfaces/IComposer';
 import composerSchema from '@/database/schemas/composer.schema';
 
 export default class ComposerModel {
+    public static async getComposerByUserId(
+        id: string,
+    ): Promise<IComposer | null> {
+        const composer = await composerSchema.findOne({ userReference: id });
+        return composer;
+    }
+    public static async getById(_id: string): Promise<IComposer | null> {
+        const composer = await composerSchema.findById(_id);
+        return composer;
+    }
+    public static async getListSong(_id: string): Promise<IComposer | null> {
+        const listSongOfComposer = await composerSchema.findById(_id).populate({
+            path: 'songsReference',
+            strictPopulate: true,
+            select: 'title',
+        });
+        return listSongOfComposer;
+    }
     public static async create(payload: IComposer): Promise<IComposer> {
         const created = await composerSchema.create(payload);
         return created;
@@ -15,7 +33,7 @@ export default class ComposerModel {
             $set: {
                 name: payload.name,
                 avatar: payload.avatar,
-                slug: payload.slug,
+                nickname: payload.nickname,
                 country: payload.country,
             },
             $push: {

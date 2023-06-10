@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import IAccountPendingVerify from '@/constraints/interfaces/IAccountPendingVerify';
+import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
 import { IsRequirementReq } from '@/decorators/index.decorator';
 import UserService from '@/services/user.service';
 

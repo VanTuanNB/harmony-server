@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
 
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
+import {
+    IsRequirementReq,
+    IsRequirementEmail,
+} from '@/decorators/index.decorator';
 import AuthService from '@/services/auth.service';
 import IUser from '@/constraints/interfaces/IUser';
 
 export default class AuthController {
     @IsRequirementReq(['email', 'password'], 'body')
+    @IsRequirementEmail('email')
     public static async loginForm(
         req: Request,
         res: Response,

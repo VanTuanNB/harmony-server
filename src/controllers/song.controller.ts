@@ -1,15 +1,20 @@
-import { Response } from 'express';
+
+import { NextFunction, Response, Request } from 'express';
+
 
 import {
     CustomRequest,
     ISong,
     IFieldNameFiles,
 } from '@/constraints/interfaces/index.interface';
-import IsRequirementFiles from '@/decorators/IsRequirementFiles.decorator';
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
+import {
+    IsRequirementFiles,
+    IsRequirementTypeId,
+    IsRequirementReq,
+} from '@/decorators/index.decorator';
+
 import SongService from '@/services/song.service';
 import { uploadFiledEnum } from '@/constraints/enums/index.enum';
-import IsRequirementTypeId from '@/decorators/IsRequirmentTypeId.decorator';
 
 const requirementFields = [
     'title',
@@ -19,6 +24,22 @@ const requirementFields = [
     'performers',
 ];
 export default class SongController {
+    public static async getAll(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const songs = await SongService.getAll();
+        return res.status(songs.status).json(songs);
+    }
+    @IsRequirementReq('id', 'params')
+    public static async getById(
+        req: Request,
+        res: Response
+    ): Promise<Response | void> {
+        const _id = req.params.id;
+        const song = await SongService.getById(_id);
+        return res.status(song.status).json(song);
+    }
     @IsRequirementReq(requirementFields, 'body')
     @IsRequirementTypeId(
         [
@@ -30,6 +51,27 @@ export default class SongController {
         'body',
     )
     @IsRequirementFiles([uploadFiledEnum.FileSong, uploadFiledEnum.Thumbnail])
+    public static async middlewareCreateSong(
+        req: CustomRequest,
+        res: Response,
+        next: NextFunction,
+    ): Promise<Response | void> {
+        const { title, composerReference } = req.body;
+        const { thumbnail, fileSong } = req.files as IFieldNameFiles;
+        const validate = await SongService.validateTitleUploadSong(
+            title,
+            composerReference,
+            {
+                fileSong: fileSong[0],
+                thumbnail: thumbnail[0],
+            },
+        );
+        if (validate.success) {
+            return next();
+        }
+        return res.status(validate.status).json(validate);
+    }
+
     public static async create(
         req: CustomRequest,
         res: Response,
