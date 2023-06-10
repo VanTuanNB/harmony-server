@@ -3,7 +3,7 @@ import {
     ValidationOptions,
     registerDecorator,
 } from 'class-validator';
-import regexUuidV4Validation from '@/utils/regexUuidv4.util';
+import { regexUuidV4Validation } from '@/utils/regex.util';
 export default function IsGenerateCollection<T extends { _id: string }>(
     validationOptions?: ValidationOptions,
 ) {

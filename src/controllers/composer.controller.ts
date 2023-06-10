@@ -1,4 +1,4 @@
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
+import { IsRequirementReq } from '@/decorators/index.decorator';
 import ComposerService from '@/services/composer.service';
 import { Request, Response } from 'express';
 

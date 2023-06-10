@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
 import { CustomRequest } from '@/constraints/interfaces/custom.interface';
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
-import IAlbum from '@/constraints/interfaces/IAlbum';
+import { IsRequirementReq } from '@/decorators/index.decorator';
+import { IAlbum } from '@/constraints/interfaces/index.interface';
 import AlbumService from '@/services/album.service';
 
 export default class AlbumController {

@@ -1,80 +1,82 @@
 [{
-  "_id": "10488737-023e-4440-b0e6-266809b943c3",
-  "title": "Phiêu Bồng 02",
-  "duration": 195.63102,
-  "publish": {
-    "$date": "2011-10-05T14:48:00.000Z"
-  },
-  "thumbnail": "2b349a0c-cd38-45cd-bf31-6c753aa56fe5",
-  "performers": [
-    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
-  ],
-  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
-  "albumReference": [
-    "42d956b3-1191-412d-b8fd-b9bb615b4046"
-  ],
-  "genresReference": [
-    "069d6560-34a1-4cde-a975-7ab106103ada"
-  ],
-  "songPathReference": "242a5798-371c-4d73-bfdc-3554246583bd",
-  "views": 0,
-  "createdAt": {
-    "$date": "2023-06-03T15:07:10.242Z"
-  },
-  "updatedAt": {
-    "$date": "2023-06-03T15:07:10.242Z"
-  },
-  "__v": 0
-},
-{
-  "_id": "5d2516c0-e1bd-4451-8726-ccf2c29c8d8b",
+  "_id": "1f1ec177-a843-4e39-8734-e23faf7adbba",
   "title": "Phiêu Bồng",
   "duration": 195.63102,
   "publish": {
     "$date": "2011-10-05T14:48:00.000Z"
   },
-  "thumbnail": "99569c08-64cf-49d2-b319-7ae504f7a0b9",
+  "thumbnail": "http://localhost:5000/api/v1/thumbnail/ccbd9ef1-e672-4484-b4b0-e10a481b7125",
   "performers": [
-    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
+    "181ca308-f791-4ff5-8041-36c046d4023f"
   ],
-  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
-  "albumReference": [],
+  "composerReference": "181ca308-f791-4ff5-8041-36c046d4023f",
+  "albumReference": [
+    "e9cdc1ac-7d99-4283-8d31-88cfe137b604"
+  ],
   "genresReference": [
-    "069d6560-34a1-4cde-a975-7ab106103ada"
+    "e6579dcc-9449-4852-b962-cd8bdffc0743"
   ],
-  "songPathReference": "8e75b3f6-6d38-435a-9186-0d7e25aecc9f",
+  "songPathReference": "deffd491-c933-4111-8f35-22b492d46d69",
   "views": 0,
   "createdAt": {
-    "$date": "2023-06-03T15:08:31.172Z"
+    "$date": "2023-06-10T14:35:23.333Z"
   },
   "updatedAt": {
-    "$date": "2023-06-03T15:08:31.172Z"
+    "$date": "2023-06-10T14:35:23.333Z"
   },
   "__v": 0
 },
 {
-  "_id": "74685af7-6a95-40f6-b123-e9478d10b482",
-  "title": "Bạc Phận",
-  "duration": 195.63102,
+  "_id": "42d3d57e-8556-4ea1-9b39-1c78c1a8f6ff",
+  "title": "Cứ Ngỡ",
+  "duration": 337.81551,
   "publish": {
     "$date": "2011-10-05T14:48:00.000Z"
   },
-  "thumbnail": "59da9611-ac0b-4e67-921b-5b7381ff1249",
+  "thumbnail": "http://localhost:5000/api/v1/thumbnail/8109a3b2-21c2-4177-bfb8-fc5bc87a5d0f",
   "performers": [
-    "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
+    "181ca308-f791-4ff5-8041-36c046d4023f"
   ],
-  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
-  "albumReference": [],
+  "composerReference": "181ca308-f791-4ff5-8041-36c046d4023f",
+  "albumReference": [
+    "ea2f0e04-73c7-4ed9-a183-d7bf1233e9d5"
+  ],
   "genresReference": [
-    "069d6560-34a1-4cde-a975-7ab106103ada"
+    "401dfd91-5dc9-4062-8bb5-53f529f9727f"
   ],
-  "songPathReference": "00cbb740-d0fe-42c4-8068-bd1024679f71",
+  "songPathReference": "cbc0b5f2-adbd-4de4-b7d5-83460b82d7df",
   "views": 0,
   "createdAt": {
-    "$date": "2023-06-03T15:12:31.114Z"
+    "$date": "2023-06-10T14:50:16.064Z"
   },
   "updatedAt": {
-    "$date": "2023-06-03T15:12:31.114Z"
+    "$date": "2023-06-10T14:50:16.064Z"
+  },
+  "__v": 0
+},
+{
+  "_id": "bd92bdea-ba4b-4292-b950-5da3f24f8198",
+  "title": "Bông Cỏ Mây",
+  "duration": 268.896,
+  "publish": {
+    "$date": "2011-10-05T14:48:00.000Z"
+  },
+  "thumbnail": "http://localhost:5000/api/v1/thumbnail/2c6a4053-4a84-48d3-a95f-1fbbc64a9f65",
+  "performers": [
+    "181ca308-f791-4ff5-8041-36c046d4023f"
+  ],
+  "composerReference": "181ca308-f791-4ff5-8041-36c046d4023f",
+  "albumReference": [],
+  "genresReference": [
+    "78383b39-7c8d-4788-adb5-ca47e05cee5f"
+  ],
+  "songPathReference": "85962b44-b8a5-4707-8661-ef7a873c0b3e",
+  "views": 0,
+  "createdAt": {
+    "$date": "2023-06-10T14:54:10.407Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-10T14:54:10.407Z"
   },
   "__v": 0
 }]

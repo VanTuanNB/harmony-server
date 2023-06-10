@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
+import { IsRequirementReq } from '@/decorators/index.decorator';
 import ThumbnailService from '@/services/thumbnail.service';
 
 export default class ThumbnailController {
