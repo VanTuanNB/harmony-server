@@ -5,12 +5,11 @@ import { uploadSong } from '@/middlewares/uploadSong.middleware';
 
 const router: Router = Router();
 
+router.route('/:id')
+    .get(SongController.getById)
 router
     .route('/')
-    .post(
-        uploadSong,
-        SongController.middlewareCreateSong,
-        SongController.create,
-    );
+    .get(SongController.getAll)
+    .post(uploadSong, SongController.middlewareCreateSong, SongController.create);
 
 export default router;
