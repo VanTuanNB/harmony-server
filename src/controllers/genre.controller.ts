@@ -1,8 +1,8 @@
 import { Response } from 'express';
 
-import IGenre from '@/constraints/interfaces/IGenre';
+import { IGenre } from '@/constraints/interfaces/index.interface';
 import { CustomRequest } from '@/constraints/interfaces/custom.interface';
-import IsRequirementReq from '@/decorators/IsRequirementReq.decorator';
+import { IsRequirementReq } from '@/decorators/index.decorator';
 import GenreService from '@/services/genre.service';
 
 export default class GenreController {

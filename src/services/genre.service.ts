@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import IGenre from '@/constraints/interfaces/IGenre';
+import { IGenre } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import GenreModel from '@/models/genre.model';
 

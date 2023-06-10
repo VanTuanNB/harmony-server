@@ -2,13 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
 
 import transporter from '@/configs/nodemailer.config';
-import IAccountPendingVerify from '@/constraints/interfaces/IAccountPendingVerify';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
 import UserModel from '@/models/user.model';
 import generateToken from '@/utils/generateToken.util';
 import UserFilter from '@/filters/user.filter';
 import ValidatePayload from '@/helpers/validate.helper';
+import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 
 export default class UserService {
     public static async checkEmail(email: string): Promise<CustomResponse> {
@@ -41,7 +41,7 @@ export default class UserService {
     ): Promise<CustomResponse> {
         try {
             const _id: string = uuidv4();
-            const randomCode: number = Math.floor(Math.random() * 1000);
+            const randomCode: number = Math.floor(Math.random() * 10000);
             const verificationCode =
                 randomCode < 1000 ? randomCode * 10 : randomCode;
             const hashPassword = await bcrypt.hash(payload.password, 10);

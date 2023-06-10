@@ -1,15 +1,18 @@
 [{
-  "_id": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e",
-  "name": "Tuấn Cao",
-  "slug": "tuancao9340",
+  "_id": "181ca308-f791-4ff5-8041-36c046d4023f",
+  "name": "Tuan Cao",
+  "nickname": "tuancao6601",
+  "userReference": "374e5329-c9e2-490b-b444-c835472a4cb5",
   "avatar": "https://fullstack.edu.vn/static/media/fallback-avatar.155cdb2376c5d99ea151.jpg",
   "country": "vi",
-  "albumsReference": [],
+  "albumsReference": [
+    "e9cdc1ac-7d99-4283-8d31-88cfe137b604",
+    "ea2f0e04-73c7-4ed9-a183-d7bf1233e9d5"
+  ],
   "songsReference": [
-    "b1c144ad-b549-4c2b-8c7b-c0091af95a5a",
-    "10488737-023e-4440-b0e6-266809b943c3",
-    "5d2516c0-e1bd-4451-8726-ccf2c29c8d8b",
-    "74685af7-6a95-40f6-b123-e9478d10b482"
+    "1f1ec177-a843-4e39-8734-e23faf7adbba",
+    "42d3d57e-8556-4ea1-9b39-1c78c1a8f6ff",
+    "bd92bdea-ba4b-4292-b950-5da3f24f8198"
   ],
   "__v": 0
 }]
