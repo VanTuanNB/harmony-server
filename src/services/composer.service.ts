@@ -1,11 +1,53 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import IUser from '@/constraints/interfaces/IUser';
+import { IComposer, IUser } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import UserModel from '@/models/user.model';
 import ComposerModel from '@/models/composer.model';
 
 export default class ComposerService {
+    public static async getById(
+        _id: string,
+    ): Promise<CustomResponse<IComposer | null>> {
+        try {
+            const composer = await ComposerModel.getById(_id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_COMPOSER_BY_ID_SUCCESSFULLY',
+                data: composer,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_COMPOSER_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
+    public static async getListSongById(
+        _id: string,
+    ): Promise<CustomResponse<IComposer | null>> {
+        try {
+            const composer = await ComposerModel.getListSong(_id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_COMPOSER_BY_ID_SUCCESSFULLY',
+                data: composer,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_COMPOSER_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async create(
         payload: Pick<IUser, '_id'>,
     ): Promise<CustomResponse> {
@@ -17,8 +59,20 @@ export default class ComposerService {
                     success: false,
                     message: 'USER_NOT_EXIST',
                 };
+            const composerByUserId = await ComposerModel.getComposerByUserId(
+                payload._id,
+            );
+            if (composerByUserId)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'COMPOSER_IS_EXISTED',
+                };
             const _id: string = uuidv4();
-            const randomEntryPointSlug = Math.floor(Math.random() * 1000);
+            let randomEntryPointSlug: number = 0;
+            do {
+                randomEntryPointSlug = Math.floor(Math.random() * 10000);
+            } while (randomEntryPointSlug < 1000);
             const nickname =
                 (user.name
                     .normalize('NFD')
@@ -33,6 +87,7 @@ export default class ComposerService {
                 name: user.name,
                 nickname,
                 avatar: user.avatar ?? undefined,
+                userReference: payload._id,
                 country: user.locale,
             });
             await UserModel.updateById(user._id, {

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import IAlbum from '@/constraints/interfaces/IAlbum';
+import { IAlbum } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import AlbumModel from '@/models/album.model';
 import ComposerModel from '@/models/composer.model';
