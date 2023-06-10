@@ -24,6 +24,8 @@ or
     PASSWORD_GMAIL_SERVER=uvzdvwesamjfszkr
     SECRET_ACCESS_TOKEN=your_access_token
     SECRET_REFRESH_TOKEN=your_refresh_token
+    GOOGLE_CLIENT_ID=139980174281-f8u26it0puifh5i7jdpd1rchciotmibm.apps.googleusercontent.com
+    GOOGLE_CLIENT_SECRET=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
 ```
 
 -   Generate token by command
