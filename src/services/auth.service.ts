@@ -93,7 +93,7 @@ export default class AuthService {
             });
 
             if (!updated) return {
-                status: 500,
+                status: 400,
                 success: false,
                 message: 'LOGIN_FAILED',
             };

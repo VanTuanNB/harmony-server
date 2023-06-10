@@ -13,9 +13,6 @@ passport.use(new Strategy({
     scope: ['profile'],
 
 }, async function (accessTokens, refreshTokens, profile, cb) {
-    // console.log(profile);
-    // cb(null, profile)
-
     const email = profile._json.email as string;
     const user = await UserModel.getByEmail(email);
     const _id: string = uuidv4();
@@ -34,7 +31,7 @@ passport.use(new Strategy({
         })
         cb(null, newUser)
     }
-    if (user?.isRegistrationForm == false) {
+    if (user?.isRegistrationForm === false) {
         cb(null, user)
     } else {
         return {
