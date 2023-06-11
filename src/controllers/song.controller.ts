@@ -1,6 +1,4 @@
-
 import { NextFunction, Response, Request } from 'express';
-
 
 import {
     CustomRequest,
@@ -31,15 +29,33 @@ export default class SongController {
         const songs = await SongService.getAll();
         return res.status(songs.status).json(songs);
     }
-    @IsRequirementReq('id', 'params')
+
+    @IsRequirementTypeId('id', 'params')
     public static async getById(
         req: Request,
-        res: Response
+        res: Response,
     ): Promise<Response | void> {
         const _id = req.params.id;
         const song = await SongService.getById(_id);
         return res.status(song.status).json(song);
     }
+
+    @IsRequirementTypeId('id', 'params')
+    public static async getStreamSong(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const { id } = req.params;
+        const range = req.headers.range;
+        const songService = await SongService.getFsStreamSong(id, range);
+        if (!songService.success)
+            return res.status(songService.status).json(songService);
+        res.writeHead(songService.status, {
+            ...songService.data?.resHeader,
+        });
+        songService.data?.fileStream.pipe(res);
+    }
+
     @IsRequirementReq(requirementFields, 'body')
     @IsRequirementTypeId(
         [

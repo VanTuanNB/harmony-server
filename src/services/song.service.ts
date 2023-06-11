@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 config();
-
+import fs from 'fs';
 
 import { v4 as uuidv4 } from 'uuid';
 import { ISong } from '@/constraints/interfaces/index.interface';
@@ -20,6 +20,16 @@ import ComposerService from './composer.service';
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
     fileSong: Express.Multer.File;
+}
+
+export interface IFsStreamSong {
+    isRange: boolean;
+    fileSize: number;
+    fileStream: fs.ReadStream;
+    chunkSize?: number;
+    resHeader: {
+        [type: string]: string | number;
+    };
 }
 
 export default class SongService {
@@ -42,14 +52,17 @@ export default class SongService {
             };
         }
     }
-    public static async getById(_id: string): Promise<CustomResponse<ISong | null>> {
+    public static async getById(
+        _id: string,
+    ): Promise<CustomResponse<ISong | null>> {
         try {
-            const song = await SongModel.getbyId(_id);
-            if(!song) return{
-                status: 400,
-                success: false,
-                message: 'GET_SONG_BY_ID_EXISTS',
-            };
+            const song = await SongModel.getById(_id);
+            if (!song)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_SONG_BY_ID_EXISTS',
+                };
 
             return {
                 status: 200,
@@ -63,7 +76,74 @@ export default class SongService {
                 status: 500,
                 success: false,
                 message: 'GET_SONG_BY_ID_FAILED',
+            };
+        }
+    }
+
+    public static async getFsStreamSong(
+        idSongPath: string,
+        range: string | undefined,
+    ): Promise<CustomResponse<IFsStreamSong>> {
+        try {
+            const filePath = await SongPathModel.getById(idSongPath);
+            if (!filePath)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_STREAM_SONG_ID_NOT_FOUND',
+                };
+            if (range) {
+                const [start, end] = range.replace('bytes=', '').split('-');
+                const startByte = parseInt(start, 10);
+                const endByte = end ? parseInt(end, 10) : filePath.size - 1;
+                const chunkSize = endByte - startByte + 1;
+                const fileStream = fs.createReadStream(filePath.path, {
+                    start: startByte,
+                    end: endByte,
+                });
+                return {
+                    status: 206,
+                    success: true,
+                    message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
+                    data: {
+                        isRange: true,
+                        chunkSize,
+                        fileStream,
+                        fileSize: filePath.size,
+                        resHeader: {
+                            'Content-Range': `bytes ${startByte}-${endByte}/${filePath.size}`,
+                            'Accept-Ranges': 'bytes',
+                            'Content-Length': chunkSize,
+                            'Content-Type': 'audio/mpeg',
+                        },
+                    },
+                };
+            } else {
+                const fileStream = fs.createReadStream(filePath.path);
+                return {
+                    status: 200,
+                    success: true,
+                    message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
+                    data: {
+                        isRange: false,
+                        fileStream,
+                        fileSize: filePath.size,
+                        resHeader: {
+                            'Content-Length': filePath.size,
+                            'Content-Type': 'audio/mpeg',
+                            'Accept-Ranges': 'bytes',
+                        },
+                    },
+                };
             }
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_STREAM_SONG_FAILED',
+                errors: error,
+            };
         }
     }
 
