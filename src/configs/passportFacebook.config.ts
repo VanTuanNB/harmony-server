@@ -28,7 +28,7 @@ passport.use(new Strategy({
             refreshToken: refreshToken
         })
         cb(null, newUser)
-    } else if (user?.isRegistrationForm === true) {
+    } else if (user?.isRegistrationForm) {
         return {
             status: 400,
             success: false,
