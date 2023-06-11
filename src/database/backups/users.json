@@ -1,38 +1,19 @@
 [{
-  "_id": "bfe9de92-24bc-455f-bc48-c5f68e75cf8b",
-  "name": "Tuấn Cao",
+  "_id": "374e5329-c9e2-490b-b444-c835472a4cb5",
+  "name": "Tuan Cao",
   "email": "vantuan26072002@gmail.com",
-  "avatar": null,
+  "avatar": "https://fullstack.edu.vn/static/media/fallback-avatar.155cdb2376c5d99ea151.jpg",
   "locale": "vi",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJiZmU5ZGU5Mi0yNGJjLTQ1NWYtYmM0OC1jNWY2OGU3NWNmOGIiLCJlbWFpbCI6InZhbnR1YW4yNjA3MjAwMkBnbWFpbC5jb20iLCJpYXQiOjE2ODUyNjM2ODYsImV4cCI6MTY4Nzg1NTY4Nn0.cFkbsX21eJmkiXGa9xWsHjIJ_eH-OtenvM0FZXfD5Gg",
-  "playlistId": [],
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIzNzRlNTMyOS1jOWUyLTQ5MGItYjQ0NC1jODM1NDcyYTRjYjUiLCJlbWFpbCI6InZhbnR1YW4yNjA3MjAwMkBnbWFpbC5jb20iLCJpYXQiOjE2ODY0MDcxNjQsImV4cCI6MTY4ODk5OTE2NH0.raXA1M_1bTP8dxr6vhSn-UnOC8u7L73IsiZhd95Jm6I",
+  "playlistReference": [],
   "isRegistrationForm": true,
-  "password": "$2b$10$LwXfgQVcZg.LtP588SaQ4OE2grmpl8yhXOFwQrHCRi4lmR.PXklA2",
+  "password": "$2b$10$/XPYMTbgXXHLiUZGvPLlWuMxPHqAXyCQkqmTK4Y8/EJCa2TSpHsPW",
   "createdAt": {
-    "$date": "2023-05-28T08:46:48.284Z"
+    "$date": "2023-06-10T14:26:04.624Z"
   },
   "updatedAt": {
-    "$date": "2023-06-03T08:49:13.062Z"
+    "$date": "2023-06-10T14:30:57.923Z"
   },
   "__v": 0,
-  "composerReference": "4c1ccf81-0adc-4a62-99fa-5975c024ae8e"
-},
-{
-  "_id": "d9fdeae9-a72e-40d0-803b-e797e691c55c",
-  "name": "Quốc Hoà",
-  "email": "conchimnon445@gmail.com",
-  "avatar": null,
-  "locale": "vi",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJkOWZkZWFlOS1hNzJlLTQwZDAtODAzYi1lNzk3ZTY5MWM1NWMiLCJlbWFpbCI6ImNvbmNoaW1ub240NDVAZ21haWwuY29tIiwiaWF0IjoxNjg1MjcxNzY0LCJleHAiOjE2ODc4NjM3NjR9.kSPWDTY67ZiV46Jd0FVsXqI0posGenvVXSgQUVu1hKM",
-  "playlistId": [],
-  "isRegistrationForm": true,
-  "password": "$2b$10$1enZiksV2GuRS8K132n4sOGOQ/IQkSOYKdEvoF4uDbUExPwWDas9K",
-  "createdAt": {
-    "$date": "2023-05-28T11:02:44.410Z"
-  },
-  "updatedAt": {
-    "$date": "2023-05-28T11:05:23.034Z"
-  },
-  "__v": 0,
-  "composerId": "39cf646d-b07e-4615-a98a-bc5d5085a6dd"
+  "composerReference": "181ca308-f791-4ff5-8041-36c046d4023f"
 }]

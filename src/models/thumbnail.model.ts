@@ -2,6 +2,10 @@ import IThumbnailSong from '@/constraints/interfaces/IThumbnailSong';
 import thumbnailSchema from '@/database/schemas/thumbnail.schema';
 
 export default class ThumbnailModel {
+    public static async getById(id: string): Promise<IThumbnailSong | null> {
+        const thumbnail = await thumbnailSchema.findById(id);
+        return thumbnail;
+    }
     public static async create(
         payload: IThumbnailSong,
     ): Promise<IThumbnailSong> {

@@ -2,6 +2,16 @@ import IAlbum from '@/constraints/interfaces/IAlbum';
 import albumSchema from '@/database/schemas/album.schema';
 
 export default class AlbumModel {
+    public static async getByComposerAndTitle(
+        idComposer: string,
+        title: string,
+    ): Promise<IAlbum | null> {
+        const albumByComposer = await albumSchema.findOne({
+            composerReference: idComposer,
+            title: { $regex: title, $options: 'i' },
+        });
+        return albumByComposer;
+    }
     public static async create(payload: IAlbum): Promise<IAlbum> {
         const created = await albumSchema.create(payload);
         return created;

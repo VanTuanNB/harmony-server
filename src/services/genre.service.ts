@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import IGenre from '@/constraints/interfaces/IGenre';
+import { IGenre } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import GenreModel from '@/models/genre.model';
 
@@ -9,6 +9,13 @@ export default class GenreService {
         payload: Pick<IGenre, 'title'>,
     ): Promise<CustomResponse> {
         try {
+            const genreByTitle = await GenreModel.getByTitle(payload.title);
+            if (genreByTitle)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_GENRE_TITLE_IS_EXISTING',
+                };
             const _id: string = uuidv4();
             const create = await GenreModel.create({
                 _id,
