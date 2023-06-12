@@ -15,12 +15,12 @@ passport.use(new Strategy({
 }, async function (accessTokens, refreshTokens, profile, cb) {
     const email = profile._json.email as string;
     const user = await UserModel.getByEmail(email);
-    const _id: string = uuidv4();
-    const { accessToken, refreshToken } = generateToken({
-        _id,
-        email: email,
-    });
     if (!user) {
+        const _id: string = uuidv4();
+        const { accessToken, refreshToken } = generateToken({
+            _id,
+            email: email,
+        });
         const newUser = await UserModel.create({
             _id: _id,
             name: profile._json.name as string,
@@ -30,15 +30,14 @@ passport.use(new Strategy({
             refreshToken: refreshToken
         })
         cb(null, newUser)
-    }
-    if (user?.isRegistrationForm === false) {
-        cb(null, user)
-    } else {
+    } else if (user?.isRegistrationForm) {
         return {
             status: 400,
             success: false,
             message: 'The account you have registered by form',
         }
+    } else {
+        cb(null, user)
     }
 
 }))
