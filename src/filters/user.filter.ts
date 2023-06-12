@@ -25,7 +25,7 @@ export default class UserValidation implements TypeProps {
     email: string;
 
     @IsNotEmpty()
-    @MaxLength(20)
+    @MaxLength(40)
     name: string;
 
     @IsNotEmpty()
