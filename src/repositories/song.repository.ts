@@ -11,4 +11,10 @@ export default class SongRepository {
             });
         });
     }
+
+    public static async getStream(path: string): Promise<ffmpeg.FfmpegCommand> {
+        return new Promise<ffmpeg.FfmpegCommand>((resolve, reject) => {
+            resolve(ffmpeg(path));
+        });
+    }
 }
