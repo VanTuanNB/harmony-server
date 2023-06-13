@@ -4,13 +4,36 @@ import bcrypt from 'bcrypt';
 import transporter from '@/configs/nodemailer.config';
 import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
 import UserModel from '@/models/user.model';
-import generateToken from '@/utils/generateToken.util';
+import { generateToken } from '@/utils/jwtToken.util';
 import UserFilter from '@/filters/user.filter';
 import ValidatePayload from '@/helpers/validate.helper';
-import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
+import {
+    IAccountPendingVerify,
+    IUser,
+} from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 
 export default class UserService {
+    public static async getById(
+        _id: string,
+    ): Promise<CustomResponse<IUser | null>> {
+        try {
+            const user = await UserModel.getById(_id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 404,
+                success: false,
+                message: 'GET_USER_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async checkEmail(email: string): Promise<CustomResponse> {
         try {
             const userInDb = await UserModel.getByEmail(email);
@@ -131,6 +154,29 @@ export default class UserService {
                 status: 500,
                 success: false,
                 message: 'SIGN_UP_FORM_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public static async updateFiled(
+        _id: string,
+        payload: Partial<Omit<IUser, '_id'>>,
+    ): Promise<CustomResponse<IUser | null>> {
+        try {
+            const updatedUser = await UserModel.updateById(_id, payload);
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_USER_SUCCESSFULLY',
+                data: updatedUser,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_USER_FAILED',
                 errors: error,
             };
         }

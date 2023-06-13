@@ -3,7 +3,7 @@ import IUser from '@/constraints/interfaces/IUser';
 import jwt from 'jsonwebtoken';
 config();
 
-export default function generateToken(payload: Pick<IUser, '_id' | 'email'>): {
+export function generateToken(payload: Pick<IUser, '_id' | 'email'>): {
     accessToken: string;
     refreshToken: string;
 } {
@@ -26,4 +26,12 @@ export default function generateToken(payload: Pick<IUser, '_id' | 'email'>): {
         accessToken,
         refreshToken,
     };
+}
+
+export function verifyToken(
+    token: string,
+    secretKey: string,
+): string | jwt.JwtPayload {
+    const isValid = jwt.verify(token, secretKey);
+    return isValid;
 }
