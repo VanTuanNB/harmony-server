@@ -6,8 +6,24 @@ import {
 } from '@/decorators/index.decorator';
 import AuthService from '@/services/auth.service';
 import IUser from '@/constraints/interfaces/IUser';
+import {
+    CustomRequest,
+    CustomResponseExpress,
+} from '@/constraints/interfaces/custom.interface';
 
 export default class AuthController {
+    @IsRequirementReq('refreshToken', 'body')
+    public static async generateRefreshToken(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const { refreshToken } = req.body;
+        const refererTokenService = await AuthService.generateRefererToken(
+            refreshToken,
+        );
+        return res.status(refererTokenService.status).json(refererTokenService);
+    }
+
     @IsRequirementReq(['email', 'password'], 'body')
     @IsRequirementEmail('email')
     public static async loginForm(
@@ -21,7 +37,7 @@ export default class AuthController {
 
     public static async loginPassport(
         req: Request,
-        res: Response
+        res: Response,
     ): Promise<Response | void> {
         const email = req.user as IUser;
         const loginServiceGGFB = await AuthService.loginGGFB(email);
