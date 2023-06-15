@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from 'dotenv';
 import UserModel from '@/models/user.model';
 import { generateToken } from '@/utils/jwtToken.util';
+import { RoleConstant } from '@/constraints/enums/role.enum';
 config();
 
 passport.use(
@@ -22,6 +23,7 @@ passport.use(
                 const { accessToken, refreshToken } = generateToken({
                     _id,
                     email: email,
+                    role: RoleConstant.USER,
                 });
                 const newUser = await UserModel.create({
                     _id: _id,

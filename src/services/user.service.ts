@@ -12,6 +12,7 @@ import {
     IUser,
 } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { RoleConstant } from '@/constraints/enums/role.enum';
 
 export default class UserService {
     public static async getById(
@@ -114,6 +115,7 @@ export default class UserService {
             const { accessToken, refreshToken } = generateToken({
                 _id,
                 email: collectionValidateUser.email,
+                role: RoleConstant.USER,
             });
             const dataUser = new UserFilter({
                 _id,

@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import SongController from '@/controllers/song.controller';
 import { uploadSong } from '@/middlewares/uploadSong.middleware';
+import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
 
 const router: Router = Router();
 
@@ -12,6 +13,7 @@ router
     .route('/')
     .get(SongController.getAll)
     .post(
+        authenticationComposer,
         uploadSong,
         SongController.middlewareCreateSong,
         SongController.create,

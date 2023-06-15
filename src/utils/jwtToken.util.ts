@@ -1,9 +1,9 @@
 import { config } from 'dotenv';
-import IUser from '@/constraints/interfaces/IUser';
 import jwt from 'jsonwebtoken';
+import IPayloadToken from '@/constraints/interfaces/IPayloadToken';
 config();
 
-export function generateToken(payload: Pick<IUser, '_id' | 'email'>): {
+export function generateToken(payload: Omit<IPayloadToken, 'iat' | 'exp'>): {
     accessToken: string;
     refreshToken: string;
 } {

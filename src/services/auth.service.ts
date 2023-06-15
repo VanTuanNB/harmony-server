@@ -6,13 +6,8 @@ import UserModel from '@/models/user.model';
 import { generateToken } from '@/utils/jwtToken.util';
 import IUser from '@/constraints/interfaces/IUser';
 import UserService from './user.service';
-
-interface IDecodeUser {
-    _id: string;
-    email: string;
-    iat: number;
-    exp: number;
-}
+import { RoleConstant } from '@/constraints/enums/role.enum';
+import IPayloadToken from '@/constraints/interfaces/IPayloadToken';
 export default class AuthService {
     public static async generateRefererToken(
         currentRefreshToken: string,
@@ -26,7 +21,7 @@ export default class AuthService {
             const decodedToken = jwt.verify(
                 currentRefreshToken,
                 process.env.SECRET_REFRESH_TOKEN as string,
-            ) as IDecodeUser;
+            ) as IPayloadToken;
             const user = await UserService.getById(decodedToken._id);
             if (!user.success)
                 return {
@@ -46,6 +41,9 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: decodedToken._id,
                 email: decodedToken.email,
+                role: user.data?.composerReference
+                    ? RoleConstant.COMPOSER
+                    : RoleConstant.USER,
             });
             const updated = await UserService.updateFiled(decodedToken._id, {
                 refreshToken,
@@ -116,8 +114,10 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: user._id,
                 email: user.email,
+                role: user.composerReference
+                    ? RoleConstant.COMPOSER
+                    : RoleConstant.USER,
             });
-            await UserService;
             const updated = await UserModel.updateById(user._id, {
                 refreshToken,
             });
@@ -165,6 +165,9 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: user._id,
                 email: user.email,
+                role: user.composerReference
+                    ? RoleConstant.COMPOSER
+                    : RoleConstant.USER,
             });
 
             const updated = await UserModel.updateById(user._id, {

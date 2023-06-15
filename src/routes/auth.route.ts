@@ -4,18 +4,8 @@ import AuthController from '@/controllers/auth.controller';
 import passport from 'passport';
 import '@/configs/passportGoogle.config';
 import '@/configs/passportFacebook.config';
-import authenticationUser from '@/middlewares/authVerifyToken.middleware';
-import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
 
 const router: Router = Router();
-router.get(
-    '/middleware',
-    authenticationUser,
-    (req, res: CustomResponseExpress) => {
-        console.log(res.locals.userDecoded);
-        return res.status(200).json({ message: 'TESTING' });
-    },
-);
 router.post('/refreshToken', AuthController.generateRefreshToken);
 router.post('/loginForm', AuthController.loginForm);
 
