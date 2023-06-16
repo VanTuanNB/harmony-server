@@ -289,4 +289,26 @@ export default class SongService {
             };
         }
     }
+
+    public static async update(
+        id: string,
+        payload: Partial<Omit<ISong, '_id'>>,
+    ): Promise<CustomResponse> {
+        try {
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_SONG_SUCCESSFULLY',
+                data: 'do something',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_SONG_FAILED',
+                errors: error,
+            };
+        }
+    }
 }

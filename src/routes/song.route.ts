@@ -8,7 +8,10 @@ const router: Router = Router();
 
 router.route('/stream/:id').get(SongController.getStreamSong);
 
-router.route('/:id').get(SongController.getById);
+router
+    .route('/:id')
+    .get(SongController.getById)
+    .put(uploadSong, SongController.update);
 router
     .route('/')
     .get(SongController.getAll)

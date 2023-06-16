@@ -13,6 +13,7 @@ import {
 
 import SongService from '@/services/song.service';
 import { uploadFiledEnum } from '@/constraints/enums/index.enum';
+import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
 
 const requirementFields = [
     'title',
@@ -88,6 +89,14 @@ export default class SongController {
         return res.status(validate.status).json(validate);
     }
 
+    public static async middlewareUpdateSong(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        console.log(req.files);
+        return res.status(400).json({ message: 'TESTING UPDATE' });
+    }
+
     public static async create(
         req: CustomRequest,
         res: Response,
@@ -112,5 +121,21 @@ export default class SongController {
             payload,
         );
         return res.status(createSong.status).json(createSong);
+    }
+
+    @IsRequirementTypeId('id', 'params')
+    public static async update(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const { id } = req.params;
+        if (Object.keys(req.body).length === 0)
+            return res.status(400).json({
+                status: 400,
+                success: false,
+                message: 'PAYLOAD_IS_EMPTY',
+            });
+        const updateSongService = await SongService.update(id, req.body);
+        return res.status(updateSongService.status).json(updateSongService);
     }
 }
