@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import fs from 'fs/promises';
 
 export default class ThumbnailRepository {
     public static async getInformationThumbnail(
@@ -26,5 +27,9 @@ export default class ThumbnailRepository {
                     });
             }
         });
+    }
+
+    public static async forceDelete(path: string): Promise<void> {
+        return await fs.unlink(path);
     }
 }

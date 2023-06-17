@@ -59,6 +59,25 @@ export default class SongModel {
         return created;
     }
 
+    public static async update(
+        _id: string,
+        payload: Partial<Omit<ISong, '_id' | 'composerReference'>>,
+    ): Promise<ISong | null> {
+        const updatedField = await songSchema.findByIdAndUpdate(_id, {
+            $set: {
+                title: payload.title,
+                duration: payload.duration,
+                publish: payload.publish,
+                views: payload.views,
+                albumReference: payload.albumReference,
+                genresReference: payload.genresReference,
+                performers: payload.performers,
+                updatedAt: new Date().toUTCString(),
+            },
+        });
+        return updatedField;
+    }
+
     public static async forceDelete(id: string): Promise<ISong | null> {
         const forceDelete = await songSchema.findByIdAndDelete(id);
         return forceDelete;

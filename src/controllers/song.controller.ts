@@ -135,7 +135,12 @@ export default class SongController {
                 success: false,
                 message: 'PAYLOAD_IS_EMPTY',
             });
-        const updateSongService = await SongService.update(id, req.body);
+        const { thumbnail, fileSong } = req.files as IFieldNameFiles;
+        const updateSongService = await SongService.update(id, {
+            ...req.body,
+            thumbnail: thumbnail ? thumbnail[0] : undefined,
+            fileSong: fileSong ? fileSong[0] : undefined,
+        });
         return res.status(updateSongService.status).json(updateSongService);
     }
 }

@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 config();
 import fs from 'fs';
+import path from 'path';
 
 import { v4 as uuidv4 } from 'uuid';
 import { ISong } from '@/constraints/interfaces/index.interface';
@@ -16,6 +17,7 @@ import ComposerModel from '@/models/composer.model';
 import GenreService from './genre.service';
 import AlbumService from './album.service';
 import ComposerService from './composer.service';
+import ThumbnailRepository from '@/repositories/thumbnail.repository';
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
@@ -31,6 +33,15 @@ export interface IFsStreamSong {
         [type: string]: string | number;
     };
 }
+
+interface IPayloadUpdate
+    extends Partial<
+            Omit<
+                ISong,
+                '_id' | 'thumbnail' | 'composerReference' | 'songPathReference'
+            >
+        >,
+        Partial<ITypeFiles> {}
 
 export default class SongService {
     public static async getAll(): Promise<CustomResponse<ISong[] | []>> {
@@ -292,17 +303,125 @@ export default class SongService {
 
     public static async update(
         id: string,
-        payload: Partial<Omit<ISong, '_id'>>,
+        payload: IPayloadUpdate,
     ): Promise<CustomResponse> {
         try {
+            Object.assign(payload, {
+                albumReference: payload.albumReference
+                    ? JSON.parse(payload.genresReference as any)
+                    : undefined,
+                genresReference: payload.genresReference
+                    ? JSON.parse(payload.genresReference as any)
+                    : undefined,
+                performers: payload.performers
+                    ? JSON.parse(payload.performers as any)
+                    : undefined,
+            });
+            if (
+                Array.isArray(payload.performers) &&
+                payload.performers.length === 0
+            )
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_EMPTY_PERFORMERS',
+                };
+            if (
+                Array.isArray(payload.genresReference) &&
+                payload.genresReference.length === 0
+            )
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_EMPTY_GENRE',
+                };
+            if (
+                Array.isArray(payload.albumReference) &&
+                payload.albumReference.length === 0
+            )
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_EMPTY_ALBUM',
+                };
+            const currentSong = await SongModel.getById(id);
+            if (!currentSong)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'ID_SONG_NOT_EXIST',
+                };
+            if (payload.thumbnail) {
+                const idThumbnail =
+                    currentSong.thumbnail?.split('thumbnail/')[1];
+                const currentThumbnail = await ThumbnailModel.getById(
+                    idThumbnail as string,
+                );
+                if (!currentThumbnail)
+                    throw new Error('THUMBNAIL_IS_NOT_EXIST');
+                const pathThumbnailToDelete = path.join(
+                    __dirname,
+                    '../..',
+                    currentThumbnail.path,
+                );
+                await ThumbnailRepository.forceDelete(pathThumbnailToDelete);
+                await ThumbnailModel.update(currentThumbnail._id as string, {
+                    path: payload.thumbnail.path.split('harmony-server/')[1],
+                });
+            }
+            if (payload.fileSong) {
+                const currentFileSong = await SongPathModel.getById(
+                    currentSong.songPathReference as string,
+                );
+                if (!currentFileSong) throw new Error('FILE_SONG_IS_NOT_EXIST');
+                const pathFileSongToDelete = path.join(
+                    __dirname,
+                    '../..',
+                    currentFileSong.path,
+                );
+                await SongRepository.forceDelete(pathFileSongToDelete);
+                await SongPathModel.update(currentFileSong._id as string, {
+                    path: payload.fileSong.path.split('harmony-server/')[1],
+                });
+                const informationFileSong =
+                    await SongRepository.getInformationFileSong(
+                        payload.fileSong,
+                    );
+                const updatedInfoSong = await SongModel.update(
+                    currentSong._id,
+                    {
+                        title: payload.title,
+                        publish: payload.publish,
+                        genresReference: payload.genresReference,
+                        performers: payload.performers,
+                        albumReference: payload.albumReference,
+                        duration: informationFileSong.format.duration,
+                    },
+                );
+                if (!updatedInfoSong)
+                    throw new Error('updated song has file song failed');
+            }
+            const updatedInfoSong = await SongModel.update(currentSong._id, {
+                title: payload.title,
+                publish: payload.publish,
+                genresReference: payload.genresReference,
+                performers: payload.performers,
+                albumReference: payload.albumReference,
+            });
+            if (!updatedInfoSong) throw new Error('update song failed!');
             return {
                 status: 200,
                 success: true,
                 message: 'UPDATE_SONG_SUCCESSFULLY',
-                data: 'do something',
             };
         } catch (error) {
             console.log(error);
+            if (payload.thumbnail) {
+                await ThumbnailRepository.forceDelete(payload.thumbnail.path);
+            }
+            if (payload.fileSong) {
+                await SongRepository.forceDelete(payload.fileSong.path);
+            }
             return {
                 status: 500,
                 success: false,
