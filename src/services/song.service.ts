@@ -18,6 +18,9 @@ import GenreService from './genre.service';
 import AlbumService from './album.service';
 import ComposerService from './composer.service';
 import ThumbnailRepository from '@/repositories/thumbnail.repository';
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
+import GenreModel from '@/models/genre.model';
+import AlbumModel from '@/models/album.model';
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
@@ -41,7 +44,16 @@ interface IPayloadUpdate
                 '_id' | 'thumbnail' | 'composerReference' | 'songPathReference'
             >
         >,
-        Partial<ITypeFiles> {}
+        Partial<ITypeFiles> {
+    genreInstance: {
+        typeAction: EnumActionUpdate;
+        payloadNeedUpdated: string[];
+    };
+    albumInstance: {
+        typeAction: EnumActionUpdate;
+        payloadNeedUpdated: string[];
+    };
+}
 
 export default class SongService {
     public static async getAll(): Promise<CustomResponse<ISong[] | []>> {
@@ -63,6 +75,7 @@ export default class SongService {
             };
         }
     }
+
     public static async getById(
         _id: string,
     ): Promise<CustomResponse<ISong | null>> {
@@ -208,6 +221,7 @@ export default class SongService {
             };
         }
     }
+
     public static async create(
         files: ITypeFiles,
         payload: Omit<
@@ -316,6 +330,12 @@ export default class SongService {
                 performers: payload.performers
                     ? JSON.parse(payload.performers as any)
                     : undefined,
+                genreInstance: payload.genreInstance
+                    ? JSON.parse(payload.genreInstance as any)
+                    : undefined,
+                albumInstance: payload.albumInstance
+                    ? JSON.parse(payload.albumInstance as any)
+                    : undefined,
             });
             if (
                 Array.isArray(payload.performers) &&
@@ -409,6 +429,26 @@ export default class SongService {
                 albumReference: payload.albumReference,
             });
             if (!updatedInfoSong) throw new Error('update song failed!');
+            if (
+                payload.genreInstance &&
+                payload.genreInstance.typeAction !== EnumActionUpdate.NOTHING
+            ) {
+                await GenreModel.updateManyActionSongReference(
+                    payload.genreInstance.payloadNeedUpdated,
+                    currentSong._id,
+                    payload.genreInstance.typeAction,
+                );
+            }
+            if (
+                payload.albumInstance &&
+                payload.albumInstance.typeAction !== EnumActionUpdate.NOTHING
+            ) {
+                await AlbumModel.updateManyActionSongReference(
+                    payload.albumInstance.payloadNeedUpdated,
+                    currentSong._id,
+                    payload.albumInstance.typeAction,
+                );
+            }
             return {
                 status: 200,
                 success: true,
