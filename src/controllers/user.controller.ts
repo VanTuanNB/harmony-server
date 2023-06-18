@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
-import { IsRequirementReq } from '@/decorators/index.decorator';
+import { IsRequirementReq, IsRequirementTypeId } from '@/decorators/index.decorator';
 import UserService from '@/services/user.service';
 
 export default class UserController {
@@ -43,5 +43,14 @@ export default class UserController {
         > = req.body;
         const signUpFormService = await UserService.signupForm(payload);
         return res.status(signUpFormService.status).json(signUpFormService);
+    }
+
+    @IsRequirementTypeId('id', 'params')
+    public static async updateUser(
+        req: Request,
+        res: Response
+    ): Promise<Response | void>{
+        const {id} = req.params;
+        
     }
 }

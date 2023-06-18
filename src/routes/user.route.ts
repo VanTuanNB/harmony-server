@@ -11,5 +11,6 @@ router.post(
     verificationEmailWithForm,
     UserController.signupForm,
 );
+router.put('/:id',)
 
 export default router;
