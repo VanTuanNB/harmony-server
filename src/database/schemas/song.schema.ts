@@ -5,7 +5,6 @@ const songSchema = new Schema<ISong>(
     {
         _id: { type: String, required: true },
         title: { type: String, required: true },
-        duration: { type: Number, required: true },
         publish: { type: Date, required: true },
         thumbnail: { type: String, required: true, ref: 'thumbnail' },
         performers: [

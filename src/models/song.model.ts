@@ -1,3 +1,4 @@
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import ISong from '@/constraints/interfaces/ISong';
 import songSchema from '@/database/schemas/song.schema';
 
@@ -54,26 +55,28 @@ export default class SongModel {
         return song;
     }
 
+    public static async getByIdSelectSongPathReference(
+        _id: string,
+    ): Promise<ISong | null> {
+        const song = await songSchema.findById(_id).select('songPathReference');
+        return song;
+    }
+
     public static async create(payload: ISong): Promise<ISong> {
         const created = await songSchema.create(payload);
         return created;
     }
 
-    public static async update(
+    public static async updateFieldPrimateType(
         _id: string,
-        payload: Partial<Omit<ISong, '_id' | 'composerReference'>>,
+        payload: Partial<Pick<ISong, 'title' | 'publish'>>,
     ): Promise<ISong | null> {
         const updatedField = await songSchema.findByIdAndUpdate(
             _id,
             {
                 $set: {
                     title: payload.title,
-                    duration: payload.duration,
                     publish: payload.publish,
-                    views: payload.views,
-                    albumReference: payload.albumReference,
-                    genresReference: payload.genresReference,
-                    performers: payload.performers,
                     updatedAt: new Date().toUTCString(),
                 },
             },
@@ -87,16 +90,15 @@ export default class SongModel {
     public static async updateByAction(
         _id: string,
         payload: Partial<Omit<ISong, '_id' | 'composerReference'>>,
-        options: 'remove' | 'push',
+        options: EnumActionUpdate,
     ): Promise<ISong | null> {
         switch (options) {
-            case 'push':
+            case EnumActionUpdate.PUSH:
                 const pushUpdated = await songSchema.findByIdAndUpdate(
                     _id,
                     {
                         $set: {
                             title: payload.title,
-                            duration: payload.duration,
                             publish: payload.publish,
                             views: payload.views,
                             updatedAt: new Date().toUTCString(),
@@ -112,13 +114,12 @@ export default class SongModel {
                     },
                 );
                 return pushUpdated;
-            case 'remove':
+            case EnumActionUpdate.REMOVE:
                 const removeUpdated = await songSchema.findByIdAndUpdate(
                     _id,
                     {
                         $set: {
                             title: payload.title,
-                            duration: payload.duration,
                             publish: payload.publish,
                             views: payload.views,
                             updatedAt: new Date().toUTCString(),

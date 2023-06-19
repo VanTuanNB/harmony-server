@@ -75,7 +75,7 @@ export default class AlbumService {
             switch (typeAction) {
                 case EnumActionUpdate.PUSH:
                     const albumHasSongReference =
-                        await AlbumModel.getByIdListSong(id, songReference);
+                        await AlbumModel.getBySongReference(id, songReference);
                     if (albumHasSongReference)
                         return {
                             status: 400,
@@ -101,7 +101,7 @@ export default class AlbumService {
                     };
                 case EnumActionUpdate.REMOVE:
                     const currentAlbumHasSongReference =
-                        await AlbumModel.getByIdListSong(id, songReference);
+                        await AlbumModel.getBySongReference(id, songReference);
                     if (!currentAlbumHasSongReference)
                         return {
                             status: 400,

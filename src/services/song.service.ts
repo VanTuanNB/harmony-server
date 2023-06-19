@@ -38,18 +38,17 @@ export interface IFsStreamSong {
 }
 
 interface IPayloadUpdate
-    extends Partial<
-            Omit<
-                ISong,
-                '_id' | 'thumbnail' | 'composerReference' | 'songPathReference'
-            >
-        >,
+    extends Partial<Pick<ISong, 'title' | 'publish'>>,
         Partial<ITypeFiles> {
     genreInstance: {
         typeAction: EnumActionUpdate;
         payloadNeedUpdated: string[];
     };
     albumInstance: {
+        typeAction: EnumActionUpdate;
+        payloadNeedUpdated: string[];
+    };
+    performerInstance: {
         typeAction: EnumActionUpdate;
         payloadNeedUpdated: string[];
     };
@@ -105,11 +104,22 @@ export default class SongService {
     }
 
     public static async getFsStreamSong(
-        idSongPath: string,
+        idSong: string,
         range: string | undefined,
     ): Promise<CustomResponse<IFsStreamSong>> {
         try {
-            const filePath = await SongPathModel.getById(idSongPath);
+            const currentSong = await SongModel.getByIdSelectSongPathReference(
+                idSong,
+            );
+            if (!currentSong)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_STREAM_SONG_NOT_EXIST',
+                };
+            const filePath = await SongPathModel.getById(
+                currentSong.songPathReference as string,
+            );
             if (!filePath)
                 return {
                     status: 400,
@@ -249,7 +259,6 @@ export default class SongService {
             const songFilter = new SongFilter({
                 ...payload,
                 _id,
-                duration: fileSongInfo.format.duration as number,
             });
             const songInValid = await ValidatePayload(
                 songFilter,
@@ -265,6 +274,7 @@ export default class SongService {
                 _id: uuidv4(),
                 path: files.fileSong.path.split('harmony-server/')[1],
                 size: fileSongInfo.format.size as number,
+                duration: fileSongInfo.format.duration as number,
                 type: files.fileSong.mimetype,
             });
             Object.assign(songFilter, {
@@ -321,49 +331,16 @@ export default class SongService {
     ): Promise<CustomResponse> {
         try {
             Object.assign(payload, {
-                albumReference: payload.albumReference
-                    ? JSON.parse(payload.genresReference as any)
-                    : undefined,
-                genresReference: payload.genresReference
-                    ? JSON.parse(payload.genresReference as any)
-                    : undefined,
-                performers: payload.performers
-                    ? JSON.parse(payload.performers as any)
-                    : undefined,
                 genreInstance: payload.genreInstance
                     ? JSON.parse(payload.genreInstance as any)
                     : undefined,
                 albumInstance: payload.albumInstance
                     ? JSON.parse(payload.albumInstance as any)
                     : undefined,
+                performerInstance: payload.performerInstance
+                    ? JSON.parse(payload.performerInstance as any)
+                    : undefined,
             });
-            if (
-                Array.isArray(payload.performers) &&
-                payload.performers.length === 0
-            )
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'BAD_REQUEST_EMPTY_PERFORMERS',
-                };
-            if (
-                Array.isArray(payload.genresReference) &&
-                payload.genresReference.length === 0
-            )
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'BAD_REQUEST_EMPTY_GENRE',
-                };
-            if (
-                Array.isArray(payload.albumReference) &&
-                payload.albumReference.length === 0
-            )
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'BAD_REQUEST_EMPTY_ALBUM',
-                };
             const currentSong = await SongModel.getById(id);
             if (!currentSong)
                 return {
@@ -371,6 +348,158 @@ export default class SongService {
                     success: false,
                     message: 'ID_SONG_NOT_EXIST',
                 };
+            const conditionGenreUpdate =
+                payload.genreInstance &&
+                payload.genreInstance.typeAction !== EnumActionUpdate.NOTHING &&
+                payload.genreInstance.payloadNeedUpdated.length > 0;
+            const conditionAlbumUpdate =
+                payload.albumInstance &&
+                payload.albumInstance.typeAction !== EnumActionUpdate.NOTHING &&
+                payload.albumInstance.payloadNeedUpdated.length > 0;
+            const conditionPerformerUpdate =
+                payload.performerInstance &&
+                payload.performerInstance.typeAction !==
+                    EnumActionUpdate.NOTHING &&
+                payload.performerInstance.payloadNeedUpdated.length > 0;
+            if (conditionGenreUpdate) {
+                const multipleRecordGenres =
+                    await GenreModel.getMultipleBySongReference(
+                        payload.genreInstance.payloadNeedUpdated,
+                        id,
+                    );
+                switch (payload.genreInstance.typeAction) {
+                    case EnumActionUpdate.PUSH:
+                        const allowInRecordSongPush =
+                            currentSong.genresReference?.every(
+                                (record) =>
+                                    payload.genreInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) === -1,
+                            );
+                        if (
+                            multipleRecordGenres.length > 0 &&
+                            allowInRecordSongPush
+                        )
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.genreInstance.typeAction.toUpperCase()}_ID_SONG_REFERENCE_ALREADY_EXIST`,
+                            };
+                        break;
+                    case EnumActionUpdate.REMOVE:
+                        const allowInRecordSongRemove =
+                            currentSong.genresReference?.every(
+                                (record) =>
+                                    payload.genreInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) !== -1,
+                            );
+                        if (
+                            multipleRecordGenres.length === 0 &&
+                            allowInRecordSongRemove
+                        )
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.genreInstance.typeAction.toUpperCase()}_ID_SONG_REFERENCE_NOT_YET_ALREADY_EXIST`,
+                            };
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (conditionAlbumUpdate) {
+                const multipleRecordGenres =
+                    await AlbumModel.getMultipleBySongReference(
+                        payload.albumInstance.payloadNeedUpdated,
+                        id,
+                    );
+                switch (payload.albumInstance.typeAction) {
+                    case EnumActionUpdate.PUSH:
+                        const allowInRecordSongPush =
+                            currentSong.albumReference?.every(
+                                (record) =>
+                                    payload.albumInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) === -1,
+                            );
+                        if (
+                            multipleRecordGenres.length > 0 &&
+                            allowInRecordSongPush
+                        )
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.albumInstance.typeAction.toUpperCase()}_ID_SONG_REFERENCE_ALREADY_EXIST`,
+                            };
+                        break;
+                    case EnumActionUpdate.REMOVE:
+                        const allowInRecordSongRemove =
+                            currentSong.albumReference?.every(
+                                (record) =>
+                                    payload.albumInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) !== -1,
+                            );
+                        if (
+                            multipleRecordGenres.length === 0 &&
+                            allowInRecordSongRemove
+                        )
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.albumInstance.typeAction.toUpperCase()}_ID_SONG_REFERENCE_NOT_YET_ALREADY_EXIST`,
+                            };
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (conditionPerformerUpdate) {
+                const existComposer = await ComposerModel.getMultipleById(
+                    payload.performerInstance.payloadNeedUpdated,
+                );
+                if (existComposer.length === 0)
+                    return {
+                        status: 400,
+                        success: false,
+                        message: 'PERFORMER_HAS_ID_COMPOSER_NOT_FOUND',
+                    };
+                switch (payload.performerInstance.typeAction) {
+                    case EnumActionUpdate.PUSH:
+                        const allowInRecordSongPush =
+                            currentSong.performers?.every(
+                                (record) =>
+                                    payload.performerInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) === -1,
+                            );
+                        if (allowInRecordSongPush)
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.performerInstance.typeAction.toUpperCase()}_ID_COMPOSER_ALREADY_EXIST`,
+                            };
+                        break;
+                    case EnumActionUpdate.REMOVE:
+                        const allowInRecordSongRemove =
+                            currentSong.performers?.every(
+                                (record) =>
+                                    payload.performerInstance.payloadNeedUpdated.indexOf(
+                                        record,
+                                    ) !== -1,
+                            );
+                        if (allowInRecordSongRemove)
+                            return {
+                                status: 400,
+                                success: false,
+                                message: `ACTION_${payload.albumInstance.typeAction.toUpperCase()}_ID_COMPOSER_NOT_YET_ALREADY_EXIST`,
+                            };
+                        break;
+                    default:
+                        break;
+                }
+            }
             if (payload.thumbnail) {
                 const idThumbnail =
                     currentSong.thumbnail?.split('thumbnail/')[1];
@@ -400,55 +529,61 @@ export default class SongService {
                     currentFileSong.path,
                 );
                 await SongRepository.forceDelete(pathFileSongToDelete);
-                await SongPathModel.update(currentFileSong._id as string, {
-                    path: payload.fileSong.path.split('harmony-server/')[1],
-                });
+
                 const informationFileSong =
                     await SongRepository.getInformationFileSong(
                         payload.fileSong,
                     );
-                const updatedInfoSong = await SongModel.update(
-                    currentSong._id,
-                    {
-                        title: payload.title,
-                        publish: payload.publish,
-                        genresReference: payload.genresReference,
-                        performers: payload.performers,
-                        albumReference: payload.albumReference,
-                        duration: informationFileSong.format.duration,
-                    },
-                );
-                if (!updatedInfoSong)
-                    throw new Error('updated song has file song failed');
+                await SongPathModel.update(currentFileSong._id as string, {
+                    path: payload.fileSong.path.split('harmony-server/')[1],
+                    size: informationFileSong.format.size,
+                    duration: informationFileSong.format.duration,
+                });
             }
-            const updatedInfoSong = await SongModel.update(currentSong._id, {
-                title: payload.title,
-                publish: payload.publish,
-                genresReference: payload.genresReference,
-                performers: payload.performers,
-                albumReference: payload.albumReference,
-            });
-            if (!updatedInfoSong) throw new Error('update song failed!');
-            if (
-                payload.genreInstance &&
-                payload.genreInstance.typeAction !== EnumActionUpdate.NOTHING
-            ) {
+            if (conditionGenreUpdate) {
                 await GenreModel.updateManyActionSongReference(
                     payload.genreInstance.payloadNeedUpdated,
                     currentSong._id,
                     payload.genreInstance.typeAction,
                 );
+                await SongModel.updateByAction(
+                    id,
+                    {
+                        genresReference:
+                            payload.genreInstance.payloadNeedUpdated,
+                    },
+                    payload.genreInstance.typeAction,
+                );
             }
-            if (
-                payload.albumInstance &&
-                payload.albumInstance.typeAction !== EnumActionUpdate.NOTHING
-            ) {
+            if (conditionAlbumUpdate) {
                 await AlbumModel.updateManyActionSongReference(
                     payload.albumInstance.payloadNeedUpdated,
                     currentSong._id,
                     payload.albumInstance.typeAction,
                 );
+                await SongModel.updateByAction(
+                    id,
+                    {
+                        albumReference:
+                            payload.albumInstance.payloadNeedUpdated,
+                    },
+                    payload.albumInstance.typeAction,
+                );
             }
+            if (conditionPerformerUpdate) {
+                await SongModel.updateByAction(
+                    id,
+                    {
+                        performers:
+                            payload.performerInstance.payloadNeedUpdated,
+                    },
+                    payload.performerInstance.typeAction,
+                );
+            }
+            await SongModel.updateFieldPrimateType(id, {
+                title: payload.title,
+                publish: payload.publish,
+            });
             return {
                 status: 200,
                 success: true,

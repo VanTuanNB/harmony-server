@@ -1,3 +1,5 @@
+import { UpdateWriteOpResult } from 'mongoose';
+
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import IAlbum from '@/constraints/interfaces/IAlbum';
 import albumSchema from '@/database/schemas/album.schema';
@@ -14,7 +16,7 @@ export default class AlbumModel {
         return albumByComposer;
     }
 
-    public static async getByIdListSong(
+    public static async getBySongReference(
         _id: string,
         songReference: string,
     ): Promise<IAlbum | null> {
@@ -23,6 +25,17 @@ export default class AlbumModel {
             listSong: songReference,
         });
         return album;
+    }
+
+    public static async getMultipleBySongReference(
+        _id: string[],
+        songReference: string,
+    ): Promise<IAlbum[]> {
+        const albums = await albumSchema
+            .find({ _id })
+            .where('listSong')
+            .equals(songReference);
+        return albums;
     }
 
     public static async getById(_id: string): Promise<IAlbum | null> {
@@ -39,25 +52,19 @@ export default class AlbumModel {
         _id: string[],
         songReference: string,
         options: EnumActionUpdate,
-    ): Promise<IAlbum | null> {
+    ): Promise<UpdateWriteOpResult> {
         switch (options) {
             case EnumActionUpdate.REMOVE:
-                const removeUpdated = await albumSchema.findByIdAndUpdate(
-                    _id,
-                    {
+                const removeUpdated = await albumSchema
+                    .find({ _id })
+                    .updateMany({
                         $pull: { listSong: songReference },
-                    },
-                    { new: true },
-                );
+                    });
                 return removeUpdated;
             case EnumActionUpdate.PUSH:
-                const pushUpdated = await albumSchema.findByIdAndUpdate(
-                    _id,
-                    {
-                        $push: { listSong: songReference },
-                    },
-                    { new: true },
-                );
+                const pushUpdated = await albumSchema.find({ _id }).updateMany({
+                    $push: { listSong: songReference },
+                });
                 return pushUpdated;
             default:
                 throw new Error('INVALID ACTION TYPE UPDATE');

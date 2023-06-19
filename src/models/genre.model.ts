@@ -1,3 +1,6 @@
+import { UpdateWriteOpResult } from 'mongoose';
+
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import IGenre from '@/constraints/interfaces/IGenre';
 import genreSchema from '@/database/schemas/genre.schema';
 
@@ -8,6 +11,18 @@ export default class GenreModel {
         });
         return genreByTitle;
     }
+
+    public static async getMultipleBySongReference(
+        _id: string[],
+        songReference: string,
+    ): Promise<IGenre[]> {
+        const albums = await genreSchema
+            .find({ _id })
+            .where('listSong')
+            .equals(songReference);
+        return albums;
+    }
+
     public static async create(payload: IGenre): Promise<IGenre> {
         const created = await genreSchema.create(payload);
         return created;
@@ -16,26 +31,20 @@ export default class GenreModel {
     public static async updateManyActionSongReference(
         _id: string[],
         songReference: string,
-        options: 'push' | 'remove',
-    ): Promise<IGenre | null> {
+        options: EnumActionUpdate,
+    ): Promise<UpdateWriteOpResult> {
         switch (options) {
-            case 'remove':
-                const removeUpdated = await genreSchema.findByIdAndUpdate(
-                    _id,
-                    {
+            case EnumActionUpdate.REMOVE:
+                const removeUpdated = await genreSchema
+                    .find({ _id })
+                    .updateMany({
                         $pull: { listSong: songReference },
-                    },
-                    { new: true },
-                );
+                    });
                 return removeUpdated;
-            case 'push':
-                const pushUpdated = await genreSchema.findByIdAndUpdate(
-                    _id,
-                    {
-                        $push: { listSong: songReference },
-                    },
-                    { new: true },
-                );
+            case EnumActionUpdate.PUSH:
+                const pushUpdated = await genreSchema.find({ _id }).updateMany({
+                    $push: { listSong: songReference },
+                });
                 return pushUpdated;
             default:
                 throw new Error('INVALID ACTION TYPE UPDATE');
