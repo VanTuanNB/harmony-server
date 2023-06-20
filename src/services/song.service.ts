@@ -17,7 +17,7 @@ import ComposerModel from '@/models/composer.model';
 import GenreService from './genre.service';
 import AlbumService from './album.service';
 import ComposerService from './composer.service';
-import { pathFromSystem } from '@/utils/pathFromSystem.util';
+import { pathFromSystem } from '@/utils/pathSystemLinux.util';
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
