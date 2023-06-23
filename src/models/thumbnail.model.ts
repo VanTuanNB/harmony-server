@@ -13,6 +13,16 @@ export default class ThumbnailModel {
         return created;
     }
 
+    public static async update(
+        _id: string,
+        payload: Partial<Omit<IThumbnailSong, '_id'>>,
+    ): Promise<IThumbnailSong | null> {
+        const updated = await thumbnailSchema.findByIdAndUpdate(_id, payload, {
+            new: true,
+        });
+        return updated;
+    }
+
     public static async forceDelete(
         id: string,
     ): Promise<IThumbnailSong | null> {

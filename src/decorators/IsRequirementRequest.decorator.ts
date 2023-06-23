@@ -6,6 +6,14 @@ import { IFieldNameFiles } from '@/constraints/interfaces/index.interface';
 
 type TypeRequest = 'body' | 'query' | 'params';
 
+function handleDeletedFileInDecorator(files: IFieldNameFiles) {
+    if (Object.keys(files).length > 0) {
+        for (const keyFile in files) {
+            handleDeleteFile(files[keyFile][0]);
+        }
+    }
+}
+
 export function IsRequirementTypeId(
     key: string | string[],
     scope: TypeRequest,
@@ -38,38 +46,54 @@ export function IsRequirementTypeId(
                     default:
                         throw new Error('Required type request');
                 }
-                if (typeof key === 'string') {
-                    if (regexUuidV4Validation(payload[key] as string)) {
-                        return originalMethod.apply(this, args);
-                    }
-                } else {
-                    const mapping: string[] = [];
-                    Object.entries(payload).forEach(([keyId, value]) => {
-                        if (key.indexOf(keyId) !== -1) {
-                            mapping.push(value.trim());
-                        }
-                    });
-                    const isPassed = mapping.every((currentValue: string) =>
-                        regexUuidV4Validation(currentValue),
-                    );
-                    if (isPassed) {
-                        const result = originalMethod.apply(this, args);
-                        return result;
-                    }
+                switch (typeof key) {
+                    case 'string':
+                        const condition = regexUuidV4Validation(
+                            payload[key] as string,
+                        );
+                        if (req.files && !condition)
+                            handleDeletedFileInDecorator(
+                                req.files as IFieldNameFiles,
+                            );
+                        return condition
+                            ? originalMethod.apply(this, args)
+                            : res.status(400).json({
+                                  status: 400,
+                                  success: false,
+                                  message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                              });
+                    case 'object':
+                        const mapping: string[] = [];
+                        Object.entries(payload).forEach(([keyId, value]) => {
+                            if (key.indexOf(keyId) !== -1) {
+                                mapping.push(value.trim());
+                            }
+                        });
+                        const isPassed = mapping.every((currentValue: string) =>
+                            regexUuidV4Validation(currentValue),
+                        );
+                        if (req.files && !isPassed)
+                            handleDeletedFileInDecorator(
+                                req.files as IFieldNameFiles,
+                            );
+                        return isPassed
+                            ? originalMethod.apply(this, args)
+                            : res.status(400).json({
+                                  status: 400,
+                                  success: false,
+                                  message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                              });
+                    default:
+                        return res.status(400).json({
+                            status: 400,
+                            success: false,
+                            message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                        });
                 }
-                const files = req.files as IFieldNameFiles;
-                if (Object.keys(files).length > 0) {
-                    for (const keyFile in files) {
-                        handleDeleteFile(files[keyFile][0]);
-                    }
-                }
-                return res.status(400).json({
-                    status: 400,
-                    success: false,
-                    message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
-                });
             } catch (error) {
                 console.log(error);
+                if (req.files)
+                    handleDeletedFileInDecorator(req.files as IFieldNameFiles);
                 return res.status(400).json({
                     status: 400,
                     success: false,
@@ -111,26 +135,37 @@ export function IsRequirementReq(key: string | string[], scope: TypeRequest) {
                     default:
                         throw new Error('Required type request');
                 }
-                if (typeof key === 'string') {
-                    if (key in payload && !!payload[key]) {
-                        const result = originalMethod.apply(this, args);
-                        return result;
-                    }
-                } else {
-                    const isPassed = key.every(
-                        (currentValue: string) =>
-                            currentValue in payload && !!payload[currentValue],
-                    );
-                    if (isPassed) {
-                        const result = originalMethod.apply(this, args);
-                        return result;
-                    }
+                switch (typeof key) {
+                    case 'string':
+                        const condition = key in payload && !!payload[key];
+                        return condition
+                            ? originalMethod.apply(this, args)
+                            : res.status(400).json({
+                                  status: 400,
+                                  success: false,
+                                  message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
+                              });
+                    case 'object':
+                        const isPassed = key.every(
+                            (currentValue: string) =>
+                                currentValue in payload &&
+                                !!payload[currentValue],
+                        );
+                        return isPassed
+                            ? originalMethod.apply(this, args)
+                            : res.status(400).json({
+                                  status: 400,
+                                  success: false,
+                                  message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
+                              });
+
+                    default:
+                        return res.status(400).json({
+                            status: 400,
+                            success: false,
+                            message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
+                        });
                 }
-                return res.status(400).json({
-                    status: 400,
-                    success: false,
-                    message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
-                });
             } catch (error) {
                 console.log(error);
                 return res.status(400).json({

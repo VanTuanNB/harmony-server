@@ -20,6 +20,12 @@ export default class ComposerModel {
         });
         return listSongOfComposer;
     }
+
+    public static async getMultipleById(_id: string[]): Promise<IComposer[]> {
+        const composers = await composerSchema.find({ _id });
+        return composers;
+    }
+
     public static async create(payload: IComposer): Promise<IComposer> {
         const created = await composerSchema.create(payload);
         return created;
