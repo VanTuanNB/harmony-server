@@ -54,6 +54,11 @@ export default class SongModel {
         return song;
     }
 
+    public static async getByArrayId(_id: string[]): Promise<ISong[] | null> {
+        const songs = await songSchema.find({ _id });
+        return songs;
+    }
+
     public static async create(payload: ISong): Promise<ISong> {
         const created = await songSchema.create(payload);
         return created;

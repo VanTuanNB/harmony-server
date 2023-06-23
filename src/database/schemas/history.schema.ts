@@ -13,6 +13,7 @@ const historySchema = new Schema<IHistory>(
     },
     {
         _id: false,
+        timestamps: true,
     },
 );
 
