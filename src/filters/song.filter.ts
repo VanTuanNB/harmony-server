@@ -30,10 +30,6 @@ export default class SongFilter implements TypeProps {
     @IsDateString()
     publish: Date;
 
-    @IsNotEmpty()
-    @IsNumber()
-    duration: number;
-
     @IsOptional()
     @IsGenerateCollection<ISongPath>({
         message: 'Property songPathId missing key _id',
@@ -70,7 +66,6 @@ export default class SongFilter implements TypeProps {
         this.title = params.title;
         this.albumReference = params.albumReference;
         this.composerReference = params.composerReference;
-        this.duration = params.duration;
         this.genresReference = params.genresReference;
         this.performers = params.performers;
         this.publish = params.publish;

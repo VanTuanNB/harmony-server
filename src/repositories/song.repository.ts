@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+
 import ffmpeg from '@/configs/fluentFfmpeg.config';
 
 export default class SongRepository {
@@ -16,5 +18,9 @@ export default class SongRepository {
         return new Promise<ffmpeg.FfmpegCommand>((resolve, reject) => {
             resolve(ffmpeg(path));
         });
+    }
+
+    public static async forceDelete(path: string): Promise<void> {
+        return await fs.unlink(path);
     }
 }
