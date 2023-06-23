@@ -341,7 +341,7 @@ export default class SongService {
                     ? JSON.parse(payload.performerInstance as any)
                     : undefined,
             });
-            const currentSong = await SongModel.getById(id);
+            const currentSong = await SongModel.getByIdNoPopulate(id);
             if (!currentSong)
                 return {
                     status: 400,
@@ -374,7 +374,7 @@ export default class SongService {
                                 (record) =>
                                     payload.genreInstance.payloadNeedUpdated.indexOf(
                                         record,
-                                    ) === -1,
+                                    ) !== -1,
                             );
                         if (
                             multipleRecordGenres.length > 0 &&
@@ -392,7 +392,7 @@ export default class SongService {
                                 (record) =>
                                     payload.genreInstance.payloadNeedUpdated.indexOf(
                                         record,
-                                    ) !== -1,
+                                    ) === -1,
                             );
                         if (
                             multipleRecordGenres.length === 0 &&
