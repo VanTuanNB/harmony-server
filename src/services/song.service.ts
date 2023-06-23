@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { v4 as uuidv4 } from 'uuid';
+import path from 'path'
 import { ISong } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import SongRepository from '@/repositories/song.repository';
@@ -21,6 +22,8 @@ import ThumbnailRepository from '@/repositories/thumbnail.repository';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import GenreModel from '@/models/genre.model';
 import AlbumModel from '@/models/album.model';
+import { pathFromSystem } from '@/utils/pathSystemLinux.util';
+
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
@@ -260,6 +263,7 @@ export default class SongService {
                 ...payload,
                 _id,
             });
+
             const songInValid = await ValidatePayload(
                 songFilter,
                 'BAD_REQUEST',
@@ -268,11 +272,11 @@ export default class SongService {
             if (songInValid) return songInValid;
             const createThumbnail = await ThumbnailModel.create({
                 _id: uuidv4(),
-                path: files.thumbnail.path.split('harmony-server/')[1],
+                path: pathFromSystem(files.thumbnail.path, process.platform),
             });
             const createSongPath = await SongPathModel.create({
                 _id: uuidv4(),
-                path: files.fileSong.path.split('harmony-server/')[1],
+                path: pathFromSystem(files.fileSong.path, process.platform),
                 size: fileSongInfo.format.size as number,
                 duration: fileSongInfo.format.duration as number,
                 type: files.fileSong.mimetype,
@@ -281,6 +285,7 @@ export default class SongService {
                 thumbnail: `${process.env.SERVER_URL}:${process.env.PORT_SERVER}/api/v1/thumbnail/${createThumbnail._id}`,
                 songPathReference: createSongPath._id,
             });
+
             const createdSong = await SongModel.create(songFilter);
             const injectorComposer = await ComposerModel.updatedField(
                 payload.composerReference,
