@@ -3,7 +3,16 @@ import { authenticationUser } from '@/middlewares/authVerifyToken.middleware';
 import { Router } from 'express';
 
 const router: Router = Router();
-
-router.route('/').post(authenticationUser, HistoryController.create);
+const historyInstance = new HistoryController();
+router
+    .route('/')
+    // .get(
+    //     authenticationUser,
+    //     historyInstance.getInformationByUserId.bind(historyInstance),
+    // )
+    .post(
+        authenticationUser,
+        historyInstance.mergingCreateUpdate.bind(historyInstance),
+    );
 
 export default router;

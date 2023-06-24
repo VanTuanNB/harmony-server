@@ -13,6 +13,7 @@ const favoriteSchema = new Schema<IFavorite>(
     },
     {
         _id: false,
+        timestamps: true,
     },
 );
 

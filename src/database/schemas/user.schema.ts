@@ -13,17 +13,12 @@ const userSchema = new Schema<IUser>(
         },
         locale: { type: String, default: 'vi' },
         refreshToken: { type: String, required: true },
-        playlistReference: [
-            {
-                type: String,
-                ref: 'playlist',
-            },
-        ],
         favoriteListReference: { type: String, ref: 'favorite' },
         historyReference: { type: String, ref: 'history' },
         composerReference: { type: String, ref: 'composer' },
         isRegistrationForm: { type: Boolean, default: false },
         password: { type: String, default: null },
+        playlistReference: [{ type: String, ref: 'playlist' }],
     },
     {
         _id: false,
