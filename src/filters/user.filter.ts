@@ -67,9 +67,7 @@ export default class UserValidation implements TypeProps {
     historyReference?: string;
 
     @IsOptional()
-    @IsGenerateCollection<IFavorite>({
-        message: 'Filed _id in collection Playlist is empty',
-    })
+    @IsGenerateCollection()
     playlistReference?: string[];
 
     constructor(payload: TypeProps) {
@@ -82,8 +80,8 @@ export default class UserValidation implements TypeProps {
         this.composerReference = payload.composerReference;
         this.favoriteListReference = payload.favoriteListReference;
         this.historyReference = payload.historyReference;
-        this.playlistReference = payload.playlistReference;
         this.isRegistrationForm = payload.isRegistrationForm;
         this.locale = payload.locale;
+        this.playlistReference = payload.playlistReference;
     }
 }

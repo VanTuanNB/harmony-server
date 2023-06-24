@@ -55,6 +55,11 @@ export default class SongModel {
         return song;
     }
 
+    public static async getByArrayId(_id: string[]): Promise<ISong[] | null> {
+        const songs = await songSchema.find({ _id });
+        return songs;
+    }
+
     public static async getByIdNoPopulate(_id: string): Promise<ISong | null> {
         const song = await songSchema.findById(_id);
         return song;

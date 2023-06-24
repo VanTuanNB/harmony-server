@@ -4,7 +4,6 @@ import fs from 'fs';
 import path from 'path';
 
 import { v4 as uuidv4 } from 'uuid';
-import path from 'path'
 import { ISong } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import SongRepository from '@/repositories/song.repository';
@@ -23,7 +22,6 @@ import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import GenreModel from '@/models/genre.model';
 import AlbumModel from '@/models/album.model';
 import { pathFromSystem } from '@/utils/pathSystemLinux.util';
-
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
