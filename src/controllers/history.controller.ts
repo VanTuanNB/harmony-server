@@ -11,15 +11,15 @@ export default class HistoryController extends HistoryService {
         super();
     }
 
-    // public async getInformationByUserId(
-    //     req: CustomRequest,
-    //     res: CustomResponseExpress,
-    // ): Promise<Response | null> {
-    //     const userId =
-    //         (res.locals.memberDecoded && res.locals.memberDecoded._id) || '';
-    //     const historyInfoService = await this.getInformation(userId);
-    //     return res.status(historyInfoService.status).json(historyInfoService);
-    // }
+    public async information(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | null> {
+        const userId =
+            (res.locals.memberDecoded && res.locals.memberDecoded._id) || '';
+        const historyInfoService = await this.getInformation(userId);
+        return res.status(historyInfoService.status).json(historyInfoService);
+    }
 
     @IsRequirementTypeId('songId', 'body')
     public async mergingCreateUpdate(
