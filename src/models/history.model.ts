@@ -17,9 +17,7 @@ export default class HistoryModel {
         return history;
     }
 
-    public static async create(
-        payload: Omit<IHistory, '_id'>,
-    ): Promise<IHistory> {
+    public static async create(payload: IHistory): Promise<IHistory> {
         const create = await historySchema.create(payload);
         return create;
     }

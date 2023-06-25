@@ -10,9 +10,7 @@ export default class UserModel {
         const user = await userSchema.findOne({ email });
         return user;
     }
-    public static async create(
-        payload: Omit<IUser, 'createdAt' | 'updatedAt'>,
-    ): Promise<IUser> {
+    public static async create(payload: IUser): Promise<IUser> {
         const created = await userSchema.create(payload);
         return created;
     }
