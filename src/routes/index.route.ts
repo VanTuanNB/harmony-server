@@ -8,9 +8,11 @@ import genreRouter from './genre.route';
 import albumRouter from './album.route';
 import thumbnailRouter from './thumbnail.route';
 import historyRouter from './history.route';
+import favoriteRouter from './favorite.route';
 
 const rootRouter = Router();
 rootRouter.use('/thumbnail', thumbnailRouter);
+rootRouter.use('/favorite', favoriteRouter);
 rootRouter.use('/history', historyRouter);
 rootRouter.use('/genre', genreRouter);
 rootRouter.use('/album', albumRouter);
