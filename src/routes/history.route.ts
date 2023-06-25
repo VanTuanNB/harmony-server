@@ -6,10 +6,7 @@ const router: Router = Router();
 const historyInstance = new HistoryController();
 router
     .route('/')
-    // .get(
-    //     authenticationUser,
-    //     historyInstance.getInformationByUserId.bind(historyInstance),
-    // )
+    .get(authenticationUser, historyInstance.information.bind(historyInstance))
     .post(
         authenticationUser,
         historyInstance.mergingCreateUpdate.bind(historyInstance),

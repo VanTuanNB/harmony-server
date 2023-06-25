@@ -10,6 +10,43 @@ import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import IHistory from '@/constraints/interfaces/IHistory';
 
 export default class HistoryService {
+    protected async getInformation(
+        userId: string,
+    ): Promise<CustomResponse<IHistory>> {
+        try {
+            const user = await UserModel.getById(userId);
+            if (!user)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'USER_NOT_FOUND',
+                };
+            const history = await HistoryModel.getByIdPoPulate(
+                user.historyReference ?? '',
+            );
+            if (!history)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'HISTORY_NOT_FOUND',
+                };
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_HISTORY_SUCCESSFULLY',
+                data: history,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_HISTORY_INFO_FAILED',
+                errors: error,
+            };
+        }
+    }
+
     protected async bothCreateUpdate(
         userId: string,
         songId: string,
