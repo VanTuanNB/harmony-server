@@ -48,6 +48,7 @@ export function IsRequirementTypeId(
                 }
                 switch (typeof key) {
                     case 'string':
+                        console.log(payload[key]);
                         const condition = regexUuidV4Validation(
                             payload[key] as string,
                         );
@@ -55,6 +56,7 @@ export function IsRequirementTypeId(
                             handleDeletedFileInDecorator(
                                 req.files as IFieldNameFiles,
                             );
+                        console.log(`condition string: `, condition);
                         return condition
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
@@ -66,7 +68,25 @@ export function IsRequirementTypeId(
                         const mapping: string[] = [];
                         Object.entries(payload).forEach(([keyId, value]) => {
                             if (key.indexOf(keyId) !== -1) {
-                                mapping.push(value.trim());
+                                if (
+                                    typeof value === 'string' &&
+                                    value.trim().startsWith(`[`)
+                                ) {
+                                    const parseFormDataStringId = JSON.parse(
+                                        value,
+                                    ) as string[];
+                                    parseFormDataStringId.forEach(
+                                        (id: string) => {
+                                            mapping.push(id.trim());
+                                        },
+                                    );
+                                } else if (Array.isArray(value)) {
+                                    value.forEach((id: string) =>
+                                        mapping.push(id.trim()),
+                                    );
+                                } else {
+                                    mapping.push(value.trim());
+                                }
                             }
                         });
                         const isPassed = mapping.every((currentValue: string) =>

@@ -19,11 +19,9 @@ export default class UserModel {
         _id: string,
         payload: Partial<Omit<IUser, '_id'>>,
     ): Promise<IUser | null> {
-        console.log(`payload needUpdate`, payload);
         const updated = await userSchema.findByIdAndUpdate(_id, payload, {
             new: true,
         });
-        console.log(`update123`, updated);
         return updated;
     }
 }
