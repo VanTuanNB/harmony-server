@@ -39,7 +39,11 @@ export default class AlbumModel {
     }
 
     public static async getById(_id: string): Promise<IAlbum | null> {
-        const album = await albumSchema.findById(_id);
+        const album = await albumSchema.findById(_id).populate({
+            path: 'composer',
+            strictPopulate: true,
+            select: 'name nickname'
+        });
         return album;
     }
 
