@@ -43,6 +43,11 @@ export default class AlbumModel {
             path: 'composerReference',
             strictPopulate: true,
             select: 'name nickname'
+        })
+        .populate({
+            path: 'listSong',
+            strictPopulate: true,
+            select: 'title thumbnail'
         });
         return album;
     }
