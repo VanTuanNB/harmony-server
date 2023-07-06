@@ -54,4 +54,30 @@ export default class GenreService {
             return false;
         }
     }
+
+    public static async getById(
+        _id:string,
+    ): Promise<CustomResponse<IGenre | null>> {
+        try {
+            const genre = await GenreModel.getById(_id);
+            if (!genre)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_SONG_BY_GENRES_EXISTS',
+                }
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_BY_GENRES_SUCCESSFULLY'
+            }    
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_BY_GENRES_FAILED'
+            }
+        }
+    }
 }

@@ -23,6 +23,17 @@ export default class GenreModel {
         return albums;
     }
 
+    public static async getById(_id: string): Promise<IGenre|null> {
+        const genre = await genreSchema
+            .findById(_id)
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: ''
+            });
+            return genre;
+    }
+
     public static async create(payload: IGenre): Promise<IGenre> {
         const created = await genreSchema.create(payload);
         return created;

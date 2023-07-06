@@ -1,5 +1,4 @@
-import { Response } from 'express';
-
+import { Response, Request } from 'express';
 import { IGenre } from '@/constraints/interfaces/index.interface';
 import { CustomRequest } from '@/constraints/interfaces/custom.interface';
 import { IsRequirementReq } from '@/decorators/index.decorator';
@@ -14,5 +13,14 @@ export default class GenreController {
         const payload: Pick<IGenre, 'title'> = req.body;
         const genreCreateService = await GenreService.create(payload);
         return res.status(genreCreateService.status).json(genreCreateService);
+    }
+    
+    public static async getById(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const _id = req.params.id;
+        const genre = await GenreService.getById(_id);
+        return res.status(genre.status).json(genre);
     }
 }
