@@ -123,4 +123,5 @@ export default class ComposerService {
             return false;
         }
     }
+
 }

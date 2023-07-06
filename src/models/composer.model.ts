@@ -9,7 +9,12 @@ export default class ComposerModel {
         return composer;
     }
     public static async getById(_id: string): Promise<IComposer | null> {
-        const composer = await composerSchema.findById(_id);
+        const composer = await composerSchema.findById(_id)
+        .populate({
+            path: 'songReferences',
+            strictPopulate: true,
+            select: '',
+        });
         return composer;
     }
     public static async getListSong(_id: string): Promise<IComposer | null> {
