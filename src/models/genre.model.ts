@@ -5,6 +5,17 @@ import IGenre from '@/constraints/interfaces/IGenre';
 import genreSchema from '@/database/schemas/genre.schema';
 
 export default class GenreModel {
+    public static async getAll(): Promise<IGenre[]> {
+        const songs = await genreSchema
+            .find()
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title',
+            });
+        return songs;
+    }
+
     public static async getByTitle(title: string): Promise<IGenre | null> {
         const genreByTitle = await genreSchema.findOne({
             title: { $regex: title, $options: 'i' },

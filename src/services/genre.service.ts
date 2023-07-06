@@ -5,6 +5,25 @@ import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import GenreModel from '@/models/genre.model';
 
 export default class GenreService {
+    public static async getAll(): Promise<CustomResponse<IGenre[] | []>> {
+        try {
+            const songs = await GenreModel.getAll();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_LIST_GENRE_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_LIST_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
     public static async create(
         payload: Pick<IGenre, 'title'>,
     ): Promise<CustomResponse> {
