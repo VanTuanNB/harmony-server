@@ -7,5 +7,6 @@ router
     .route('/change/:id')
     .put(authenticationComposer, AlbumController.updateChangesSong);
 router.route('/').post(authenticationComposer, AlbumController.create);
+router.route('/:id').get( AlbumController.getById);
 
 export default router;
