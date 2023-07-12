@@ -20,5 +20,5 @@ router
         SongController.middlewareCreateSong,
         SongController.create,
     );
-
+router.route('/mostView').get(SongController.getMostView);
 export default router;

@@ -104,6 +104,32 @@ export default class SongService {
         }
     }
 
+    public static async getMostView(
+
+    ): Promise<CustomResponse<ISong | null>> {
+        try {
+            const song = await SongModel.getMostView();
+            if(!song)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_MOST_VIEW_SONG_EXIST',
+                };
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_MOST_VIEW_SONG_SUCCESSFUL',
+            }
+        } catch(error){
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_MOST_VIEW_SONG_FAILED',
+            }
+        }
+    }
+
     public static async getFsStreamSong(
         idSong: string,
         range: string | undefined,
