@@ -150,6 +150,14 @@ export default class SongModel {
         }
     }
 
+    public static async getMostView(): Promise<ISong[] | null> {
+        const song = await songSchema
+        .find()
+        .sort({'view':-1})
+        .select('title')
+        return song;
+    }
+
     public static async forceDelete(id: string): Promise<ISong | null> {
         const forceDelete = await songSchema.findByIdAndDelete(id);
         return forceDelete;
