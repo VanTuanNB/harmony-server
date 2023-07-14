@@ -78,4 +78,15 @@ export default class GenreModel {
         });
         return updatedField;
     }
+
+    public static async getAll(): Promise<IGenre[]> {
+        const genres = genreSchema.find()
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title thumbnail songPathReference'
+            })
+
+        return genres;
+    }
 }
