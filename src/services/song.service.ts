@@ -40,7 +40,7 @@ export interface IFsStreamSong {
 
 interface IPayloadUpdate
     extends Partial<Pick<ISong, 'title' | 'publish'>>,
-        Partial<ITypeFiles> {
+    Partial<ITypeFiles> {
     genreInstance: {
         typeAction: EnumActionUpdate;
         payloadNeedUpdated: string[];
@@ -362,7 +362,7 @@ export default class SongService {
             const conditionPerformerUpdate =
                 payload.performerInstance &&
                 payload.performerInstance.typeAction !==
-                    EnumActionUpdate.NOTHING &&
+                EnumActionUpdate.NOTHING &&
                 payload.performerInstance.payloadNeedUpdated.length > 0;
             if (conditionGenreUpdate) {
                 const multipleRecordGenres =
@@ -606,6 +606,61 @@ export default class SongService {
                 message: 'UPDATE_SONG_FAILED',
                 errors: error,
             };
+        }
+    }
+    public static async forceDelete(id: string): Promise<CustomResponse> {
+        try {
+
+            const song = await SongModel.getById(id);
+
+            if (song) {
+                const thumbnail = song.thumbnail
+                const songPath = song.songPathReference
+
+                if (thumbnail) {
+                    const parts = thumbnail.split('/');
+                    const result = parts[parts.length - 1];
+                    console.log(result);
+                    await ThumbnailModel.forceDelete(result);
+                }else{
+                    return {
+                        status: 400,
+                        success: false,
+                        message: 'THUMBNAIL_ID_EXIXTS' 
+                    }
+                }
+
+                if (songPath) {
+                    await SongPathModel.forceDelete(songPath);
+                }else{
+                    return {
+                        status: 400,
+                        success: false,
+                        message: 'SONGPATH_ID_EXIXTS' 
+                    }
+                }
+               
+                await SongModel.forceDelete(song._id);
+                return {
+                    status: 201,
+                    success: true,
+                    message: 'DELETE_SONG_SUCCESSFULLY'
+                }
+            } else {
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'PERFORMER_HAS_ID_COMPOSER_NOT_FOUND',
+                }
+
+            }
+
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'DELETE_SONG_FAILED'
+            }
         }
     }
 }
