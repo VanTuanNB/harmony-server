@@ -49,4 +49,18 @@ export default class ComposerModel {
         });
         return updated;
     }
+    public static async getComposerPopulate(id: string): Promise<IComposer | null> {
+        const composer = await composerSchema.findById(id)
+            .populate({
+                path: 'songsReference',
+                strictPopulate: true,
+                select: 'title thumbnail songPathReference'
+            })
+            .populate({
+                path: 'albumsReference',
+                strictPopulate: true,
+                select: 'title publish thumbnail'
+            })
+        return composer;
+    }
 }
