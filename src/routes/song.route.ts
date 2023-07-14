@@ -10,7 +10,8 @@ router.route('/stream/:id').get(SongController.getStreamSong);
 router
     .route('/:id')
     .get(SongController.getById)
-    .put(authenticationComposer, uploadSong, SongController.update);
+    .put(authenticationComposer, uploadSong, SongController.update)
+    .delete(authenticationComposer, SongController.delete)
 router
     .route('/')
     .get(SongController.getAll)
