@@ -8,4 +8,6 @@ router
     .put(authenticationComposer, AlbumController.updateChangesSong);
 router.route('/').post(authenticationComposer, AlbumController.create);
 
+router.route('/newWeek').get(AlbumController.getAlbumNewWeek)
+
 export default router;

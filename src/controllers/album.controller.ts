@@ -40,4 +40,12 @@ export default class AlbumController {
         const createAlbumService = await AlbumService.create(payload);
         return res.status(createAlbumService.status).json(createAlbumService);
     }
+
+    public static async getAlbumNewWeek(
+        req: CustomRequest,
+        res: Response,
+    ): Promise<Response | void> {
+        const albums = await AlbumService.getAlbumNewWeek();
+        return res.status(albums.status).json(albums);
+    }
 }

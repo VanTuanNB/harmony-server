@@ -160,4 +160,24 @@ export default class AlbumService {
             return false;
         }
     }
+
+    public static async getAlbumNewWeek(): Promise<CustomResponse> {
+        try {
+            const albumNew = await AlbumModel.getAlbumNewWeek();
+            
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALBUM_NEW_WEEK_SUCCESSFULLY',
+                data: albumNew,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALBUM_NEW_WEEK_FAILED',
+                errors: error,
+            };
+        }
+    }
 }
