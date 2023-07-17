@@ -16,4 +16,14 @@ export default class ComposerController {
             .status(createComposerService.status)
             .json(createComposerService);
     }
+
+    @IsRequirementReq('id', 'params')
+    public static async getById(
+        req: Request,
+        res: Response
+    ): Promise<Response | void> {
+        const { id } = req.params
+        const composer = await ComposerService.getComposerPopulate(id);
+        return res.status(composer.status).json(composer);
+    }
 }

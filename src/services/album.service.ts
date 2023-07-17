@@ -177,6 +177,34 @@ export default class AlbumService {
                 success: false,
                 message: 'GET_ALBUM_NEW_WEEK_FAILED',
                 errors: error,
+            }
+        }
+    }
+  
+    public static async getById(
+        _id: string,
+    ): Promise<CustomResponse<IAlbum | null>> {
+        try {
+            const album = await AlbumModel.getById(_id);
+            if (!album)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_ALBUM_BY_ID_EXISTS',
+                };
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALBUM_BY_ID_SUCCESSFULLY',
+                data: album,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALBUM_BY_ID_FAILED',
             };
         }
     }
