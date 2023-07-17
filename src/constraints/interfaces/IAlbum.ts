@@ -4,6 +4,7 @@ export default interface IAlbum {
     publish: Date;
     composerReference: string;
     listSong?: string[];
+    thumbnail?: string;
     information?: string;
     createdAt?: Date;
     updatedAt?: Date;
