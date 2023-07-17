@@ -60,6 +60,32 @@ export default class SongModel {
         return songs;
     }
 
+    public static async getSongTopView(id: number): Promise<ISong[]> {
+        const songs = await songSchema
+            .find({}).sort({ views: -1 }).limit(id)
+            .populate({
+                path: 'composerReference',
+                strictPopulate: true,
+                select: 'name slug',
+            })
+            .populate({
+                path: 'albumReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'genresReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name slug',
+            });
+        return songs;
+    }
+
     public static async getByIdNoPopulate(_id: string): Promise<ISong | null> {
         const song = await songSchema.findById(_id);
         return song;
