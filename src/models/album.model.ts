@@ -121,4 +121,15 @@ export default class AlbumModel {
         );
         return updatedField;
     }
+
+    public static async getAlbumNewWeek(): Promise<IAlbum[]> {
+        const albumNew = await albumSchema.find({
+            updatedAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 7)) }
+        }).populate({
+            path: 'composerReference',
+            strictPopulate: true,
+            select: 'name nickname avatar'
+        });
+        return albumNew;
+    }
 }

@@ -9,4 +9,6 @@ router
 router.route('/').post(authenticationComposer, AlbumController.create);
 router.route('/:id').get( AlbumController.getById);
 
+router.route('/newWeek').get(AlbumController.getAlbumNewWeek)
+
 export default router;
