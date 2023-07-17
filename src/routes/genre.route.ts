@@ -4,6 +4,8 @@ import { Router } from 'express';
 
 const router: Router = Router();
 
-router.route('/').post(GenreController.create); // middleware admin role
+router.route('/')
+    .get(GenreController.getAll)
+    .post(GenreController.create); // middleware admin role
 
 export default router;
