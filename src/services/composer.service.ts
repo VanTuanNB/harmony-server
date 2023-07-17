@@ -18,7 +18,6 @@ export default class ComposerService {
                 data: composer,
             };
         } catch (error) {
-            console.log(error);
             return {
                 status: 500,
                 success: false,
@@ -121,6 +120,24 @@ export default class ComposerService {
         } catch (error) {
             console.log(error);
             return false;
+        }
+    }
+    public static async getComposerPopulate(_id: string): Promise<CustomResponse>{
+        try{
+            const composer = await ComposerModel.getComposerPopulate(_id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_COMPOSER_BY_ID_SUCCESSFULLY',
+                data: composer,
+            };
+        }catch(error){
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_COMPOSER_BY_ID_FAILED',
+                errors: error,
+            };
         }
     }
 }
