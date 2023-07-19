@@ -21,5 +21,6 @@ router
         SongController.middlewareCreateSong,
         SongController.create,
     );
+router.route('/topSong/:id').get(SongController.getSongTop);
 
 export default router;

@@ -104,6 +104,25 @@ export default class SongService {
         }
     }
 
+    public static async getSongTopView(id: number): Promise<CustomResponse<ISong[] | []>> {
+        try {
+            const songs = await SongModel.getSongTopView(id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_TOP_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_TOP_FAILED',
+                errors: error,
+            };
+        }
+    }
+
     public static async getFsStreamSong(
         idSong: string,
         range: string | undefined,
