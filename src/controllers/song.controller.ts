@@ -153,4 +153,12 @@ export default class SongController {
         const deleteSong = await SongService.forceDelete(id)
         return res.status(deleteSong.status).json(deleteSong);
     }
+
+    public static async getSongJustReleased(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const songs = await SongService.getSongJustReleased();
+        return res.status(songs.status).json(songs);
+    }
 }

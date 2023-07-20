@@ -663,4 +663,24 @@ export default class SongService {
             }
         }
     }
+
+    public static async getSongJustReleased(): Promise<CustomResponse<ISong[] | null>> {
+        try {
+            const songs = await SongModel.getSongJustReleased();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALL_SONG_JUST_RELEASED_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALL_SONG_JUST_RELEASED_FAILED',
+                errors: error,
+            };
+        }
+    }
 }

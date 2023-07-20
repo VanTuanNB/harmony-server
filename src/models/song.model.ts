@@ -154,4 +154,32 @@ export default class SongModel {
         const forceDelete = await songSchema.findByIdAndDelete(id);
         return forceDelete;
     }
+
+    public static async getSongJustReleased(): Promise<ISong[]> {
+        const songs = await songSchema
+            .find({
+                createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) }
+            })
+            .populate({
+                path: 'composerReference',
+                strictPopulate: true,
+                select: 'name slug',
+            })
+            .populate({
+                path: 'albumReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'genresReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name slug',
+            });
+        return songs;
+    }
 }
