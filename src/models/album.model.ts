@@ -44,12 +44,25 @@ export default class AlbumModel {
             strictPopulate: true,
             select: 'name nickname'
         })
-        .populate({
-            path: 'listSong',
-            strictPopulate: true,
-            select: 'title thumbnail'
-        });
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title thumbnail'
+            });
         return album;
+    }
+
+    public static async search(title: string): Promise<IAlbum[]> {
+        const albumQuery = albumSchema.find({
+            $or: [
+                { title: { $regex: title, $options: 'i' } }
+            ]
+        }).populate({
+            path: 'composerReference',
+            strictPopulate: true,
+            select: 'name nickname'
+        });
+        return albumQuery;
     }
 
     public static async create(payload: IAlbum): Promise<IAlbum> {

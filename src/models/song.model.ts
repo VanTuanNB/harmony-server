@@ -1,5 +1,6 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import ISong from '@/constraints/interfaces/ISong';
+import albumSchema from '@/database/schemas/album.schema';
 import songSchema from '@/database/schemas/song.schema';
 
 export default class SongModel {
@@ -53,6 +54,34 @@ export default class SongModel {
                 select: 'name slug',
             });
         return song;
+    }
+
+    public static async search(title: string): Promise<ISong[]> {
+        const songQuery = songSchema.find({
+            $or: [
+                { title: { $regex: title, $options: 'i' } }
+            ]
+        }).populate({
+            path: 'composerReference',
+            strictPopulate: true,
+            select: 'name slug',
+        })
+            .populate({
+                path: 'albumReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'genresReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name slug',
+            });
+        return songQuery;
     }
 
     public static async getByArrayId(_id: string[]): Promise<ISong[] | null> {
