@@ -108,19 +108,11 @@ export default class SongService {
         try {
             const songs = await SongModel.getSongTopView(item);
             const getall = await SongModel.getAll()
-
-            if (item === 0) return {
+            if (item === 0 || item > getall.length) return {
                 status: 400,
-                success: true,
-                message: 'QUERY_ITEM_OTHER_0',
-            };
-
-            if (item > getall.length) return {
-                status: 400,
-                success: true,
+                success: false,
                 message: 'SONG_LENGTH_NOT_EXIST',
             };
-
             return {
                 status: 200,
                 success: true,
