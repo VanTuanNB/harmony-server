@@ -41,11 +41,13 @@ export default class AlbumController {
         return res.status(createAlbumService.status).json(createAlbumService);
     }
 
+    @IsRequirementReq('item', 'query')
     public static async getAlbumNewWeek(
         req: CustomRequest,
         res: Response,
     ): Promise<Response | void> {
-        const albums = await AlbumService.getAlbumNewWeek();
+        const item = req.query.item as string;
+        const albums = await AlbumService.getAlbumNewWeek(parseInt(item));
         return res.status(albums.status).json(albums);
     }
 }

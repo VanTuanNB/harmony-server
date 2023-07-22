@@ -161,10 +161,15 @@ export default class AlbumService {
         }
     }
 
-    public static async getAlbumNewWeek(): Promise<CustomResponse> {
+    public static async getAlbumNewWeek(item: number): Promise<CustomResponse> {
         try {
-            const albumNew = await AlbumModel.getAlbumNewWeek();
-            
+            const albumNew = await AlbumModel.getAlbumNewWeek(item);
+            if (item == 0) return {
+                status: 400,
+                success: false,
+                message: 'QUERY_ITEM_NOT_EXITS',
+            }
+
             return {
                 status: 200,
                 success: true,
