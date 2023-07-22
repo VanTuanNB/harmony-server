@@ -6,7 +6,7 @@ import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware
 const router: Router = Router();
 
 router.route('/stream/:id').get(SongController.getStreamSong);
-
+router.route('/search').get(SongController.search);
 router
     .route('/:id')
     .get(SongController.getById)
@@ -21,7 +21,5 @@ router
         SongController.middlewareCreateSong,
         SongController.create,
     );
-
-router.route('/search').get(SongController.search);
 
 export default router;

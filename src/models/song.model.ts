@@ -60,7 +60,6 @@ export default class SongModel {
         const songQuery = songSchema.find({
             $or: [
                 { title: { $regex: title, $options: 'i' } },
-                { composerReference: { name: { $regex: title, $options: 'i' } } }
             ]
         }).populate({
             path: 'composerReference',

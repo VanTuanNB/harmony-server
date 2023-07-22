@@ -21,6 +21,23 @@ export default class ComposerModel {
         return listSongOfComposer;
     }
 
+    public static async search(title: string): Promise<IComposer[]> {
+        const search = await composerSchema.find({
+            $or: [
+                { name: { $regex: title, $options: 'i' } },
+            ]
+        }).populate({
+            path: 'albumsReference',
+            strictPopulate: true,
+            select: 'title thumbnail'
+        }).populate({
+            path: 'songsReference',
+            strictPopulate: true,
+            select: 'title thumbnail'
+        })
+        return search;
+    }
+
     public static async getMultipleById(_id: string[]): Promise<IComposer[]> {
         const composers = await composerSchema.find({ _id });
         return composers;

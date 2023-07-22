@@ -46,6 +46,7 @@ export default class SongController {
         req: Request,
         res: Response,
     ): Promise<Response | void> {
+        console.log('payload controller', req.query);
         const title = req.query.title as string
         const song = await SongService.search(title);
         return res.status(song.status).json(song);
@@ -159,7 +160,7 @@ export default class SongController {
     public static async delete(
         req: CustomRequest,
         res: CustomResponseExpress,
-    ):Promise<Response | void>{
+    ): Promise<Response | void> {
         const { id } = req.params;
         const deleteSong = await SongService.forceDelete(id)
         return res.status(deleteSong.status).json(deleteSong);

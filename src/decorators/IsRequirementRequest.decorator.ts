@@ -45,10 +45,10 @@ export function IsRequirementTypeId(
                         return condition
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
-                                  status: 400,
-                                  success: false,
-                                  message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
-                              });
+                                status: 400,
+                                success: false,
+                                message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                            });
                     case 'object':
                         const mapping: string[] = [];
                         Object.entries(payload).forEach(([keyId, value]) => {
@@ -84,10 +84,10 @@ export function IsRequirementTypeId(
                         return isPassed
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
-                                  status: 400,
-                                  success: false,
-                                  message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
-                              });
+                                status: 400,
+                                success: false,
+                                message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                            });
                     default:
                         return res.status(400).json({
                             status: 400,
@@ -133,10 +133,10 @@ export function IsRequirementReq(key: string | string[], scope: TypeRequest) {
                         return condition
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
-                                  status: 400,
-                                  success: false,
-                                  message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
-                              });
+                                status: 400,
+                                success: false,
+                                message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
+                            });
                     case 'object':
                         const isPassed = key.every(
                             (currentValue: string) =>
@@ -146,10 +146,10 @@ export function IsRequirementReq(key: string | string[], scope: TypeRequest) {
                         return isPassed
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
-                                  status: 400,
-                                  success: false,
-                                  message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
-                              });
+                                status: 400,
+                                success: false,
+                                message: `BAD_REQUEST_REQUIRE_NOT_NULL_"${key}"`,
+                            });
 
                     default:
                         return res.status(400).json({
