@@ -32,23 +32,9 @@ export function IsRequirementTypeId(
                 next: NextFunction,
             ];
             try {
-                let payload: { [x: string]: any } = req.body;
-                switch (scope) {
-                    case 'body':
-                        payload = req.body;
-                        break;
-                    case 'params':
-                        payload = req.params;
-                        break;
-                    case 'query':
-                        payload = req.query;
-                        break;
-                    default:
-                        throw new Error('Required type request');
-                }
+                const payload: { [x: string]: any } = req[scope];
                 switch (typeof key) {
                     case 'string':
-                        console.log(payload[key]);
                         const condition = regexUuidV4Validation(
                             payload[key] as string,
                         );
@@ -56,7 +42,6 @@ export function IsRequirementTypeId(
                             handleDeletedFileInDecorator(
                                 req.files as IFieldNameFiles,
                             );
-                        console.log(`condition string: `, condition);
                         return condition
                             ? originalMethod.apply(this, args)
                             : res.status(400).json({
@@ -141,20 +126,7 @@ export function IsRequirementReq(key: string | string[], scope: TypeRequest) {
                 next: NextFunction,
             ];
             try {
-                let payload: { [x: string]: any } = req.body;
-                switch (scope) {
-                    case 'body':
-                        payload = req.body;
-                        break;
-                    case 'params':
-                        payload = req.params;
-                        break;
-                    case 'query':
-                        payload = req.query;
-                        break;
-                    default:
-                        throw new Error('Required type request');
-                }
+                const payload: { [x: string]: any } = req[scope];
                 switch (typeof key) {
                     case 'string':
                         const condition = key in payload && !!payload[key];
