@@ -22,6 +22,6 @@ router
         SongController.create,
     );
 
-router.route('/search/:id').get(SongController.search);
+router.route('/search').get(SongController.search);
 
 export default router;

@@ -59,7 +59,8 @@ export default class SongModel {
     public static async search(title: string): Promise<ISong[]> {
         const songQuery = songSchema.find({
             $or: [
-                { title: { $regex: title, $options: 'i' } }
+                { title: { $regex: title, $options: 'i' } },
+                { composerReference: { name: { $regex: title, $options: 'i' } } }
             ]
         }).populate({
             path: 'composerReference',
