@@ -159,7 +159,7 @@ export default class SongController {
         req: Request,
         res: Response,
     ): Promise<Response | void> {
-        const item= req.query.title as string
+        const item= req.query.item as string
         const songs = await SongService.getSongJustReleased(parseInt(item));
         return res.status(songs.status).json(songs);
     }

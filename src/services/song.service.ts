@@ -667,6 +667,12 @@ export default class SongService {
     public static async getSongJustReleased(item: number): Promise<CustomResponse<ISong[]>> {
         try {
             const songs = await SongModel.getSongJustReleased(item);
+
+            if(item == 0) return{
+                status: 400,
+                success: false,
+                message: 'LIST_SONG_QUERY_PARMAS_NOT_EXITS',
+            }
             return {
                 status: 200,
                 success: true,
