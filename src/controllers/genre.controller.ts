@@ -15,4 +15,12 @@ export default class GenreController {
         const genreCreateService = await GenreService.create(payload);
         return res.status(genreCreateService.status).json(genreCreateService);
     }
+
+    public static async getAll(
+        req: CustomRequest,
+        res: Response,
+    ): Promise<Response | void> {
+        const genres = await GenreService.getAll();
+        return res.status(genres.status).json(genres);
+    }
 }

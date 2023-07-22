@@ -54,4 +54,24 @@ export default class GenreService {
             return false;
         }
     }
+    public static async getAll(): Promise<CustomResponse<IGenre[] | []>> {
+        try {
+            const genres = await GenreModel.getAll();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALL_GENRE_SUCCESSFULLY',
+                data: genres,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALL_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
+
 }

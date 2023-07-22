@@ -50,4 +50,13 @@ export default class AlbumController {
         const albums = await AlbumService.getAlbumNewWeek(parseInt(item));
         return res.status(albums.status).json(albums);
     }
+    @IsRequirementTypeId('id', 'params')
+    public static async getById(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const _id = req.params.id;
+        const album = await AlbumService.getById(_id);
+        return res.status(album.status).json(album);
+    }
 }
