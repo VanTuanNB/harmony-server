@@ -622,24 +622,24 @@ export default class SongService {
                     const result = parts[parts.length - 1];
                     console.log(result);
                     await ThumbnailModel.forceDelete(result);
-                }else{
+                } else {
                     return {
                         status: 400,
                         success: false,
-                        message: 'THUMBNAIL_ID_EXIXTS' 
+                        message: 'THUMBNAIL_ID_EXIXTS'
                     }
                 }
 
                 if (songPath) {
                     await SongPathModel.forceDelete(songPath);
-                }else{
+                } else {
                     return {
                         status: 400,
                         success: false,
-                        message: 'SONGPATH_ID_EXIXTS' 
+                        message: 'SONGPATH_ID_EXIXTS'
                     }
                 }
-               
+
                 await SongModel.forceDelete(song._id);
                 return {
                     status: 201,
@@ -664,9 +664,9 @@ export default class SongService {
         }
     }
 
-    public static async getSongJustReleased(): Promise<CustomResponse<ISong[] | null>> {
+    public static async getSongJustReleased(item: number): Promise<CustomResponse<ISong[]>> {
         try {
-            const songs = await SongModel.getSongJustReleased();
+            const songs = await SongModel.getSongJustReleased(item);
             return {
                 status: 200,
                 success: true,

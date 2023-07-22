@@ -154,11 +154,13 @@ export default class SongController {
         return res.status(deleteSong.status).json(deleteSong);
     }
 
+    @IsRequirementReq('item', 'query')
     public static async getSongJustReleased(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
-        const songs = await SongService.getSongJustReleased();
+        const item= req.query.title as string
+        const songs = await SongService.getSongJustReleased(parseInt(item));
         return res.status(songs.status).json(songs);
     }
 }

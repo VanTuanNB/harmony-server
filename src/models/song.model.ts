@@ -155,11 +155,11 @@ export default class SongModel {
         return forceDelete;
     }
 
-    public static async getSongJustReleased(): Promise<ISong[]> {
+    public static async getSongJustReleased(item: number): Promise<ISong[]> {
         const songs = await songSchema
             .find({
-                createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) }
-            })
+                createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
+            }).limit(item)
             .populate({
                 path: 'composerReference',
                 strictPopulate: true,
