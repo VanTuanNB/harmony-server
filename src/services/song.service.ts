@@ -104,9 +104,23 @@ export default class SongService {
         }
     }
 
-    public static async getSongTopView(id: number): Promise<CustomResponse<ISong[] | []>> {
+    public static async getSongTopView(item: number): Promise<CustomResponse<ISong[]>> {
         try {
-            const songs = await SongModel.getSongTopView(id);
+            const songs = await SongModel.getSongTopView(item);
+            const getall = await SongModel.getAll()
+
+            if (item === 0) return {
+                status: 400,
+                success: true,
+                message: 'QUERY_ITEM_OTHER_0',
+            };
+
+            if (item > getall.length) return {
+                status: 400,
+                success: true,
+                message: 'SONG_LENGTH_NOT_EXIST',
+            };
+
             return {
                 status: 200,
                 success: true,
@@ -641,24 +655,24 @@ export default class SongService {
                     const result = parts[parts.length - 1];
                     console.log(result);
                     await ThumbnailModel.forceDelete(result);
-                }else{
+                } else {
                     return {
                         status: 400,
                         success: false,
-                        message: 'THUMBNAIL_ID_EXIXTS' 
+                        message: 'THUMBNAIL_ID_EXIXTS'
                     }
                 }
 
                 if (songPath) {
                     await SongPathModel.forceDelete(songPath);
-                }else{
+                } else {
                     return {
                         status: 400,
                         success: false,
-                        message: 'SONGPATH_ID_EXIXTS' 
+                        message: 'SONGPATH_ID_EXIXTS'
                     }
                 }
-               
+
                 await SongModel.forceDelete(song._id);
                 return {
                     status: 201,

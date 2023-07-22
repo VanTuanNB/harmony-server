@@ -5,6 +5,7 @@ import { uploadSong } from '@/middlewares/uploadSong.middleware';
 import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
 const router: Router = Router();
 
+router.route('/topSong').get(SongController.getSongTop);
 router.route('/stream/:id').get(SongController.getStreamSong);
 
 router
@@ -21,6 +22,6 @@ router
         SongController.middlewareCreateSong,
         SongController.create,
     );
-router.route('/topSong/:id').get(SongController.getSongTop);
+
 
 export default router;

@@ -41,13 +41,13 @@ export default class SongController {
         return res.status(song.status).json(song);
     }
 
-    @IsRequirementReq('id', 'params')
+    @IsRequirementReq('item', 'query')
     public static async getSongTop(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
-        const item = parseInt(req.params.id);
-        const song = await SongService.getSongTopView(item);
+        const item = req.query.item as string;
+        const song = await SongService.getSongTopView(parseInt(item));
         return res.status(song.status).json(song);
     }
 
