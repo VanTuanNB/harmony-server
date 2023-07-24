@@ -57,4 +57,18 @@ export default class AlbumController {
         const album = await AlbumService.getById(_id);
         return res.status(album.status).json(album);
     }
+
+    @IsRequirementReq(['item', 'id'], 'query')
+    public static async getAllByComposer(
+        req: CustomRequest,
+        res: Response
+    ): Promise<Response | void> {
+        const item = req.query.item as string;
+        const id = req.query.id as string
+        // console.log(id);
+        // console.log(item);
+
+        const albumComposer = await AlbumService.getAllByComposer(id, parseInt(item));
+        return res.status(albumComposer.status).json(albumComposer);
+    }
 }

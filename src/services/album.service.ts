@@ -164,7 +164,7 @@ export default class AlbumService {
     public static async getAlbumNewWeek(): Promise<CustomResponse> {
         try {
             const albumNew = await AlbumModel.getAlbumNewWeek();
-            
+
             return {
                 status: 200,
                 success: true,
@@ -180,7 +180,7 @@ export default class AlbumService {
             }
         }
     }
-  
+
     public static async getById(
         _id: string,
     ): Promise<CustomResponse<IAlbum | null>> {
@@ -206,6 +206,37 @@ export default class AlbumService {
                 success: false,
                 message: 'GET_ALBUM_BY_ID_FAILED',
             };
+        }
+    }
+
+    public static async getAllByComposer(
+        idComposer: string,
+        item: number
+    ): Promise<CustomResponse> {
+        try {
+            const albumComposer = await AlbumModel.getAllByComposer(idComposer, item);
+            if (item == 0) return {
+                status: 400,
+                success: false,
+                message: 'QUERY_PARMAS_ITEM_NOT_EXITS'
+            }
+            if (!albumComposer) return {
+                status: 400,
+                success: false,
+                message: 'GET_ALBUM_BY_COMPOSER_FAILED'
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALBUM_BY_COMPOSER_SUCCESSFULY',
+                data: albumComposer
+            }
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALBUM_BY_ID_FAILED ' + error
+            }
         }
     }
 }

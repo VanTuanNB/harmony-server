@@ -6,6 +6,8 @@ const router: Router = Router();
 router
     .route('/change/:id')
     .put(authenticationComposer, AlbumController.updateChangesSong);
+
+router.get('/composer', AlbumController.getAllByComposer)
 router.route('/').post(authenticationComposer, AlbumController.create);
 router.route('/:id').get( AlbumController.getById);
 
