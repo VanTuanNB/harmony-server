@@ -54,7 +54,7 @@ export default class ComposerModel {
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: 'title thumbnail songPathReference'
+                select: 'title thumbnail songPathReference performers'
             })
             .populate({
                 path: 'albumsReference',
