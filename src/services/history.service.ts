@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { IHistory } from '@/constraints/interfaces/index.interface';
 import UserModel from '@/models/user.model';
 import HistoryFilter from '@/filters/history.filter';
 import ValidatePayload from '@/helpers/validate.helper';
 import SongModel from '@/models/song.model';
 import HistoryModel from '@/models/history.model';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IHistory from '@/constraints/interfaces/IHistory';
 
 export default class HistoryService {
     protected async getInformation(

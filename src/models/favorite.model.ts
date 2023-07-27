@@ -1,5 +1,5 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IFavorite from '@/constraints/interfaces/IFavorite';
+import { IFavorite } from '@/constraints/interfaces/index.interface';
 import favoriteSchema from '@/database/schemas/favorite.schema';
 
 export default class FavoriteModel {

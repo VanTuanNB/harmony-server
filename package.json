@@ -23,6 +23,8 @@
     },
     "homepage": "https://github.com/VanTuanNB/harmony-server#readme",
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.377.0",
+        "@aws-sdk/s3-request-presigner": "^3.377.0",
         "@ffmpeg-installer/ffmpeg": "^1.1.0",
         "@ffprobe-installer/ffprobe": "^2.0.0",
         "bcrypt": "^5.1.0",

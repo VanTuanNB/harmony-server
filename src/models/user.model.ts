@@ -1,4 +1,4 @@
-import IUser from '@/constraints/interfaces/IUser';
+import { IUser } from '@/constraints/interfaces/index.interface';
 import userSchema from '@/database/schemas/user.schema';
 
 export default class UserModel {

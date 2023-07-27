@@ -1,4 +1,4 @@
-import IThumbnailSong from '@/constraints/interfaces/IThumbnailSong';
+import { IThumbnailSong } from '@/constraints/interfaces/index.interface';
 import mongoose, { Schema } from 'mongoose';
 
 const thumbnailSchema = new Schema<IThumbnailSong>(

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import IPayloadToken from './IPayloadToken';
+import { IPayloadToken } from './common.interface';
 export interface CustomResponse<T = any> {
     status: number;
     success: boolean;

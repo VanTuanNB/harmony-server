@@ -1,4 +1,4 @@
-import IComposer from '@/constraints/interfaces/IComposer';
+import { IComposer } from '@/constraints/interfaces/index.interface';
 import composerSchema from '@/database/schemas/composer.schema';
 
 export default class ComposerModel {
@@ -49,18 +49,21 @@ export default class ComposerModel {
         });
         return updated;
     }
-    public static async getComposerPopulate(id: string): Promise<IComposer | null> {
-        const composer = await composerSchema.findById(id)
+    public static async getComposerPopulate(
+        id: string,
+    ): Promise<IComposer | null> {
+        const composer = await composerSchema
+            .findById(id)
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: 'title thumbnail songPathReference'
+                select: 'title thumbnail songPathReference',
             })
             .populate({
                 path: 'albumsReference',
                 strictPopulate: true,
-                select: 'title publish thumbnail'
-            })
+                select: 'title publish thumbnail',
+            });
         return composer;
     }
 }

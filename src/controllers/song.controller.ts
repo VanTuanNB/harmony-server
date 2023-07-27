@@ -148,9 +148,9 @@ export default class SongController {
     public static async delete(
         req: CustomRequest,
         res: CustomResponseExpress,
-    ):Promise<Response | void>{
+    ): Promise<Response | void> {
         const { id } = req.params;
-        const deleteSong = await SongService.forceDelete(id)
+        const deleteSong = await SongService.forceDelete(id);
         return res.status(deleteSong.status).json(deleteSong);
     }
 }

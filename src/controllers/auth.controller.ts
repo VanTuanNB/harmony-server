@@ -5,11 +5,11 @@ import {
     IsRequirementEmail,
 } from '@/decorators/index.decorator';
 import AuthService from '@/services/auth.service';
-import IUser from '@/constraints/interfaces/IUser';
 import {
     CustomRequest,
     CustomResponseExpress,
-} from '@/constraints/interfaces/custom.interface';
+    IUser,
+} from '@/constraints/interfaces/index.interface';
 
 export default class AuthController {
     @IsRequirementReq('refreshToken', 'body')

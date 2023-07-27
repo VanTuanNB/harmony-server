@@ -1,13 +1,15 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import {
+    CustomResponse,
+    IUser,
+    IPayloadToken,
+} from '@/constraints/interfaces/index.interface';
 import UserModel from '@/models/user.model';
 import { generateToken } from '@/utils/jwtToken.util';
-import IUser from '@/constraints/interfaces/IUser';
 import UserService from './user.service';
 import { RoleConstant } from '@/constraints/enums/role.enum';
-import IPayloadToken from '@/constraints/interfaces/IPayloadToken';
 export default class AuthService {
     public static async generateRefererToken(
         currentRefreshToken: string,

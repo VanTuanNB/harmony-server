@@ -1,4 +1,4 @@
-import IThumbnailSong from '@/constraints/interfaces/IThumbnailSong';
+import { IThumbnailSong } from '@/constraints/interfaces/index.interface';
 import thumbnailSchema from '@/database/schemas/thumbnail.schema';
 
 export default class ThumbnailModel {
