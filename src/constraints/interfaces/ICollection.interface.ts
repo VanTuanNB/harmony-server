@@ -98,3 +98,13 @@ export interface IPlaylist {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface ISongDraftUpload {
+    _id: string;
+    bucketName: string;
+    keyObject: string;
+    expiredTime: number;
+    contentType: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
