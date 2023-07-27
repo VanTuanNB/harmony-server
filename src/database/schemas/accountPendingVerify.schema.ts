@@ -1,4 +1,4 @@
-import IAccountPendingVerify from '@/constraints/interfaces/IAccountPendingVerify';
+import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
 import mongoose, { Schema } from 'mongoose';
 
 const accountPendingSchema = new Schema<IAccountPendingVerify>(

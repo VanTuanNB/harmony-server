@@ -1,7 +1,7 @@
 import { UpdateWriteOpResult } from 'mongoose';
 
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IAlbum from '@/constraints/interfaces/IAlbum';
+import { IAlbum } from '@/constraints/interfaces/index.interface';
 import albumSchema from '@/database/schemas/album.schema';
 
 export default class AlbumModel {
@@ -39,16 +39,18 @@ export default class AlbumModel {
     }
 
     public static async getById(_id: string): Promise<IAlbum | null> {
-        const album = await albumSchema.findById(_id).populate({
-            path: 'composerReference',
-            strictPopulate: true,
-            select: 'name nickname'
-        })
-        .populate({
-            path: 'listSong',
-            strictPopulate: true,
-            select: 'title thumbnail'
-        });
+        const album = await albumSchema
+            .findById(_id)
+            .populate({
+                path: 'composerReference',
+                strictPopulate: true,
+                select: 'name nickname',
+            })
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title thumbnail',
+            });
         return album;
     }
 
@@ -123,13 +125,19 @@ export default class AlbumModel {
     }
 
     public static async getAlbumNewWeek(): Promise<IAlbum[]> {
-        const albumNew = await albumSchema.find({
-            updatedAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 7)) }
-        }).populate({
-            path: 'composerReference',
-            strictPopulate: true,
-            select: 'name nickname avatar'
-        });
+        const albumNew = await albumSchema
+            .find({
+                updatedAt: {
+                    $gte: new Date(
+                        new Date().setDate(new Date().getDate() - 7),
+                    ),
+                },
+            })
+            .populate({
+                path: 'composerReference',
+                strictPopulate: true,
+                select: 'name nickname avatar',
+            });
         return albumNew;
     }
 }

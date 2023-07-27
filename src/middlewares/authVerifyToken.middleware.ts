@@ -1,5 +1,5 @@
 import { RoleConstant } from '@/constraints/enums/role.enum';
-import IPayloadToken from '@/constraints/interfaces/IPayloadToken';
+import { IPayloadToken } from '@/constraints/interfaces/index.interface';
 import UserService from '@/services/user.service';
 import { verifyToken } from '@/utils/jwtToken.util';
 import { Request, Response, NextFunction } from 'express';

@@ -1,7 +1,7 @@
 import { UpdateWriteOpResult } from 'mongoose';
 
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IGenre from '@/constraints/interfaces/IGenre';
+import { IGenre } from '@/constraints/interfaces/index.interface';
 import genreSchema from '@/database/schemas/genre.schema';
 
 export default class GenreModel {
@@ -80,12 +80,11 @@ export default class GenreModel {
     }
 
     public static async getAll(): Promise<IGenre[]> {
-        const genres = genreSchema.find()
-            .populate({
-                path: 'listSong',
-                strictPopulate: true,
-                select: 'title thumbnail songPathReference'
-            })
+        const genres = genreSchema.find().populate({
+            path: 'listSong',
+            strictPopulate: true,
+            select: 'title thumbnail songPathReference',
+        });
 
         return genres;
     }

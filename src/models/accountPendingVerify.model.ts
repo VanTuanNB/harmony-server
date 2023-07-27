@@ -1,4 +1,4 @@
-import IAccountPendingVerify from '@/constraints/interfaces/IAccountPendingVerify';
+import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
 import accountPendingVerifySchema from '@/database/schemas/accountPendingVerify.schema';
 
 export default class AccountPendingVerifyModel {

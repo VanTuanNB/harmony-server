@@ -1,16 +1,20 @@
-export type { CustomResponse, CustomRequest } from './custom.interface';
+export type {
+    CustomResponse,
+    CustomRequest,
+    CustomResponseExpress,
+} from './custom.interface';
+
+export type { IPayloadToken, IFieldNameFiles } from './common.interface';
 export type { ITypeFile } from './IMulter';
-
-export type { default as IUser } from './IUser';
+export type { IGenre } from './ICollection.interface';
+export type { ISong } from './ICollection.interface';
+export type { IHistory } from './ICollection.interface';
+export type { IComposer } from './ICollection.interface';
+export type { IFavorite } from './ICollection.interface';
+export type { IThumbnailSong } from './ICollection.interface';
+export type { IUser } from './ICollection.interface';
+export type { IAccountPendingVerify } from './ICollection.interface';
+export type { IAlbum } from './ICollection.interface';
+export type { IPlaylist } from './ICollection.interface';
 export type { default as IAdmin } from './IAdmin';
-export type { default as IAlbum } from './IAlbum';
-export type { default as IFavorite } from './IFavorite';
-export type { default as IGenre } from './IGenre';
-export type { default as IHistory } from './IHistory';
-export type { default as IPlaylist } from './IPlaylist';
-export type { default as ISong } from './ISong';
 export type { default as ISongPath } from './ISongPath';
-export type { default as IAccountPendingVerify } from './IAccountPendingVerify';
-export type { default as IComposer } from './IComposer';
-export type { default as IFieldNameFiles } from './IFieldNameFiles';
-

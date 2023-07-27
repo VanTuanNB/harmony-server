@@ -9,8 +9,10 @@ import albumRouter from './album.route';
 import thumbnailRouter from './thumbnail.route';
 import historyRouter from './history.route';
 import favoriteRouter from './favorite.route';
+import s3Router from './s3.route';
 
 const rootRouter = Router();
+rootRouter.use('/signedUrlS3', s3Router);
 rootRouter.use('/thumbnail', thumbnailRouter);
 rootRouter.use('/favorite', favoriteRouter);
 rootRouter.use('/history', historyRouter);

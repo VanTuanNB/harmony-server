@@ -1,5 +1,5 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import ISong from '@/constraints/interfaces/ISong';
+import { ISong } from '@/constraints/interfaces/index.interface';
 import songSchema from '@/database/schemas/song.schema';
 
 export default class SongModel {

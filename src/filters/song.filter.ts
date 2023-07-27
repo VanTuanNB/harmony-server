@@ -1,7 +1,8 @@
-import IAlbum from '@/constraints/interfaces/IAlbum';
-import IComposer from '@/constraints/interfaces/IComposer';
-import IGenre from '@/constraints/interfaces/IGenre';
-import ISong from '@/constraints/interfaces/ISong';
+import {
+    ISong,
+    IComposer,
+    IAlbum,
+} from '@/constraints/interfaces/index.interface';
 import ISongPath from '@/constraints/interfaces/ISongPath';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 import {

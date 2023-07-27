@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IFavorite from '@/constraints/interfaces/IFavorite';
+import { IFavorite } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import FavoriteModel from '@/models/favorite.model';
 import SongModel from '@/models/song.model';

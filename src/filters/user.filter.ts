@@ -8,11 +8,13 @@ import {
     MaxLength,
 } from 'class-validator';
 
-import IFavorite from '@/constraints/interfaces/IFavorite';
-import IHistory from '@/constraints/interfaces/IHistory';
-import IUser from '@/constraints/interfaces/IUser';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
-import IComposer from '@/constraints/interfaces/IComposer';
+import {
+    IComposer,
+    IHistory,
+    IFavorite,
+    IUser,
+} from '@/constraints/interfaces/index.interface';
 
 interface TypeProps extends Omit<IUser, 'createdAt' | 'updatedAt'> {}
 export default class UserValidation implements TypeProps {

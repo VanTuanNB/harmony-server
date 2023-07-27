@@ -1,4 +1,4 @@
-import IFavorite from '@/constraints/interfaces/IFavorite';
+import { IFavorite } from '@/constraints/interfaces/index.interface';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 

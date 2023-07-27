@@ -1,5 +1,5 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import IHistory from '@/constraints/interfaces/IHistory';
+import { IHistory } from '@/constraints/interfaces/index.interface';
 import historySchema from '@/database/schemas/history.schema';
 
 export default class HistoryModel {

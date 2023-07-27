@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import jwt from 'jsonwebtoken';
-import IPayloadToken from '@/constraints/interfaces/IPayloadToken';
+import { IPayloadToken } from '@/constraints/interfaces/index.interface';
 config();
 
 export function generateToken(payload: Omit<IPayloadToken, 'iat' | 'exp'>): {
