@@ -14,6 +14,11 @@ import {
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { RoleConstant } from '@/constraints/enums/role.enum';
 
+interface ISendMail {
+    to: string;
+    subject: string;
+    message: string;
+}
 export default class UserService {
     public static async getById(
         _id: string,
@@ -78,11 +83,10 @@ export default class UserService {
             const created = await AccountPendingVerifyModel.create(
                 payloadToModel,
             );
-            const sended = await transporter.sendMail({
-                from: process.env.GMAIL_SERVER,
+            this.sendMailToUser({
                 to: created.email,
-                subject: 'Harmony music needs you to verification your email',
-                html: `<p>Your verification code is: <b>${created.verificationCode}</b></p>`,
+                subject: `Thư xác thực email`,
+                message: `Mã xác thực của bạn: <b>${created.verificationCode}</b>`,
             });
             return {
                 status: 201,
@@ -124,6 +128,7 @@ export default class UserService {
                 refreshToken,
                 password: collectionValidateUser.password as string,
                 isRegistrationForm: true,
+                role: RoleConstant.USER,
             });
             const validation = await ValidatePayload(
                 dataUser,
@@ -161,6 +166,15 @@ export default class UserService {
         }
     }
 
+    public static sendMailToUser({ to, subject, message }: ISendMail) {
+        transporter.sendMail({
+            from: process.env.GMAIL_SERVER,
+            to,
+            subject,
+            html: `<p>${message}</p>`,
+        });
+    }
+
     public static async updateFiled(
         _id: string,
         payload: Partial<Omit<IUser, '_id'>>,
@@ -180,6 +194,86 @@ export default class UserService {
                 success: false,
                 message: 'UPDATE_USER_FAILED',
                 errors: error,
+            };
+        }
+    }
+
+    public static async pendingUpgradeComposer(
+        userId: string,
+    ): Promise<CustomResponse> {
+        try {
+            const user = await UserModel.getById(userId);
+            if (!user || user.role === RoleConstant.COMPOSER)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            await this.updateFiled(userId, { isPendingUpgradeComposer: true });
+            return {
+                status: 200,
+                success: true,
+                message: 'PENDING_UPGRADE_COMPOSER_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'PENDING_UPGRADE_COMPOSER_FAILED',
+            };
+        }
+    }
+
+    public static async upgradeComposer(
+        userId: string,
+    ): Promise<CustomResponse> {
+        try {
+            const user = await UserModel.getById(userId);
+            if (
+                !user ||
+                user.role === RoleConstant.COMPOSER ||
+                !user.isPendingUpgradeComposer
+            )
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            let randomEntryPointSlug: number = 0;
+            do {
+                randomEntryPointSlug = Math.floor(Math.random() * 10000);
+            } while (randomEntryPointSlug < 1000);
+            const nickname =
+                (user.name
+                    .normalize('NFD')
+                    .replace(/[^a-z0-9\s]/gi, '')
+                    .toLocaleLowerCase()
+                    .replace(/\s+/g, '') ?? '') +
+                (randomEntryPointSlug < 1000
+                    ? randomEntryPointSlug * 10
+                    : randomEntryPointSlug);
+            await this.updateFiled(userId, {
+                nickname,
+                role: RoleConstant.COMPOSER,
+                isPendingUpgradeComposer: false,
+            });
+            this.sendMailToUser({
+                to: user.email,
+                subject: `Thư chúc mừng`,
+                message: `Cảm ơn bạn đã gắn bó với chúng tôi trong thời gian qua, chúc mừng bạn đã trở thành tác giả của Harmony Music`,
+            });
+            return {
+                status: 200,
+                success: true,
+                message: 'ASK_PERMISSION_UPGRADE_COMPOSER_BY_USER_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'ASK_PERMISSION_UPGRADE_COMPOSER_BY_USER_FAILED',
             };
         }
     }

@@ -10,7 +10,7 @@ export default class AlbumModel {
         title: string,
     ): Promise<IAlbum | null> {
         const albumByComposer = await albumSchema.findOne({
-            composerReference: idComposer,
+            userReference: idComposer,
             title: { $regex: title, $options: 'i' },
         });
         return albumByComposer;
@@ -42,7 +42,7 @@ export default class AlbumModel {
         const album = await albumSchema
             .findById(_id)
             .populate({
-                path: 'composerReference',
+                path: 'userReference',
                 strictPopulate: true,
                 select: 'name nickname',
             })
@@ -93,7 +93,7 @@ export default class AlbumModel {
                     title: payload.title,
                     publish: payload.publish,
                     information: payload.information,
-                    composerReference: payload.composerReference,
+                    userReference: payload.userReference,
                     updatedAt: payload.updatedAt,
                 },
                 $push: { listSong: payload.listSong },
@@ -114,7 +114,7 @@ export default class AlbumModel {
                     title: payload.title,
                     publish: payload.publish,
                     information: payload.information,
-                    composerReference: payload.composerReference,
+                    userReference: payload.userReference,
                     updatedAt: payload.updatedAt,
                 },
                 $pull: { listSong: payload.listSong },
@@ -134,7 +134,7 @@ export default class AlbumModel {
                 },
             })
             .populate({
-                path: 'composerReference',
+                path: 'userReference',
                 strictPopulate: true,
                 select: 'name nickname avatar',
             });

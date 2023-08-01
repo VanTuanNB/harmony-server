@@ -10,11 +10,11 @@ import {
 
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 import {
-    IComposer,
     IHistory,
     IFavorite,
     IUser,
 } from '@/constraints/interfaces/index.interface';
+import { RoleConstant } from '@/constraints/enums/role.enum';
 
 interface TypeProps extends Omit<IUser, 'createdAt' | 'updatedAt'> {}
 export default class UserValidation implements TypeProps {
@@ -37,12 +37,6 @@ export default class UserValidation implements TypeProps {
     @IsOptional()
     @IsString()
     avatar?: string;
-
-    @IsOptional()
-    @IsGenerateCollection<IComposer>({
-        message: 'Filed _id in collection Composer is empty',
-    })
-    composerReference?: string;
 
     @IsOptional()
     @IsBoolean()
@@ -72,6 +66,26 @@ export default class UserValidation implements TypeProps {
     @IsGenerateCollection()
     playlistReference?: string[];
 
+    @IsNotEmpty()
+    @IsString()
+    role: RoleConstant.USER | RoleConstant.COMPOSER;
+
+    @IsOptional()
+    @IsString()
+    nickname?: string;
+
+    @IsOptional()
+    @IsGenerateCollection()
+    albumsReference?: string[];
+
+    @IsOptional()
+    @IsGenerateCollection()
+    songsReference?: string[];
+
+    @IsOptional()
+    @IsBoolean()
+    isPendingUpgradeComposer?: boolean;
+
     constructor(payload: TypeProps) {
         this._id = payload._id;
         this.email = payload.email;
@@ -79,11 +93,15 @@ export default class UserValidation implements TypeProps {
         this.refreshToken = payload.refreshToken;
         this.password = payload.password;
         this.avatar = payload.avatar;
-        this.composerReference = payload.composerReference;
         this.favoriteListReference = payload.favoriteListReference;
         this.historyReference = payload.historyReference;
         this.isRegistrationForm = payload.isRegistrationForm;
         this.locale = payload.locale;
         this.playlistReference = payload.playlistReference;
+        this.role = payload.role;
+        this.nickname = payload.nickname;
+        this.albumsReference = payload.albumsReference;
+        this.songsReference = payload.songsReference;
+        this.isPendingUpgradeComposer = payload.isPendingUpgradeComposer;
     }
 }

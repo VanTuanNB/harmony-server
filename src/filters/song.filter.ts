@@ -40,7 +40,7 @@ export default class SongFilter implements TypeProps {
     @IsGenerateCollection<IComposer>({
         message: 'Property composerId missing key _id',
     })
-    composerReference: string;
+    userReference: string;
 
     @IsOptional()
     @IsGenerateCollection<IAlbum>({
@@ -66,7 +66,7 @@ export default class SongFilter implements TypeProps {
         this._id = params._id;
         this.title = params.title;
         this.albumReference = params.albumReference;
-        this.composerReference = params.composerReference;
+        this.userReference = params.userReference;
         this.genresReference = params.genresReference;
         this.performers = params.performers;
         this.publish = params.publish;

@@ -32,6 +32,7 @@ passport.use(
                     avatar: profile._json.picture,
                     locale: profile._json.locale,
                     refreshToken: refreshToken,
+                    role: RoleConstant.USER,
                 });
                 cb(null, newUser);
             } else if (user?.isRegistrationForm) {

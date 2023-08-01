@@ -7,7 +7,7 @@ export default class SongModel {
         const songs = await songSchema
             .find()
             .populate({
-                path: 'composerReference',
+                path: 'userReference',
                 strictPopulate: true,
                 select: 'name slug',
             })
@@ -33,7 +33,7 @@ export default class SongModel {
         const song = await songSchema
             .findById(_id)
             .populate({
-                path: 'composerReference',
+                path: 'userReference',
                 strictPopulate: true,
                 select: 'name slug',
             })
@@ -99,7 +99,7 @@ export default class SongModel {
 
     public static async updateByAction(
         _id: string,
-        payload: Partial<Omit<ISong, '_id' | 'composerReference'>>,
+        payload: Partial<Omit<ISong, '_id' | 'userReference'>>,
         options: EnumActionUpdate,
     ): Promise<ISong | null> {
         switch (options) {

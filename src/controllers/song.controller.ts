@@ -17,7 +17,7 @@ import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface
 
 const requirementFields = [
     'title',
-    'composerReference',
+    'userReference',
     'publish',
     'genresReference',
     'performers',
@@ -59,12 +59,7 @@ export default class SongController {
 
     @IsRequirementReq(requirementFields, 'body')
     @IsRequirementTypeId(
-        [
-            'composerReference',
-            'genresReference',
-            'albumReference',
-            'performers',
-        ],
+        ['userReference', 'genresReference', 'albumReference', 'performers'],
         'body',
     )
     @IsRequirementFiles([uploadFiledEnum.FileSong, uploadFiledEnum.Thumbnail])
@@ -73,11 +68,11 @@ export default class SongController {
         res: Response,
         next: NextFunction,
     ): Promise<Response | void> {
-        const { title, composerReference } = req.body;
+        const { title, userReference } = req.body;
         const { thumbnail, fileSong } = req.files as IFieldNameFiles;
         const validate = await SongService.validateTitleUploadSong(
             title,
-            composerReference,
+            userReference,
             {
                 fileSong: fileSong[0],
                 thumbnail: thumbnail[0],
@@ -106,7 +101,7 @@ export default class SongController {
             | 'title'
             | 'publish'
             | 'albumReference'
-            | 'composerReference'
+            | 'userReference'
             | 'genresReference'
             | 'performers'
         > = {

@@ -89,10 +89,6 @@ export default class ComposerService {
                 userReference: payload._id,
                 country: user.locale,
             });
-            await UserModel.updateById(user._id, {
-                composerReference: createdComposer._id,
-            });
-
             return {
                 status: 201,
                 success: true,
@@ -122,8 +118,10 @@ export default class ComposerService {
             return false;
         }
     }
-    public static async getComposerPopulate(_id: string): Promise<CustomResponse>{
-        try{
+    public static async getComposerPopulate(
+        _id: string,
+    ): Promise<CustomResponse> {
+        try {
             const composer = await ComposerModel.getComposerPopulate(_id);
             return {
                 status: 200,
@@ -131,7 +129,7 @@ export default class ComposerService {
                 message: 'GET_COMPOSER_BY_ID_SUCCESSFULLY',
                 data: composer,
             };
-        }catch(error){
+        } catch (error) {
             return {
                 status: 500,
                 success: false,

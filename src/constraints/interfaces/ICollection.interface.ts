@@ -1,8 +1,11 @@
+import { RoleConstant } from '../enums/role.enum';
+import { EContentTypeObjectS3 } from '../enums/s3.enum';
+
 export interface ISong {
     _id: string;
     title: string;
     thumbnail?: string;
-    composerReference: string;
+    userReference: string;
     songPathReference?: string;
     publish: Date;
     albumReference?: string[];
@@ -63,7 +66,11 @@ export interface IUser {
     favoriteListReference?: string;
     historyReference?: string;
     isRegistrationForm?: boolean;
-    composerReference?: string;
+    role: RoleConstant.USER | RoleConstant.COMPOSER;
+    nickname?: string;
+    albumsReference?: string[];
+    songsReference?: string[];
+    isPendingUpgradeComposer?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -83,7 +90,7 @@ export interface IAlbum {
     _id: string;
     title: string;
     publish: Date;
-    composerReference: string;
+    userReference: string;
     listSong?: string[];
     thumbnail?: string;
     information?: string;
@@ -101,10 +108,22 @@ export interface IPlaylist {
 
 export interface ISongDraftUpload {
     _id: string;
-    bucketName: string;
-    keyObject: string;
-    expiredTime: number;
-    contentType: string;
+    thumbnail: {
+        bucketName: string;
+        keyObject: string;
+        expiredTime: number;
+        contentType:
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.PNG
+            | EContentTypeObjectS3.JPG;
+    } | null;
+    audio: {
+        bucketName: string;
+        keyObject: string;
+        expiredTime: number;
+        contentType: EContentTypeObjectS3.AUDIO;
+    };
+    userReference: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

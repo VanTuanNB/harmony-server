@@ -10,11 +10,11 @@ const songSchema = new Schema<ISong>(
         performers: [
             {
                 type: String,
-                ref: 'composer',
+                ref: 'user',
                 required: true,
             },
         ],
-        composerReference: { type: String, required: true, ref: 'composer' },
+        userReference: { type: String, required: true, ref: 'user' },
         albumReference: [{ type: String, ref: 'album' }],
         genresReference: [
             {
