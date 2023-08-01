@@ -30,12 +30,12 @@ export default class AlbumController {
             .json(changeSongAlbumService);
     }
 
-    @IsRequirementReq(['title', 'publish', 'composerReference'], 'body')
+    @IsRequirementReq(['title', 'publish', 'userReference'], 'body')
     public static async create(
         req: CustomRequest,
         res: Response,
     ): Promise<Response | void> {
-        const payload: Pick<IAlbum, 'title' | 'publish' | 'composerReference'> =
+        const payload: Pick<IAlbum, 'title' | 'publish' | 'userReference'> =
             req.body;
         const createAlbumService = await AlbumService.create(payload);
         return res.status(createAlbumService.status).json(createAlbumService);

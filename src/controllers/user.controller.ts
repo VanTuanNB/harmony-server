@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { IAccountPendingVerify } from '@/constraints/interfaces/index.interface';
+import {
+    CustomRequest,
+    CustomResponseExpress,
+    IAccountPendingVerify,
+} from '@/constraints/interfaces/index.interface';
 import { IsRequirementReq } from '@/decorators/index.decorator';
 import UserService from '@/services/user.service';
 
@@ -44,4 +48,34 @@ export default class UserController {
         const signUpFormService = await UserService.signupForm(payload);
         return res.status(signUpFormService.status).json(signUpFormService);
     }
+
+    public static async permissionComposer(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const userId = res.locals.memberDecoded?._id;
+        const pendingUpgradeComposerService =
+            await UserService.pendingUpgradeComposer(userId ?? '');
+        return res
+            .status(pendingUpgradeComposerService.status)
+            .json(pendingUpgradeComposerService);
+    }
+
+    @IsRequirementReq('userId', 'body')
+    public static async AskForPermissionUpgradeComposer(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const userId: string = req.body.userId;
+        const upgradeComposerService = await UserService.upgradeComposer(
+            userId,
+        );
+        return res
+            .status(upgradeComposerService.status)
+            .json(upgradeComposerService);
+    }
+
+    // ngày mai làm phần update khi là user và composer cần làm gì
+    // xoá collection composer
+    // làm phần tạo songDraft
 }

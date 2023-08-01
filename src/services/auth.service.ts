@@ -43,9 +43,7 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: decodedToken._id,
                 email: decodedToken.email,
-                role: user.data?.composerReference
-                    ? RoleConstant.COMPOSER
-                    : RoleConstant.USER,
+                role: user.data?.role ?? RoleConstant.USER,
             });
             const updated = await UserService.updateFiled(decodedToken._id, {
                 refreshToken,
@@ -116,9 +114,7 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: user._id,
                 email: user.email,
-                role: user.composerReference
-                    ? RoleConstant.COMPOSER
-                    : RoleConstant.USER,
+                role: user.role,
             });
             const updated = await UserModel.updateById(user._id, {
                 refreshToken,
@@ -167,9 +163,7 @@ export default class AuthService {
             const { accessToken, refreshToken } = generateToken({
                 _id: user._id,
                 email: user.email,
-                role: user.composerReference
-                    ? RoleConstant.COMPOSER
-                    : RoleConstant.USER,
+                role: user.role,
             });
 
             const updated = await UserModel.updateById(user._id, {

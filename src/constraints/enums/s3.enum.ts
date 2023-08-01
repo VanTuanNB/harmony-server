@@ -1,7 +1,7 @@
-export enum EKeyObjectS3 {
-    AUDIO = 'audio',
-    THUMBNAIL_SONG = 'thumbnail-song',
-    USER_AVATAR = 'user-avatar',
+export enum EKeyObjectS3Thumbnail {
+    SONG = 'song',
+    ALBUM = 'album',
+    AVATAR = 'avatar',
 }
 
 export enum EContentTypeObjectS3 {

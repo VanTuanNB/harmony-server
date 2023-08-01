@@ -184,11 +184,11 @@ export default class SongService {
 
     public static async validateTitleUploadSong(
         title: string,
-        composerReference: string,
+        userReference: string,
         files: ITypeFiles,
     ): Promise<CustomResponse> {
         try {
-            const composer = await ComposerService.getById(composerReference);
+            const composer = await ComposerService.getById(userReference);
             if (!composer) {
                 handleDeleteFile(files.fileSong);
                 handleDeleteFile(files.thumbnail);
@@ -199,7 +199,7 @@ export default class SongService {
                 };
             }
             const listSongOfComposer = await ComposerService.getListSongById(
-                composerReference,
+                userReference,
             );
             const songs = listSongOfComposer.data!.songsReference as any[];
             const isDuplicated = songs.some(
@@ -286,7 +286,7 @@ export default class SongService {
 
             const createdSong = await SongModel.create(songFilter);
             const injectorComposer = await ComposerModel.updatedField(
-                payload.composerReference,
+                payload.userReference,
                 { songsReference: createdSong._id },
             );
             const injectorGenre = await GenreService.updateMultipleCollection(

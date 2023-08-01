@@ -31,6 +31,7 @@ passport.use(
                     email: profile._json.email as string,
                     avatar: profile._json.picture.data.url,
                     refreshToken: refreshToken,
+                    role: RoleConstant.USER,
                 });
                 cb(null, newUser);
             } else if (user?.isRegistrationForm) {

@@ -10,13 +10,11 @@ import SongModel from '@/models/song.model';
 
 export default class AlbumService {
     public static async create(
-        payload: Pick<IAlbum, 'title' | 'publish' | 'composerReference'>,
+        payload: Pick<IAlbum, 'title' | 'publish' | 'userReference'>,
     ): Promise<CustomResponse> {
         try {
             const _id: string = uuidv4();
-            const composer = await ComposerModel.getById(
-                payload.composerReference,
-            );
+            const composer = await ComposerModel.getById(payload.userReference);
             if (!composer)
                 return {
                     status: 400,
@@ -24,7 +22,7 @@ export default class AlbumService {
                     message: 'BAD_REQUEST_COMPOSER_NOT_FOUND',
                 };
             const albumByComposer = await AlbumModel.getByComposerAndTitle(
-                payload.composerReference,
+                payload.userReference,
                 payload.title,
             );
             if (albumByComposer)
@@ -39,7 +37,7 @@ export default class AlbumService {
                 ...payload,
             });
             await ComposerService.updateFieldGenre(
-                payload.composerReference,
+                payload.userReference,
                 newAlbum._id,
             );
             return {
@@ -164,7 +162,7 @@ export default class AlbumService {
     public static async getAlbumNewWeek(): Promise<CustomResponse> {
         try {
             const albumNew = await AlbumModel.getAlbumNewWeek();
-            
+
             return {
                 status: 200,
                 success: true,
@@ -177,10 +175,10 @@ export default class AlbumService {
                 success: false,
                 message: 'GET_ALBUM_NEW_WEEK_FAILED',
                 errors: error,
-            }
+            };
         }
     }
-  
+
     public static async getById(
         _id: string,
     ): Promise<CustomResponse<IAlbum | null>> {

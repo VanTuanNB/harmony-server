@@ -1,3 +1,4 @@
+import { RoleConstant } from '@/constraints/enums/role.enum';
 import { IUser } from '@/constraints/interfaces/index.interface';
 import mongoose, { Schema } from 'mongoose';
 
@@ -15,10 +16,24 @@ const userSchema = new Schema<IUser>(
         refreshToken: { type: String, required: true },
         favoriteListReference: { type: String, ref: 'favorite' },
         historyReference: { type: String, ref: 'history' },
-        composerReference: { type: String, ref: 'composer' },
+        role: { type: String, default: RoleConstant.USER },
         isRegistrationForm: { type: Boolean, default: false },
         password: { type: String, default: null },
         playlistReference: [{ type: String, ref: 'playlist' }],
+        nickname: { type: String, default: '' },
+        isPendingUpgradeComposer: { type: Boolean, default: false },
+        albumsReference: [
+            {
+                type: String,
+                ref: 'album',
+            },
+        ],
+        songsReference: [
+            {
+                type: String,
+                ref: 'song',
+            },
+        ],
     },
     {
         _id: false,
