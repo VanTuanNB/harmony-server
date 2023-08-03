@@ -77,9 +77,16 @@ export default class SongModel {
         return created;
     }
 
-    public static async updateFieldPrimateType(
+    public static async updateField(
         _id: string,
-        payload: Partial<Pick<ISong, 'title' | 'publish'>>,
+        payload: Pick<
+            ISong,
+            | 'albumReference'
+            | 'genresReference'
+            | 'performers'
+            | 'publish'
+            | 'title'
+        >,
     ): Promise<ISong | null> {
         const updatedField = await songSchema.findByIdAndUpdate(
             _id,
@@ -87,6 +94,9 @@ export default class SongModel {
                 $set: {
                     title: payload.title,
                     publish: payload.publish,
+                    albumReference: payload.albumReference,
+                    genresReference: payload.genresReference,
+                    performers: payload.performers,
                     updatedAt: new Date().toUTCString(),
                 },
             },

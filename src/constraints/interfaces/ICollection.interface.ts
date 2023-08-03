@@ -6,7 +6,12 @@ export interface ISong {
     title: string;
     thumbnail?: string;
     userReference: string;
-    songPathReference?: string;
+    // songPathReference?: string;
+    audio: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3.AUDIO;
+    };
     publish: Date;
     albumReference?: string[];
     genresReference: string[];
@@ -102,6 +107,7 @@ export interface IPlaylist {
     _id: string;
     title: string;
     listSong: string[];
+    userReference: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

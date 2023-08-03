@@ -8,7 +8,11 @@ import { IPayloadRequestSignedUrlS3 } from '@/constraints/interfaces/common.inte
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import songDraftModel from '@/models/songDraft.model';
 import generateRandomString from '@/utils/generateRandomKey.util';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+    DeleteObjectCommand,
+    GetObjectCommand,
+    PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ISongDraftUpload } from '@/constraints/interfaces/ICollection.interface';
 
@@ -132,6 +136,35 @@ export default class S3Service {
                 status: 500,
                 success: false,
                 message: 'GET_SIGNED_URL_FOR_UPLOAD_THUMBNAIL_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async deleteFileOnS3(instance: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+    }): Promise<CustomResponse> {
+        try {
+            const command = new DeleteObjectCommand({
+                Bucket: instance.bucketName,
+                Key: instance.keyObject,
+            });
+            const response = await s3Client.send(command);
+            console.log(response);
+            return {
+                status: 200,
+                success: true,
+                message: 'DELETE_FILE_S3_SUCCESSFULLY',
+                data: response,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'DELETE_FILE_S3_FAILED',
                 errors: error,
             };
         }

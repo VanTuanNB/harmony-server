@@ -1,5 +1,6 @@
 import { IUser } from '@/constraints/interfaces/index.interface';
 import userSchema from '@/database/schemas/user.schema';
+import { UpdateWriteOpResult } from 'mongoose';
 
 export default class UserModel {
     public static async getById(_id: string): Promise<IUser | null> {
@@ -23,5 +24,16 @@ export default class UserModel {
             new: true,
         });
         return updated;
+    }
+
+    public static async updateDetachListSong(
+        songReference: string,
+    ): Promise<UpdateWriteOpResult> {
+        return await userSchema.updateMany(
+            {
+                $pull: { songsReference: songReference },
+            },
+            { new: true },
+        );
     }
 }
