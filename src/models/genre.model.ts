@@ -79,6 +79,17 @@ export default class GenreModel {
         return updatedField;
     }
 
+    public static async updateDetachListSong(
+        songReference: string,
+    ): Promise<UpdateWriteOpResult> {
+        return await genreSchema.updateMany(
+            {
+                $pull: { listSong: songReference },
+            },
+            { new: true },
+        );
+    }
+
     public static async getAll(): Promise<IGenre[]> {
         const genres = genreSchema.find().populate({
             path: 'listSong',

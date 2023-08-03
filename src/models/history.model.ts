@@ -1,6 +1,7 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { IHistory } from '@/constraints/interfaces/index.interface';
 import historySchema from '@/database/schemas/history.schema';
+import { UpdateWriteOpResult } from 'mongoose';
 
 export default class HistoryModel {
     public static async getById(_id: string): Promise<IHistory | null> {
@@ -57,6 +58,17 @@ export default class HistoryModel {
             default:
                 throw new Error('INVALID ACTION UPDATE HISTORY');
         }
+    }
+
+    public static async updateDetachListSong(
+        songReference: string,
+    ): Promise<UpdateWriteOpResult> {
+        return await historySchema.updateMany(
+            {
+                $pull: { listSong: songReference },
+            },
+            { new: true },
+        );
     }
 
     public static async removeFirstSongIntoListSong(

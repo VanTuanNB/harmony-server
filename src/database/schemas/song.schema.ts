@@ -23,7 +23,15 @@ const songSchema = new Schema<ISong>(
                 required: true,
             },
         ],
-        songPathReference: { type: String, required: true, ref: 'songPath' },
+        // songPathReference: { type: String, required: true, ref: 'songPath' },
+        audio: {
+            type: {
+                bucketName: { type: String, required: true },
+                keyObject: { type: String, required: true },
+                contentType: { type: String, required: true },
+            },
+            required: true,
+        },
         views: { type: Number, default: 0 },
     },
     {

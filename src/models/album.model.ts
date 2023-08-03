@@ -124,6 +124,17 @@ export default class AlbumModel {
         return updatedField;
     }
 
+    public static async updateDetachListSong(
+        songReference: string,
+    ): Promise<UpdateWriteOpResult> {
+        return await albumSchema.updateMany(
+            {
+                $pull: { listSong: songReference },
+            },
+            { new: true },
+        );
+    }
+
     public static async getAlbumNewWeek(): Promise<IAlbum[]> {
         const albumNew = await albumSchema
             .find({
