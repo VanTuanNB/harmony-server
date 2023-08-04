@@ -9,6 +9,10 @@ export default class songDraftModel {
         return await songDraftSchema.findById(_id);
     }
 
+    public static async getUserId(userReference: string): Promise<ISongDraftUpload | null> {
+        return await songDraftSchema.findOne({userReference: userReference});
+    }
+
     public static async create(
         payload: ISongDraftUpload,
     ): Promise<ISongDraftUpload> {
