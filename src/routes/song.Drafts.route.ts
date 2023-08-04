@@ -5,6 +5,6 @@ import songDraft from '@/services/songDraffs.service';
 const SongDraftInstance = new SongDraftsController(new songDraft());
 const router: Router = Router();
 
-router.route('/:id').get(SongDraftInstance.getSongDaftsbyUserID);
+router.route('/:id').get(SongDraftInstance.getSongDaftsbyUserID.bind(SongDraftInstance));
 
 export default router;
