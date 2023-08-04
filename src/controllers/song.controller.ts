@@ -55,7 +55,6 @@ export default class SongController {
             data &&
             data.instanceContent &&
             (data.instanceContent.Body as Readable);
-        console.log('true', streamData);
         if (streamData) {
             res.writeHead(songService.status, {
                 ...data?.resHeader,

@@ -1,7 +1,4 @@
-import path from 'path';
-
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import ThumbnailRepository from '@/repositories/thumbnail.repository';
 import SongModel from '@/models/song.model';
 import S3Service from './s3.service';
 import sharp from 'sharp';
