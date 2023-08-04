@@ -4,12 +4,7 @@ import {
     EContentTypeObjectS3,
     EKeyObjectS3Thumbnail,
 } from '@/constraints/enums/s3.enum';
-import { IPayloadRequestSignedUrlS3 } from '@/constraints/interfaces/common.interface';
-import { Readable } from 'stream';
-import {
-    CustomRequest,
-    CustomResponse,
-} from '@/constraints/interfaces/custom.interface';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import songDraftModel from '@/models/songDraft.model';
 import generateRandomString from '@/utils/generateRandomKey.util';
 import {
@@ -19,11 +14,14 @@ import {
     PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ISongDraftUpload } from '@/constraints/interfaces/ICollection.interface';
 
 interface IResponseUrlS3 {
+    uploadId: string;
     privateUrl: string;
     expired: number;
+    contentType: string;
+    keyObjectAudio?: string;
+    keyObjectThumbnail?: string;
 }
 
 export default class S3Service {
@@ -61,13 +59,9 @@ export default class S3Service {
         }
     }
 
-    // ngày mai fix tường hợp erorr của khi get không có range;
-    // ở controller call service getByiD của song;
-    // sau đó call hàm s3service ở đó luôn cho dễ sử dụng
-
     public async getSignUrlForUploadAudioS3(
         userId: string,
-    ): Promise<CustomResponse> {
+    ): Promise<CustomResponse<IResponseUrlS3>> {
         try {
             if (!userId)
                 return {
@@ -126,7 +120,7 @@ export default class S3Service {
             | EContentTypeObjectS3.JPEG
             | EContentTypeObjectS3.JPG
             | EContentTypeObjectS3.PNG,
-    ): Promise<CustomResponse> {
+    ): Promise<CustomResponse<IResponseUrlS3>> {
         try {
             const currentSongDraft = await songDraftModel.getById(uploadId);
             if (!userId || !currentSongDraft)
