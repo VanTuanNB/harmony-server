@@ -3,10 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { IAlbum } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import AlbumModel from '@/models/album.model';
-import ComposerModel from '@/models/composer.model';
-import ComposerService from './composer.service';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import SongModel from '@/models/song.model';
+import UserModel from '@/models/user.model';
 
 export default class AlbumService {
     public static async create(
@@ -14,7 +13,7 @@ export default class AlbumService {
     ): Promise<CustomResponse> {
         try {
             const _id: string = uuidv4();
-            const composer = await ComposerModel.getById(payload.userReference);
+            const composer = await UserModel.getById(payload.userReference);
             if (!composer)
                 return {
                     status: 400,
@@ -31,12 +30,11 @@ export default class AlbumService {
                     success: false,
                     message: 'TITLE_ALBUM_IS_EXISTING',
                 };
-
             const newAlbum = await AlbumModel.create({
                 _id,
                 ...payload,
             });
-            await ComposerService.updateFieldGenre(
+            await UserModel.updateIncreaseAlbum(
                 payload.userReference,
                 newAlbum._id,
             );

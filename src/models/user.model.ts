@@ -36,4 +36,14 @@ export default class UserModel {
             { new: true },
         );
     }
+
+    public static async updateIncreaseAlbum(_id: string, albumId: string) {
+        return await userSchema.findOneAndUpdate(
+            { _id },
+            {
+                $push: { albumsReference: albumId },
+            },
+            { new: true },
+        );
+    }
 }
