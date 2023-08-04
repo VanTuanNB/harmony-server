@@ -6,10 +6,12 @@ import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware
 import SongService from '@/services/song.service';
 import S3Service from '@/services/s3.service';
 const router: Router = Router();
-// router.route('/stream/:id').get(SongController.getStreamSong);
 const songControllerInstance = new SongController(
     new SongService(new S3Service()),
 );
+router
+    .route('/stream/:id')
+    .get(songControllerInstance.getStreamSong.bind(songControllerInstance));
 router
     .route('/:id')
     .get(songControllerInstance.getById.bind(songControllerInstance))

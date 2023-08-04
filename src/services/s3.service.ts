@@ -5,12 +5,17 @@ import {
     EKeyObjectS3Thumbnail,
 } from '@/constraints/enums/s3.enum';
 import { IPayloadRequestSignedUrlS3 } from '@/constraints/interfaces/common.interface';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { Readable } from 'stream';
+import {
+    CustomRequest,
+    CustomResponse,
+} from '@/constraints/interfaces/custom.interface';
 import songDraftModel from '@/models/songDraft.model';
 import generateRandomString from '@/utils/generateRandomKey.util';
 import {
     DeleteObjectCommand,
     GetObjectCommand,
+    GetObjectOutput,
     PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -24,6 +29,41 @@ interface IResponseUrlS3 {
 export default class S3Service {
     private expiredTime: number = 3000; // default 5 minutes
     constructor() {}
+    public async getFileContentS3(instance: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+        range?: string;
+    }): Promise<CustomResponse<GetObjectOutput>> {
+        try {
+            const command = new GetObjectCommand({
+                Bucket: instance.bucketName,
+                Key: instance.keyObject,
+                Range: instance.range,
+            });
+            const response: GetObjectOutput = await s3Client.send(command);
+            if (response && !response.Body)
+                throw new Error('CAN_NOT_GET_FILE_S3');
+            return {
+                status: 200,
+                success: true,
+                message: 'FILE_CONTENT_S3_SUCCESSFULLY',
+                data: response,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_FILE_CONTENT_S3_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    // ngày mai fix tường hợp erorr của khi get không có range;
+    // ở controller call service getByiD của song;
+    // sau đó call hàm s3service ở đó luôn cho dễ sử dụng
 
     public async getSignUrlForUploadAudioS3(
         userId: string,
@@ -152,7 +192,6 @@ export default class S3Service {
                 Key: instance.keyObject,
             });
             const response = await s3Client.send(command);
-            console.log(response);
             return {
                 status: 200,
                 success: true,

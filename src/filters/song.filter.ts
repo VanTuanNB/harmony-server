@@ -26,11 +26,19 @@ export default class SongFilter implements TypeProps {
 
     @IsOptional()
     @IsString()
-    thumbnail?: string;
+    thumbnailUrl: string;
 
     @IsNotEmpty()
     @IsDateString()
     publish: Date;
+
+    @IsNotEmpty()
+    @IsObject()
+    thumbnail: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3;
+    };
 
     @IsNotEmpty()
     @IsObject()
@@ -74,6 +82,7 @@ export default class SongFilter implements TypeProps {
         this.performers = params.performers;
         this.publish = params.publish;
         this.thumbnail = params.thumbnail;
+        this.thumbnailUrl = params.thumbnailUrl;
         this.audio = params.audio;
         this.views = params.views;
     }

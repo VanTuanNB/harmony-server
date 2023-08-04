@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import mongoose from 'mongoose';
 
-export default class ThumbnailMigration {
+export default class SongDraftMigration {
     public static async create(db: mongoose.mongo.Db): Promise<boolean> {
         try {
             const filePath = path.join(
@@ -12,13 +12,13 @@ export default class ThumbnailMigration {
                 '../',
                 'database',
                 'backups',
-                'thumbnails.json',
+                'songdrafts.json',
             );
             const fileContent = fs.readFileSync(filePath, {
                 encoding: 'utf-8',
             });
             const fileData = JSON.parse(fileContent);
-            const collectionName = 'thumbnails';
+            const collectionName = 'songdrafts';
             const isExits = !!(await db
                 .listCollections({ name: collectionName })
                 .next());
@@ -26,7 +26,7 @@ export default class ThumbnailMigration {
             const result = await db
                 .collection(collectionName)
                 .insertMany(fileData);
-            console.log('Create thumbnail collection successfully');
+            console.log('Create songDrafts collection successfully');
             return result ? true : false;
         } catch (error) {
             console.error(error);

@@ -14,6 +14,7 @@ import {
 import SongService from '@/services/song.service';
 import { uploadFiledEnum } from '@/constraints/enums/index.enum';
 import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
+import { Readable } from 'stream';
 
 const requirementFields = [
     'title',
@@ -37,6 +38,33 @@ export default class SongController {
         const _id = req.params.id;
         const song = await this.songService.getById(_id);
         return res.status(song.status).json(song);
+    }
+
+    @IsRequirementReq('id', 'params')
+    public async getStreamSong(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const { id } = req.params;
+        const range = req.headers.range;
+        const songService = await this.songService.getStreamSong(id, range);
+        if (!songService.success)
+            return res.status(songService.status).json(songService);
+        const { data } = songService;
+        const streamData =
+            data &&
+            data.instanceContent &&
+            (data.instanceContent.Body as Readable);
+        console.log('true', streamData);
+        if (streamData) {
+            res.writeHead(songService.status, {
+                ...data?.resHeader,
+            });
+            streamData.pipe(res);
+        } else {
+            delete songService.data;
+            return res.status(songService.status).json(songService);
+        }
     }
 
     @IsRequirementReq(requirementFields, 'body')

@@ -17,6 +17,7 @@ import FavoriteModel from '@/models/favorite.model';
 import HistoryModel from '@/models/history.model';
 import UserModel from '@/models/user.model';
 import PlaylistModel from '@/models/paylist.model';
+import { GetObjectOutput } from '@aws-sdk/client-s3';
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
@@ -24,10 +25,7 @@ export interface ITypeFiles {
 }
 
 export interface IFsStreamSong {
-    isRange: boolean;
-    fileSize: number;
-    fileStream: fs.ReadStream;
-    chunkSize?: number;
+    instanceContent: GetObjectOutput;
     resHeader: {
         [type: string]: string | number;
     };
@@ -114,13 +112,18 @@ export default class SongService {
             const currentSongDraft = await songDraftModel.getById(
                 payload.uploadId,
             );
-            if (
-                !currentSongDraft ||
-                payload.uploadId === currentSongDraft._id ||
-                (!currentSongDraft.audio.hasOwnProperty('bucketName') &&
-                    currentSongDraft.thumbnail &&
-                    !currentSongDraft.thumbnail.hasOwnProperty('bucketName'))
-            )
+            const isFailedCheckFirst =
+                !currentSongDraft || payload.uploadId !== currentSongDraft._id;
+            if (isFailedCheckFirst)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_UPLOAD_SONG',
+                };
+
+            const isFailedCheckSecond =
+                !currentSongDraft.audio && currentSongDraft.thumbnail === null;
+            if (isFailedCheckSecond)
                 return {
                     status: 400,
                     success: false,
@@ -129,7 +132,12 @@ export default class SongService {
             const _id = uuidv4();
             const songFilter = new SongFilter({
                 _id,
-                thumbnail: `http://localhost:5000/signedUrlS3/thumbnail/{id}`,
+                thumbnailUrl: `${process.env.SERVER_URL}:${process.env.PORT_SERVER}/api/v1/thumbnail/${_id}`,
+                thumbnail: {
+                    bucketName: currentSongDraft.thumbnail!.bucketName,
+                    keyObject: currentSongDraft.thumbnail!.keyObject,
+                    contentType: currentSongDraft.thumbnail!.contentType,
+                },
                 audio: {
                     bucketName: currentSongDraft.audio.bucketName,
                     keyObject: currentSongDraft.audio.keyObject,
@@ -281,83 +289,77 @@ export default class SongService {
         }
     }
 
-    // public static async getFsStreamSong(
-    //     idSong: string,
-    //     range: string | undefined,
-    // ): Promise<CustomResponse<IFsStreamSong>> {
-    //     try {
-    //         const currentSong = await SongModel.getByIdSelectSongPathReference(
-    //             idSong,
-    //         );
-    //         if (!currentSong)
-    //             return {
-    //                 status: 400,
-    //                 success: false,
-    //                 message: 'GET_STREAM_SONG_NOT_EXIST',
-    //             };
-    //         const filePath = await SongPathModel.getById(
-    //             currentSong.songPathReference as string,
-    //         );
-    //         if (!filePath)
-    //             return {
-    //                 status: 400,
-    //                 success: false,
-    //                 message: 'GET_STREAM_SONG_ID_NOT_FOUND',
-    //             };
-    //         if (range) {
-    //             const [start, end] = range.replace('bytes=', '').split('-');
-    //             const startByte = parseInt(start, 10);
-    //             const endByte = end ? parseInt(end, 10) : filePath.size - 1;
-    //             const chunkSize = endByte - startByte + 1;
-    //             const fileStream = fs.createReadStream(filePath.path, {
-    //                 start: startByte,
-    //                 end: endByte,
-    //             });
-    //             return {
-    //                 status: 206,
-    //                 success: true,
-    //                 message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
-    //                 data: {
-    //                     isRange: true,
-    //                     chunkSize,
-    //                     fileStream,
-    //                     fileSize: filePath.size,
-    //                     resHeader: {
-    //                         'Content-Range': `bytes ${startByte}-${endByte}/${filePath.size}`,
-    //                         'Accept-Ranges': 'bytes',
-    //                         'Content-Length': chunkSize,
-    //                         'Content-Type': 'audio/mpeg',
-    //                     },
-    //                 },
-    //             };
-    //         } else {
-    //             const fileStream = fs.createReadStream(filePath.path);
-    //             return {
-    //                 status: 200,
-    //                 success: true,
-    //                 message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
-    //                 data: {
-    //                     isRange: false,
-    //                     fileStream,
-    //                     fileSize: filePath.size,
-    //                     resHeader: {
-    //                         'Content-Length': filePath.size,
-    //                         'Content-Type': 'audio/mpeg',
-    //                         'Accept-Ranges': 'bytes',
-    //                     },
-    //                 },
-    //             };
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         return {
-    //             status: 500,
-    //             success: false,
-    //             message: 'GET_STREAM_SONG_FAILED',
-    //             errors: error,
-    //         };
-    //     }
-    // }
+    public async getStreamSong(
+        _id: string,
+        range: string | undefined,
+    ): Promise<CustomResponse<IFsStreamSong>> {
+        try {
+            const currentSong = await SongModel.getByIdNoPopulate(_id);
+            if (!currentSong)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_STREAM_SONG_NOT_EXIST',
+                };
+            if (range) {
+                const fileContent = await this.s3Service.getFileContentS3({
+                    bucketName: currentSong.audio.bucketName,
+                    contentType: currentSong.audio.contentType,
+                    keyObject: currentSong.audio.keyObject,
+                    range,
+                });
+                return {
+                    status: 206,
+                    success: true,
+                    message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
+                    data: {
+                        instanceContent: fileContent.data as GetObjectOutput,
+                        resHeader: {
+                            'Accept-Ranges': 'bytes',
+                            'Content-Range': fileContent.data
+                                ? fileContent.data.ContentRange || '0-0/0'
+                                : '0-0/0',
+                            'Content-Length':
+                                (fileContent.data &&
+                                    fileContent.data.ContentLength) ||
+                                0,
+                            'Content-Type': currentSong.audio.contentType,
+                        },
+                    },
+                };
+            } else {
+                const fileContent = await this.s3Service.getFileContentS3({
+                    bucketName: currentSong.audio.bucketName,
+                    contentType: currentSong.audio.contentType,
+                    keyObject: currentSong.audio.keyObject,
+                });
+                return {
+                    status: 200,
+                    success: true,
+                    message: 'GET_FS_STREAM_SONG_SUCCESSFULLY',
+                    data: {
+                        instanceContent: fileContent.data as GetObjectOutput,
+                        resHeader: {
+                            'Accept-Ranges': 'bytes',
+                            'Content-Length':
+                                (fileContent.data &&
+                                    fileContent.data.ContentLength) ||
+                                0,
+                            'Content-Type': currentSong.audio.contentType,
+                        },
+                    },
+                };
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_STREAM_SONG_FAILED',
+                errors: error,
+            };
+        }
+    }
 
     // public static async validateTitleUploadSong(
     //     title: string,

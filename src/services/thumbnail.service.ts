@@ -1,7 +1,6 @@
 import path from 'path';
 
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import ThumbnailModel from '@/models/thumbnail.model';
 import ThumbnailRepository from '@/repositories/thumbnail.repository';
 
 export default class ThumbnailService {
@@ -10,25 +9,30 @@ export default class ThumbnailService {
         resize?: string,
     ): Promise<CustomResponse<Buffer>> {
         try {
-            const thumbnailImg = await ThumbnailModel.getById(slugId);
-            if (!thumbnailImg)
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'GET_THUMBNAIL_FAILED_ID_NOT_FOUND',
-                };
-            const filePath = path.join(__dirname, '../../', thumbnailImg.path);
-            const thumbnailRepo =
-                await ThumbnailRepository.getInformationThumbnail(
-                    filePath,
-                    resize,
-                );
             return {
                 status: 200,
                 success: true,
-                message: 'GET_THUMBNAIL_SUCCESSFULLY',
-                data: thumbnailRepo,
+                message: 'TESTING',
             };
+            // const thumbnailImg = await ThumbnailModel.getById(slugId);
+            // if (!thumbnailImg)
+            //     return {
+            //         status: 400,
+            //         success: false,
+            //         message: 'GET_THUMBNAIL_FAILED_ID_NOT_FOUND',
+            //     };
+            // const filePath = path.join(__dirname, '../../', thumbnailImg.path);
+            // const thumbnailRepo =
+            //     await ThumbnailRepository.getInformationThumbnail(
+            //         filePath,
+            //         resize,
+            //     );
+            // return {
+            //     status: 200,
+            //     success: true,
+            //     message: 'GET_THUMBNAIL_SUCCESSFULLY',
+            //     data: thumbnailRepo,
+            // };
         } catch (error) {
             console.log(error);
             return {

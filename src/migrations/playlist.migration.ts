@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import mongoose from 'mongoose';
 
-export default class ComposerMigration {
+export default class PlaylistMigration {
     public static async create(db: mongoose.mongo.Db): Promise<boolean> {
         try {
             const filePath = path.join(
@@ -12,13 +12,13 @@ export default class ComposerMigration {
                 '../',
                 'database',
                 'backups',
-                'composers.json',
+                'playlists.json',
             );
             const fileContent = fs.readFileSync(filePath, {
                 encoding: 'utf-8',
             });
             const fileData = JSON.parse(fileContent);
-            const collectionName = 'composers';
+            const collectionName = 'playlists';
             const isExits = !!(await db
                 .listCollections({ name: collectionName })
                 .next());
@@ -26,7 +26,7 @@ export default class ComposerMigration {
             const result = await db
                 .collection(collectionName)
                 .insertMany(fileData);
-            console.log('Create composer collection successfully');
+            console.log('create playlists collection successfully');
             return result ? true : false;
         } catch (error) {
             console.error(error);
