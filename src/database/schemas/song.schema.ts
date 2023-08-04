@@ -6,7 +6,6 @@ const songSchema = new Schema<ISong>(
         _id: { type: String, required: true },
         title: { type: String, required: true },
         publish: { type: Date, required: true },
-        thumbnail: { type: String, required: true, ref: 'thumbnail' },
         performers: [
             {
                 type: String,
@@ -23,7 +22,25 @@ const songSchema = new Schema<ISong>(
                 required: true,
             },
         ],
-        songPathReference: { type: String, required: true, ref: 'songPath' },
+        thumbnailUrl: { type: String, required: true },
+        thumbnail: {
+            type: {
+                bucketName: { type: String, required: true },
+                keyObject: { type: String, required: true },
+                contentType: { type: String, required: true },
+            },
+            _id: false,
+            required: true,
+        },
+        audio: {
+            type: {
+                bucketName: { type: String, required: true },
+                keyObject: { type: String, required: true },
+                contentType: { type: String, required: true },
+            },
+            _id: false,
+            required: true,
+        },
         views: { type: Number, default: 0 },
     },
     {

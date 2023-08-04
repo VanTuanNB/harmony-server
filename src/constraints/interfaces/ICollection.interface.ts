@@ -4,9 +4,18 @@ import { EContentTypeObjectS3 } from '../enums/s3.enum';
 export interface ISong {
     _id: string;
     title: string;
-    thumbnail?: string;
+    thumbnailUrl: string;
     userReference: string;
-    songPathReference?: string;
+    thumbnail: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3;
+    };
+    audio: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3.AUDIO;
+    };
     publish: Date;
     albumReference?: string[];
     genresReference: string[];
@@ -47,11 +56,6 @@ export interface IFavorite {
     listSong: string[];
     createdAt?: Date;
     updatedAt?: Date;
-}
-
-export interface IThumbnailSong {
-    _id: string;
-    path: string;
 }
 
 export interface IUser {
@@ -102,6 +106,7 @@ export interface IPlaylist {
     _id: string;
     title: string;
     listSong: string[];
+    userReference: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

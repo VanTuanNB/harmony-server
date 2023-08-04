@@ -1,14 +1,15 @@
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 import {
     ISong,
     IComposer,
     IAlbum,
 } from '@/constraints/interfaces/index.interface';
-import ISongPath from '@/constraints/interfaces/ISongPath';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 import {
     IsDateString,
     IsNotEmpty,
     IsNumber,
+    IsObject,
     IsOptional,
     IsString,
 } from 'class-validator';
@@ -25,17 +26,27 @@ export default class SongFilter implements TypeProps {
 
     @IsOptional()
     @IsString()
-    thumbnail?: string;
+    thumbnailUrl: string;
 
     @IsNotEmpty()
     @IsDateString()
     publish: Date;
 
-    @IsOptional()
-    @IsGenerateCollection<ISongPath>({
-        message: 'Property songPathId missing key _id',
-    })
-    songPathReference?: string;
+    @IsNotEmpty()
+    @IsObject()
+    thumbnail: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3;
+    };
+
+    @IsNotEmpty()
+    @IsObject()
+    audio: {
+        bucketName: string;
+        keyObject: string;
+        contentType: EContentTypeObjectS3.AUDIO;
+    };
 
     @IsGenerateCollection<IComposer>({
         message: 'Property composerId missing key _id',
@@ -71,7 +82,8 @@ export default class SongFilter implements TypeProps {
         this.performers = params.performers;
         this.publish = params.publish;
         this.thumbnail = params.thumbnail;
-        this.songPathReference = params.songPathReference;
+        this.thumbnailUrl = params.thumbnailUrl;
+        this.audio = params.audio;
         this.views = params.views;
     }
 }

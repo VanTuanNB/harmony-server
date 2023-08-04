@@ -1,6 +1,5 @@
 import { RoleConstant } from '@/constraints/enums/role.enum';
 import { IPayloadToken } from '@/constraints/interfaces/index.interface';
-import ComposerService from '@/services/composer.service';
 import UserService from '@/services/user.service';
 import { verifyToken } from '@/utils/jwtToken.util';
 import { Request, Response, NextFunction } from 'express';
@@ -68,13 +67,17 @@ export async function authenticationComposer(
                 message: 'PERMISSION_DENIED',
             });
         const user = await UserService.getById(verify._id);
-        if (!user.success && (user.data && user.data.role !== RoleConstant.COMPOSER))
+        if (
+            !user.success &&
+            user.data &&
+            user.data.role !== RoleConstant.COMPOSER
+        )
             return res.status(400).json({
                 status: 403,
                 success: false,
                 message: 'PERMISSION_DENIED',
             });
-        
+
         res.locals.memberDecoded = verify;
         next();
     } catch (error: any) {

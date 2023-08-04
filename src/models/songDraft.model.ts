@@ -1,4 +1,7 @@
-import { ISongDraftUpload } from '@/constraints/interfaces/ICollection.interface';
+import {
+    ISong,
+    ISongDraftUpload,
+} from '@/constraints/interfaces/ICollection.interface';
 import songDraftSchema from '@/database/schemas/songDraft.schema';
 
 export default class songDraftModel {
@@ -58,4 +61,18 @@ export default class songDraftModel {
             },
         );
     }
+
+    public static async forceDelete(_id: string): Promise<ISong | null> {
+        return await songDraftSchema.findByIdAndDelete(_id);
+    }
 }
+
+// ngày mai sẽ làm phần tiếp theo của s3:
+//  + update một song thì update field trong collection song. -> done
+//  + delete ở trên s3 đồng thời cũng delete trên db; -> thiếu phần playlist
+//  + create song thì cũng phải thêm id vào listSong những collection liên quan
+//  + get song thì trả về json
+//  + get stream thì trả về pipe stream
+//  + get thumbnail thì gọi lên api server, server sẽ gọi lên s3, xong lấy
+//  + thiếu playlist module
+//  file content đọc và trả về bằng res.pipe

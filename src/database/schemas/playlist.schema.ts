@@ -11,6 +11,7 @@ const playlistSchema = new Schema<IPlaylist>(
                 ref: 'song',
             },
         ],
+        userReference: { type: String, required: true, ref: 'user' },
     },
     {
         _id: false,

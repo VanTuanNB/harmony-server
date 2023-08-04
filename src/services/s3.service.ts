@@ -4,26 +4,64 @@ import {
     EContentTypeObjectS3,
     EKeyObjectS3Thumbnail,
 } from '@/constraints/enums/s3.enum';
-import { IPayloadRequestSignedUrlS3 } from '@/constraints/interfaces/common.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import songDraftModel from '@/models/songDraft.model';
 import generateRandomString from '@/utils/generateRandomKey.util';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+    DeleteObjectCommand,
+    GetObjectCommand,
+    GetObjectOutput,
+    PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { ISongDraftUpload } from '@/constraints/interfaces/ICollection.interface';
 
 interface IResponseUrlS3 {
+    uploadId: string;
     privateUrl: string;
     expired: number;
+    contentType: string;
+    keyObjectAudio?: string;
+    keyObjectThumbnail?: string;
 }
 
 export default class S3Service {
     private expiredTime: number = 3000; // default 5 minutes
     constructor() {}
+    public async getFileContentS3(instance: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+        range?: string;
+    }): Promise<CustomResponse<GetObjectOutput>> {
+        try {
+            const command = new GetObjectCommand({
+                Bucket: instance.bucketName,
+                Key: instance.keyObject,
+                Range: instance.range,
+            });
+            const response: GetObjectOutput = await s3Client.send(command);
+            if (response && !response.Body)
+                throw new Error('CAN_NOT_GET_FILE_S3');
+            return {
+                status: 200,
+                success: true,
+                message: 'FILE_CONTENT_S3_SUCCESSFULLY',
+                data: response,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_FILE_CONTENT_S3_FAILED',
+                errors: error,
+            };
+        }
+    }
 
     public async getSignUrlForUploadAudioS3(
         userId: string,
-    ): Promise<CustomResponse> {
+    ): Promise<CustomResponse<IResponseUrlS3>> {
         try {
             if (!userId)
                 return {
@@ -82,7 +120,7 @@ export default class S3Service {
             | EContentTypeObjectS3.JPEG
             | EContentTypeObjectS3.JPG
             | EContentTypeObjectS3.PNG,
-    ): Promise<CustomResponse> {
+    ): Promise<CustomResponse<IResponseUrlS3>> {
         try {
             const currentSongDraft = await songDraftModel.getById(uploadId);
             if (!userId || !currentSongDraft)
@@ -132,6 +170,34 @@ export default class S3Service {
                 status: 500,
                 success: false,
                 message: 'GET_SIGNED_URL_FOR_UPLOAD_THUMBNAIL_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async deleteFileOnS3(instance: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+    }): Promise<CustomResponse> {
+        try {
+            const command = new DeleteObjectCommand({
+                Bucket: instance.bucketName,
+                Key: instance.keyObject,
+            });
+            const response = await s3Client.send(command);
+            return {
+                status: 200,
+                success: true,
+                message: 'DELETE_FILE_S3_SUCCESSFULLY',
+                data: response,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'DELETE_FILE_S3_FAILED',
                 errors: error,
             };
         }
