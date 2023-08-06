@@ -3,6 +3,7 @@ import {
     IsBoolean,
     IsEmail,
     IsNotEmpty,
+    IsObject,
     IsOptional,
     IsString,
     MaxLength,
@@ -36,7 +37,15 @@ export default class UserValidation implements TypeProps {
 
     @IsOptional()
     @IsString()
-    avatar?: string;
+    avatarUrl?: string;
+
+    @IsOptional()
+    @IsObject()
+    avatarS3: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+    } | null;
 
     @IsOptional()
     @IsBoolean()
@@ -92,7 +101,8 @@ export default class UserValidation implements TypeProps {
         this.name = payload.name;
         this.refreshToken = payload.refreshToken;
         this.password = payload.password;
-        this.avatar = payload.avatar;
+        this.avatarUrl = payload.avatarUrl;
+        this.avatarS3 = payload.avatarS3;
         this.favoriteListReference = payload.favoriteListReference;
         this.historyReference = payload.historyReference;
         this.isRegistrationForm = payload.isRegistrationForm;

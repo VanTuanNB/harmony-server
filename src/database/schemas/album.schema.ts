@@ -7,7 +7,16 @@ const albumSchema = new Schema<IAlbum>(
         title: { type: String, required: true },
         publish: { type: Date, required: true },
         information: { type: String, default: '' },
-        thumbnail: { type: String, required: true, ref: 'thumbnail' },
+        thumbnailUrl: { type: String, default: null },
+        thumbnail: {
+            type: {
+                bucketName: { type: String, required: true },
+                keyObject: { type: String, required: true },
+                contentType: { type: String, required: true },
+            },
+            default: null,
+            _id: false,
+        },
         userReference: { type: String, required: true, ref: 'user' },
         listSong: [
             {

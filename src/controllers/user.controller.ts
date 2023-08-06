@@ -74,8 +74,4 @@ export default class UserController {
             .status(upgradeComposerService.status)
             .json(upgradeComposerService);
     }
-
-    // ngày mai làm phần update khi là user và composer cần làm gì
-    // xoá collection composer
-    // làm phần tạo songDraft
 }

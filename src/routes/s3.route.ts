@@ -1,5 +1,8 @@
 import S3Controller from '@/controllers/s3.controller';
-import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
+import {
+    authenticationComposer,
+    authenticationUser,
+} from '@/middlewares/authVerifyToken.middleware';
 import S3Service from '@/services/s3.service';
 import { Router } from 'express';
 const s3ControllerInstance = new S3Controller(new S3Service());
@@ -19,6 +22,22 @@ router
     .post(
         authenticationComposer,
         s3ControllerInstance.postSignedUrlS3Audio.bind(s3ControllerInstance),
+    );
+
+router
+    .route('/album')
+    .post(
+        authenticationComposer,
+        s3ControllerInstance.postSignedUrlS3Album.bind(s3ControllerInstance),
+    );
+
+router
+    .route('/userAvatar')
+    .post(
+        authenticationUser,
+        s3ControllerInstance.postSignedUrlS3UserAvatar.bind(
+            s3ControllerInstance,
+        ),
     );
 
 export default router;

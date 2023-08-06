@@ -39,18 +39,7 @@ export default class AlbumModel {
     }
 
     public static async getById(_id: string): Promise<IAlbum | null> {
-        const album = await albumSchema
-            .findById(_id)
-            .populate({
-                path: 'userReference',
-                strictPopulate: true,
-                select: 'name nickname',
-            })
-            .populate({
-                path: 'listSong',
-                strictPopulate: true,
-                select: 'title thumbnail',
-            });
+        const album = await albumSchema.findById(_id);
         return album;
     }
 
@@ -94,6 +83,8 @@ export default class AlbumModel {
                     publish: payload.publish,
                     information: payload.information,
                     userReference: payload.userReference,
+                    thumbnail: payload.thumbnail,
+                    thumbnailUrl: payload.thumbnailUrl,
                     updatedAt: payload.updatedAt,
                 },
                 $push: { listSong: payload.listSong },
@@ -115,6 +106,8 @@ export default class AlbumModel {
                     publish: payload.publish,
                     information: payload.information,
                     userReference: payload.userReference,
+                    thumbnail: payload.thumbnail,
+                    thumbnailUrl: payload.thumbnailUrl,
                     updatedAt: payload.updatedAt,
                 },
                 $pull: { listSong: payload.listSong },

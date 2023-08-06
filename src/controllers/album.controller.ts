@@ -30,13 +30,19 @@ export default class AlbumController {
             .json(changeSongAlbumService);
     }
 
-    @IsRequirementReq(['title', 'publish', 'userReference'], 'body')
+    @IsRequirementReq(['title', 'publish'], 'body')
+    @IsRequirementTypeId(['userReference', 'listSong'], 'body')
     public static async create(
         req: CustomRequest,
-        res: Response,
+        res: CustomResponseExpress,
     ): Promise<Response | void> {
-        const payload: Pick<IAlbum, 'title' | 'publish' | 'userReference'> =
-            req.body;
+        const payload: Pick<
+            IAlbum,
+            'title' | 'publish' | 'userReference' | 'listSong' | 'information'
+        > = req.body;
+        Object.assign(payload, {
+            userReference: res.locals.memberDecoded?._id ?? '',
+        });
         const createAlbumService = await AlbumService.create(payload);
         return res.status(createAlbumService.status).json(createAlbumService);
     }

@@ -1,4 +1,4 @@
-import { IUser } from '@/constraints/interfaces/index.interface';
+import { ISong, IUser } from '@/constraints/interfaces/index.interface';
 import userSchema from '@/database/schemas/user.schema';
 import { UpdateWriteOpResult } from 'mongoose';
 
@@ -24,6 +24,19 @@ export default class UserModel {
             new: true,
         });
         return updated;
+    }
+
+    public static async updateIncreaseSongReferenceById(
+        userId: string,
+        songReference: string,
+    ): Promise<ISong | null> {
+        return await userSchema.findByIdAndUpdate(
+            { _id: userId },
+            {
+                $push: { songsReference: songReference },
+            },
+            { new: true },
+        );
     }
 
     public static async updateDetachListSong(

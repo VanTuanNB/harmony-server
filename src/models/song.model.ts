@@ -1,6 +1,7 @@
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { ISong } from '@/constraints/interfaces/index.interface';
 import songSchema from '@/database/schemas/song.schema';
+import { UpdateWriteOpResult } from 'mongoose';
 
 export default class SongModel {
     public static async getAll(): Promise<ISong[]> {
@@ -158,6 +159,19 @@ export default class SongModel {
             default:
                 throw new Error('Action not supported');
         }
+    }
+
+    public static async updateIncreaseAlbumReference(
+        listId: string[],
+        albumId: string,
+    ): Promise<UpdateWriteOpResult> {
+        return await songSchema.updateMany(
+            { _id: listId },
+            {
+                $push: { albumReference: albumId },
+            },
+            { new: true },
+        );
     }
 
     public static async forceDelete(id: string): Promise<ISong | null> {

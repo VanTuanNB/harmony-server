@@ -3,7 +3,6 @@ export default interface IAdmin {
     name: string;
     email: string;
     password: string;
-    role: number;
     refreshToken: string;
     createdAt: string;
     updatedAt: string;

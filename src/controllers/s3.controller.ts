@@ -42,4 +42,46 @@ export default class S3Controller {
             );
         return res.status(200).json(signedUrlS3Service);
     }
+
+    @IsRequirementReq(['albumId', 'contentType'], 'body')
+    public async postSignedUrlS3Album(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const userId = res.locals.memberDecoded?._id;
+        const { albumId, contentType } = req.body as {
+            albumId: string;
+            contentType:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.PNG
+                | EContentTypeObjectS3.JPG;
+        };
+        const signedUrlS3Service =
+            await this.s3Service.getSignUrlForUploadAlbum(
+                userId ?? '',
+                albumId,
+                contentType,
+            );
+        return res.status(200).json(signedUrlS3Service);
+    }
+
+    @IsRequirementReq('contentType', 'body')
+    public async postSignedUrlS3UserAvatar(
+        req: CustomRequest,
+        res: CustomResponseExpress,
+    ): Promise<Response | void> {
+        const userId = res.locals.memberDecoded?._id;
+        const { contentType } = req.body as {
+            contentType:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.PNG
+                | EContentTypeObjectS3.JPG;
+        };
+        const signedUrlS3Service =
+            await this.s3Service.getSignUrlForUploadUserAvatar(
+                userId ?? '',
+                contentType,
+            );
+        return res.status(200).json(signedUrlS3Service);
+    }
 }

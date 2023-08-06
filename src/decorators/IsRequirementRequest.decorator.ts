@@ -51,29 +51,55 @@ export function IsRequirementTypeId(
                               });
                     case 'object':
                         const mapping: string[] = [];
-                        Object.entries(payload).forEach(([keyId, value]) => {
-                            if (key.indexOf(keyId) !== -1) {
-                                if (
-                                    typeof value === 'string' &&
-                                    value.trim().startsWith(`[`)
-                                ) {
-                                    const parseFormDataStringId = JSON.parse(
-                                        value,
-                                    ) as string[];
-                                    parseFormDataStringId.forEach(
-                                        (id: string) => {
-                                            mapping.push(id.trim());
-                                        },
+                        let flagInValidArray: boolean[] = [];
+                        const reducePayload = Object.entries(payload).reduce(
+                            (acc: { [key: string]: string }, cur, index) => {
+                                const [keyId, value] = cur;
+                                if (key.indexOf(keyId) !== -1) {
+                                    acc[keyId] = value;
+                                    flagInValidArray.push(
+                                        Array.isArray(value)
+                                            ? value.length > 0
+                                            : !!value,
                                     );
-                                } else if (Array.isArray(value)) {
-                                    value.forEach((id: string) =>
-                                        mapping.push(id.trim()),
-                                    );
-                                } else {
-                                    mapping.push(value.trim());
                                 }
-                            }
-                        });
+                                return acc;
+                            },
+                            {},
+                        );
+                        if (flagInValidArray.includes(false))
+                            return res.status(400).json({
+                                status: 400,
+                                success: false,
+                                message: 'BAD_REQUEST_REQUIRE_ID_TYPE',
+                            });
+                        Object.entries(reducePayload).forEach(
+                            ([keyId, value]: [
+                                keyId: string,
+                                value: string | string[],
+                            ]) => {
+                                if (key.indexOf(keyId) !== -1) {
+                                    if (
+                                        typeof value === 'string' &&
+                                        value.trim().startsWith(`[`)
+                                    ) {
+                                        const parseFormDataStringId =
+                                            JSON.parse(value) as string[];
+                                        parseFormDataStringId.forEach(
+                                            (id: string) => {
+                                                mapping.push(id.trim());
+                                            },
+                                        );
+                                    } else if (Array.isArray(value)) {
+                                        value.forEach((id: string) =>
+                                            mapping.push(id.trim()),
+                                        );
+                                    } else {
+                                        mapping.push(value.trim());
+                                    }
+                                }
+                            },
+                        );
                         const isPassed = mapping.every((currentValue: string) =>
                             regexUuidV4Validation(currentValue),
                         );

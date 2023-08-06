@@ -40,17 +40,6 @@ export interface IHistory {
     updatedAt?: Date;
 }
 
-export interface IComposer {
-    _id: string;
-    name: string;
-    avatar?: string;
-    nickname: string;
-    country?: string;
-    userReference: string;
-    albumsReference?: string | string[];
-    songsReference?: string | string[];
-}
-
 export interface IFavorite {
     _id: string;
     listSong: string[];
@@ -64,7 +53,12 @@ export interface IUser {
     name: string;
     refreshToken: string;
     password?: string;
-    avatar?: string;
+    avatarUrl?: string;
+    avatarS3: {
+        bucketName: string;
+        keyObject: string;
+        contentType: string;
+    } | null;
     locale?: string;
     playlistReference?: string[];
     favoriteListReference?: string;
@@ -95,8 +89,16 @@ export interface IAlbum {
     title: string;
     publish: Date;
     userReference: string;
-    listSong?: string[];
-    thumbnail?: string;
+    listSong: string[];
+    thumbnailUrl: string | null;
+    thumbnail: {
+        bucketName: string;
+        keyObject: string;
+        contentType:
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG;
+    } | null;
     information?: string;
     createdAt?: Date;
     updatedAt?: Date;

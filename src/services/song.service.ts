@@ -163,6 +163,10 @@ export default class SongService {
                 songFilter._id,
                 EnumActionUpdate.PUSH,
             );
+            await UserModel.updateIncreaseSongReferenceById(
+                currentSongDraft.userReference,
+                songFilter._id,
+            );
             if (songFilter.albumReference && songFilter.albumReference.length) {
                 await AlbumModel.updateManyActionSongReference(
                     songFilter.albumReference,

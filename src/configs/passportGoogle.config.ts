@@ -29,10 +29,11 @@ passport.use(
                     _id: _id,
                     name: profile._json.name as string,
                     email: profile._json.email as string,
-                    avatar: profile._json.picture,
+                    avatarUrl: profile._json.picture,
                     locale: profile._json.locale,
                     refreshToken: refreshToken,
                     role: RoleConstant.USER,
+                    avatarS3: null,
                 });
                 cb(null, newUser);
             } else if (user?.isRegistrationForm) {

@@ -4,6 +4,8 @@ import S3Service from './s3.service';
 import sharp from 'sharp';
 import { Readable } from 'stream';
 import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
+import AlbumModel from '@/models/album.model';
+import UserModel from '@/models/user.model';
 
 export default class ThumbnailService {
     constructor(private s3Service: S3Service) {}
@@ -22,6 +24,88 @@ export default class ThumbnailService {
                 };
             const fileContent = await this.s3Service.getFileContentS3(
                 currentSong.thumbnail,
+            );
+            const { data } = fileContent;
+            if (!data || !data.Body)
+                throw new Error('GET_FILE_THUMBNAIL_FAILED');
+            const bufferData = await this.streamToBuffer(data.Body as Readable);
+            const translateThumbnail = await this.translateThumbnailFromS3(
+                bufferData,
+                EContentTypeObjectS3.JPEG,
+                resize,
+            );
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_THUMBNAIL_SUCCESSFULLY',
+                data: translateThumbnail,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_THUMBNAIL_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getThumbnailAlbum(
+        slugId: string,
+        resize?: string,
+    ): Promise<CustomResponse<any>> {
+        try {
+            const currentAlbum = await AlbumModel.getById(slugId);
+            if (!currentAlbum || currentAlbum.thumbnail === null)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_GET_THUMBNAIL',
+                };
+            const fileContent = await this.s3Service.getFileContentS3(
+                currentAlbum.thumbnail,
+            );
+            const { data } = fileContent;
+            if (!data || !data.Body)
+                throw new Error('GET_FILE_THUMBNAIL_FAILED');
+            const bufferData = await this.streamToBuffer(data.Body as Readable);
+            const translateThumbnail = await this.translateThumbnailFromS3(
+                bufferData,
+                EContentTypeObjectS3.JPEG,
+                resize,
+            );
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_THUMBNAIL_SUCCESSFULLY',
+                data: translateThumbnail,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_THUMBNAIL_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getThumbnailUserAvatar(
+        slugId: string,
+        resize?: string,
+    ): Promise<CustomResponse<any>> {
+        try {
+            const currentUser = await UserModel.getById(slugId);
+            if (!currentUser || currentUser.avatarS3 === null)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_GET_THUMBNAIL',
+                };
+            const fileContent = await this.s3Service.getFileContentS3(
+                currentUser.avatarS3,
             );
             const { data } = fileContent;
             if (!data || !data.Body)
