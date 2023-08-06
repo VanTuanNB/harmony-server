@@ -14,6 +14,8 @@ import {
     PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import AlbumModel from '@/models/album.model';
+import UserModel from '@/models/user.model';
 
 interface IResponseUrlS3 {
     uploadId: string;
@@ -198,6 +200,126 @@ export default class S3Service {
                 status: 500,
                 success: false,
                 message: 'DELETE_FILE_S3_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getSignUrlForUploadAlbum(
+        userId: string,
+        albumId: string,
+        contentType:
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG,
+    ): Promise<CustomResponse> {
+        try {
+            const currentAlbum = await AlbumModel.getById(albumId);
+            console.log(currentAlbum);
+            if (
+                !currentAlbum ||
+                (currentAlbum && currentAlbum.userReference !== userId)
+            )
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_UPLOAD',
+                };
+
+            const keyObjectAlbum = `${
+                EKeyObjectS3Thumbnail.ALBUM
+            }/${generateRandomString(30)}.${contentType}`;
+            const command = new PutObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                Key: keyObjectAlbum,
+                ContentType: contentType,
+            });
+            const url = await getSignedUrl(s3Client, command, {
+                expiresIn: this.expiredTime,
+            });
+            await AlbumModel.updatedField(currentAlbum._id, {
+                thumbnail: {
+                    bucketName: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                    keyObject: keyObjectAlbum,
+                    contentType,
+                },
+                thumbnailUrl: `${process.env.SERVER_URL}:${process.env.PORT_SERVER}/api/v1/thumbnail/album/${currentAlbum._id}`,
+            });
+            return {
+                status: 200,
+                success: true,
+                message: 'UPLOAD_FILE_SUCCESSFULLY',
+                data: {
+                    privateUrl: url,
+                    expired: this.expiredTime,
+                    contentType,
+                    keyObjectAlbum,
+                    albumId,
+                },
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPLOAD_FILE_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getSignUrlForUploadUserAvatar(
+        userId: string,
+        contentType:
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG,
+    ): Promise<CustomResponse> {
+        try {
+            const currentUser = await UserModel.getById(userId);
+            if (!currentUser)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_UPLOAD',
+                };  
+            const keyObjectUserAvatar = `${
+                EKeyObjectS3Thumbnail.AVATAR
+            }/${generateRandomString(30)}.${contentType}`;
+            const command = new PutObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                Key: keyObjectUserAvatar,
+                ContentType: contentType,
+            });
+            const url = await getSignedUrl(s3Client, command, {
+                expiresIn: this.expiredTime,
+            });
+            await UserModel.updateById(currentUser._id, {
+                avatarS3: {
+                    bucketName: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                    keyObject: keyObjectUserAvatar,
+                    contentType,
+                },
+                avatarUrl: `${process.env.SERVER_URL}:${process.env.PORT_SERVER}/api/v1/thumbnail/avatar/${currentUser._id}`,
+            });
+            return {
+                status: 200,
+                success: true,
+                message: 'UPLOAD_FILE_SUCCESSFULLY',
+                data: {
+                    privateUrl: url,
+                    expired: this.expiredTime,
+                    contentType,
+                    keyObjectUserAvatar,
+                    userId,
+                },
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPLOAD_FILE_FAILED',
                 errors: error,
             };
         }

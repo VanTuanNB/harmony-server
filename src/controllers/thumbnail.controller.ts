@@ -23,4 +23,45 @@ export default class ThumbnailController {
             .set('Content-Type', 'image/jpeg')
             .send(thumbnailService.data);
     }
+
+    @IsRequirementReq('id', 'params')
+    public async getAlbum(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const slugId: string = req.params.id;
+        const resizeQuery = req.query.resize as string | undefined;
+        const thumbnailService = await this.thumbnailService.getThumbnailAlbum(
+            slugId,
+            resizeQuery,
+        );
+        if (!thumbnailService.success)
+            return res.status(thumbnailService.status).json(thumbnailService);
+
+        return res
+            .status(thumbnailService.status)
+            .set('Content-Type', 'image/jpeg')
+            .send(thumbnailService.data);
+    }
+
+    @IsRequirementReq('id', 'params')
+    public async getUserAvatar(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const slugId: string = req.params.id;
+        const resizeQuery = req.query.resize as string | undefined;
+        const thumbnailService =
+            await this.thumbnailService.getThumbnailUserAvatar(
+                slugId,
+                resizeQuery,
+            );
+        if (!thumbnailService.success)
+            return res.status(thumbnailService.status).json(thumbnailService);
+
+        return res
+            .status(thumbnailService.status)
+            .set('Content-Type', 'image/jpeg')
+            .send(thumbnailService.data);
+    }
 }

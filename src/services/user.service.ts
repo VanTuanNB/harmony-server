@@ -129,6 +129,7 @@ export default class UserService {
                 password: collectionValidateUser.password as string,
                 isRegistrationForm: true,
                 role: RoleConstant.USER,
+                avatarS3: null,
             });
             const validation = await ValidatePayload(
                 dataUser,

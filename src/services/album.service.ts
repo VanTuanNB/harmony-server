@@ -6,10 +6,15 @@ import AlbumModel from '@/models/album.model';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import SongModel from '@/models/song.model';
 import UserModel from '@/models/user.model';
+import AlbumFilter from '@/filters/album.filter';
+import ValidatePayload from '@/helpers/validate.helper';
 
 export default class AlbumService {
     public static async create(
-        payload: Pick<IAlbum, 'title' | 'publish' | 'userReference'>,
+        payload: Pick<
+            IAlbum,
+            'title' | 'publish' | 'userReference' | 'listSong' | 'information'
+        >,
     ): Promise<CustomResponse> {
         try {
             const _id: string = uuidv4();
@@ -30,13 +35,26 @@ export default class AlbumService {
                     success: false,
                     message: 'TITLE_ALBUM_IS_EXISTING',
                 };
-            const newAlbum = await AlbumModel.create({
-                _id,
+            const albumFilter = new AlbumFilter({
                 ...payload,
+                _id,
+                thumbnail: null,
+                thumbnailUrl: null,
             });
+            const isInValidValidator = await ValidatePayload(
+                albumFilter,
+                'BAD_REQUEST',
+                true,
+            );
+            if (isInValidValidator) return isInValidValidator;
+            const newAlbum = await AlbumModel.create(albumFilter);
             await UserModel.updateIncreaseAlbum(
                 payload.userReference,
                 newAlbum._id,
+            );
+            await SongModel.updateIncreaseAlbumReference(
+                albumFilter.listSong,
+                albumFilter._id,
             );
             return {
                 status: 201,
