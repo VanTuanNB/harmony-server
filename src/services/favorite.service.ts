@@ -3,25 +3,27 @@ import { v4 as uuidv4 } from 'uuid';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { IFavorite } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import FavoriteModel from '@/models/favorite.model';
-import SongModel from '@/models/song.model';
-import UserModel from '@/models/user.model';
 import FavoriteFilter from '@/filters/favorite.filter';
 import ValidatePayload from '@/helpers/validate.helper';
+import {
+    favoriteModel,
+    songModel,
+    userModel,
+} from '@/instances/index.instance';
 
 export default class FavoriteService {
-    protected async information(
+    public async information(
         userId: string,
     ): Promise<CustomResponse<IFavorite | null>> {
         try {
-            const user = await UserModel.getById(userId);
+            const user = await userModel.getById(userId);
             if (!user)
                 return {
                     status: 400,
                     success: false,
                     message: 'USER_NOT_FOUND',
                 };
-            const favorite = await FavoriteModel.getByIdPoPulate(
+            const favorite = await favoriteModel.getByIdPoPulate(
                 user.favoriteListReference ?? '',
             );
             if (!favorite)
@@ -47,14 +49,14 @@ export default class FavoriteService {
         }
     }
 
-    protected async combineCreateUpdate(
+    public async combineCreateUpdate(
         userId: string,
         songId: string,
         actions?: EnumActionUpdate,
     ): Promise<CustomResponse<IFavorite>> {
         try {
-            const user = await UserModel.getById(userId);
-            const song = await SongModel.getById(songId);
+            const user = await userModel.getById(userId);
+            const song = await songModel.getById(songId);
             if (!song || !user)
                 return {
                     status: 400,
@@ -115,7 +117,7 @@ export default class FavoriteService {
         songId: string,
     ): Promise<IFavorite | null> {
         try {
-            const validFavorite = await FavoriteModel.getById(
+            const validFavorite = await favoriteModel.getById(
                 currentFavoriteId,
             );
             if (validFavorite) return null;
@@ -130,8 +132,8 @@ export default class FavoriteService {
                 true,
             );
             if (isInvalid) return null;
-            const create = await FavoriteModel.create(favoriteFilter);
-            await UserModel.updateById(userId, {
+            const create = await favoriteModel.create(favoriteFilter);
+            await userModel.updateById(userId, {
                 favoriteListReference: create._id,
             });
             return create;
@@ -147,7 +149,7 @@ export default class FavoriteService {
         actions: EnumActionUpdate,
     ): Promise<IFavorite | null> {
         try {
-            const currentFavorite = await FavoriteModel.getById(_id);
+            const currentFavorite = await favoriteModel.getById(_id);
             if (!currentFavorite) return null;
             switch (actions) {
                 case EnumActionUpdate.PUSH:
@@ -155,7 +157,7 @@ export default class FavoriteService {
                         (id: string) => id === songId,
                     );
                     if (isInvalid) return null;
-                    const pushUpdate = await FavoriteModel.updateByAction(
+                    const pushUpdate = await favoriteModel.updateByAction(
                         _id,
                         songId,
                         actions,
@@ -166,7 +168,7 @@ export default class FavoriteService {
                         (id: string) => id === songId,
                     );
                     if (!isInvalidRemove) return null;
-                    const removeUpdate = await FavoriteModel.updateByAction(
+                    const removeUpdate = await favoriteModel.updateByAction(
                         _id,
                         songId,
                         actions,

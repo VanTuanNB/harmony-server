@@ -6,14 +6,12 @@ import {
     IUser,
     IPayloadToken,
 } from '@/constraints/interfaces/index.interface';
-import UserModel from '@/models/user.model';
 import { generateToken } from '@/utils/jwtToken.util';
-import UserService from './user.service';
 import { RoleConstant } from '@/constraints/enums/role.enum';
+import { userModel, userService } from '@/instances/index.instance';
 export default class AuthService {
-    public static async generateRefererToken(
-        currentRefreshToken: string,
-    ): Promise<
+    constructor() {}
+    public async generateRefererToken(currentRefreshToken: string): Promise<
         CustomResponse<{
             accessToken: string;
             refreshToken: string;
@@ -24,7 +22,7 @@ export default class AuthService {
                 currentRefreshToken,
                 process.env.SECRET_REFRESH_TOKEN as string,
             ) as IPayloadToken;
-            const user = await UserService.getById(decodedToken._id);
+            const user = await userService.getById(decodedToken._id);
             if (!user.success)
                 return {
                     ...user,
@@ -45,7 +43,7 @@ export default class AuthService {
                 email: decodedToken.email,
                 role: user.data?.role ?? RoleConstant.USER,
             });
-            const updated = await UserService.updateFiled(decodedToken._id, {
+            const updated = await userService.updateFiled(decodedToken._id, {
                 refreshToken,
             });
             if (!updated.success)
@@ -83,12 +81,12 @@ export default class AuthService {
         }
     }
 
-    public static async loginForm(payload: {
+    public async loginForm(payload: {
         email: string;
         password: string;
     }): Promise<CustomResponse> {
         try {
-            const user = await UserModel.getByEmail(payload.email);
+            const user = await userModel.getByEmail(payload.email);
             if (!user)
                 return {
                     status: 403,
@@ -116,7 +114,7 @@ export default class AuthService {
                 email: user.email,
                 role: user.role,
             });
-            const updated = await UserModel.updateById(user._id, {
+            const updated = await userModel.updateById(user._id, {
                 refreshToken,
             });
             if (!updated)
@@ -143,9 +141,9 @@ export default class AuthService {
             };
         }
     }
-    public static async loginGGFB(payload: Pick<IUser, 'email'>) {
+    public async loginGGFB(payload: Pick<IUser, 'email'>) {
         try {
-            const user = await UserModel.getByEmail(payload.email);
+            const user = await userModel.getByEmail(payload.email);
             if (!user)
                 return {
                     status: 403,
@@ -166,7 +164,7 @@ export default class AuthService {
                 role: user.role,
             });
 
-            const updated = await UserModel.updateById(user._id, {
+            const updated = await userModel.updateById(user._id, {
                 refreshToken,
             });
 

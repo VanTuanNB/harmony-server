@@ -1,6 +1,6 @@
 import { RoleConstant } from '@/constraints/enums/role.enum';
 import { IPayloadToken } from '@/constraints/interfaces/index.interface';
-import UserService from '@/services/user.service';
+import { userService } from '@/instances/index.instance';
 import { verifyToken } from '@/utils/jwtToken.util';
 import { Request, Response, NextFunction } from 'express';
 
@@ -66,7 +66,7 @@ export async function authenticationComposer(
                 success: false,
                 message: 'PERMISSION_DENIED',
             });
-        const user = await UserService.getById(verify._id);
+        const user = await userService.getById(verify._id);
         if (
             !user.success &&
             user.data &&

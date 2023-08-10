@@ -1,28 +1,30 @@
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import SongModel from '@/models/song.model';
-import S3Service from './s3.service';
 import sharp from 'sharp';
 import { Readable } from 'stream';
 import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
-import AlbumModel from '@/models/album.model';
-import UserModel from '@/models/user.model';
+import {
+    albumModel,
+    s3Service,
+    songModel,
+    userModel,
+} from '@/instances/index.instance';
 
 export default class ThumbnailService {
-    constructor(private s3Service: S3Service) {}
+    constructor() {}
 
     public async getThumbnailSong(
         slugId: string,
         resize?: string,
     ): Promise<CustomResponse<any>> {
         try {
-            const currentSong = await SongModel.getById(slugId);
+            const currentSong = await songModel.getById(slugId);
             if (!currentSong)
                 return {
                     status: 400,
                     success: false,
                     message: 'BAD_REQUEST_GET_THUMBNAIL',
                 };
-            const fileContent = await this.s3Service.getFileContentS3(
+            const fileContent = await s3Service.getFileContentS3(
                 currentSong.thumbnail,
             );
             const { data } = fileContent;
@@ -56,14 +58,14 @@ export default class ThumbnailService {
         resize?: string,
     ): Promise<CustomResponse<any>> {
         try {
-            const currentAlbum = await AlbumModel.getById(slugId);
+            const currentAlbum = await albumModel.getById(slugId);
             if (!currentAlbum || currentAlbum.thumbnail === null)
                 return {
                     status: 400,
                     success: false,
                     message: 'BAD_REQUEST_GET_THUMBNAIL',
                 };
-            const fileContent = await this.s3Service.getFileContentS3(
+            const fileContent = await s3Service.getFileContentS3(
                 currentAlbum.thumbnail,
             );
             const { data } = fileContent;
@@ -97,14 +99,14 @@ export default class ThumbnailService {
         resize?: string,
     ): Promise<CustomResponse<any>> {
         try {
-            const currentUser = await UserModel.getById(slugId);
+            const currentUser = await userModel.getById(slugId);
             if (!currentUser || currentUser.avatarS3 === null)
                 return {
                     status: 400,
                     success: false,
                     message: 'BAD_REQUEST_GET_THUMBNAIL',
                 };
-            const fileContent = await this.s3Service.getFileContentS3(
+            const fileContent = await s3Service.getFileContentS3(
                 currentUser.avatarS3,
             );
             const { data } = fileContent;

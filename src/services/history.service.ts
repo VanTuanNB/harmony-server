@@ -2,26 +2,24 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { IHistory } from '@/constraints/interfaces/index.interface';
-import UserModel from '@/models/user.model';
 import HistoryFilter from '@/filters/history.filter';
 import ValidatePayload from '@/helpers/validate.helper';
-import SongModel from '@/models/song.model';
-import HistoryModel from '@/models/history.model';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
+import { historyModel, songModel, userModel } from '@/instances/index.instance';
 
 export default class HistoryService {
-    protected async getInformation(
+    public async getInformation(
         userId: string,
     ): Promise<CustomResponse<IHistory>> {
         try {
-            const user = await UserModel.getById(userId);
+            const user = await userModel.getById(userId);
             if (!user)
                 return {
                     status: 400,
                     success: false,
                     message: 'USER_NOT_FOUND',
                 };
-            const history = await HistoryModel.getByIdPoPulate(
+            const history = await historyModel.getByIdPoPulate(
                 user.historyReference ?? '',
             );
             if (!history)
@@ -47,13 +45,13 @@ export default class HistoryService {
         }
     }
 
-    protected async bothCreateUpdate(
+    public async bothCreateUpdate(
         userId: string,
         songId: string,
     ): Promise<CustomResponse<IHistory>> {
         try {
-            const user = await UserModel.getById(userId);
-            const song = await SongModel.getById(songId);
+            const user = await userModel.getById(userId);
+            const song = await songModel.getById(songId);
             if (!song)
                 return {
                     status: 400,
@@ -119,14 +117,14 @@ export default class HistoryService {
                 true,
             );
             if (inValid) throw new Error(JSON.stringify(inValid));
-            const createHistory = await HistoryModel.create(historyFilter);
+            const createHistory = await historyModel.create(historyFilter);
             if (!createHistory) throw new Error('POST_HISTORY_FAILED');
-            const updateSong = await UserModel.updateById(userId, {
+            const updateSong = await userModel.updateById(userId, {
                 historyReference: createHistory._id,
             });
 
             if (!updateSong) {
-                await HistoryModel.forceDelete(createHistory._id);
+                await historyModel.forceDelete(createHistory._id);
                 return null;
             }
             return createHistory;
@@ -141,19 +139,19 @@ export default class HistoryService {
         songId: string,
     ): Promise<IHistory | null> {
         try {
-            const currentHistory = await HistoryModel.getById(_id);
+            const currentHistory = await historyModel.getById(_id);
             if (!currentHistory) return null;
             const isValidPushSong = currentHistory.listSong.some(
                 (song: string) => song === songId,
             );
             if (isValidPushSong) return null;
-            const updated = await HistoryModel.updateByAction(
+            const updated = await historyModel.updateByAction(
                 _id,
                 songId,
                 EnumActionUpdate.PUSH,
             );
             if (updated && updated.listSong.length > 30) {
-                await HistoryModel.removeFirstSongIntoListSong(updated._id);
+                await historyModel.removeFirstSongIntoListSong(updated._id);
             }
             return updated;
         } catch (error) {

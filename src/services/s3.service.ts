@@ -5,7 +5,6 @@ import {
     EKeyObjectS3Thumbnail,
 } from '@/constraints/enums/s3.enum';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import songDraftModel from '@/models/songDraft.model';
 import generateRandomString from '@/utils/generateRandomKey.util';
 import {
     DeleteObjectCommand,
@@ -14,8 +13,11 @@ import {
     PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import AlbumModel from '@/models/album.model';
-import UserModel from '@/models/user.model';
+import {
+    albumModel,
+    songDraftModel,
+    userModel,
+} from '@/instances/index.instance';
 
 interface IResponseUrlS3 {
     uploadId: string;
@@ -24,6 +26,9 @@ interface IResponseUrlS3 {
     contentType: string;
     keyObjectAudio?: string;
     keyObjectThumbnail?: string;
+    keyObjectAlbum?: string;
+    keyObjectUserAvatar?: string;
+    userId: string;
 }
 
 export default class S3Service {
@@ -103,6 +108,7 @@ export default class S3Service {
                     expired: this.expiredTime,
                     contentType: newSongDraftInstance.audio.contentType,
                     keyObjectAudio: newSongDraftInstance.audio.keyObject,
+                    userId,
                 },
             };
         } catch (error) {
@@ -164,6 +170,7 @@ export default class S3Service {
                     expired: this.expiredTime,
                     contentType: updateSongDraft.thumbnail!.contentType,
                     keyObjectThumbnail: updateSongDraft.thumbnail!.keyObject,
+                    userId,
                 },
             };
         } catch (error) {
@@ -212,10 +219,11 @@ export default class S3Service {
             | EContentTypeObjectS3.JPEG
             | EContentTypeObjectS3.JPG
             | EContentTypeObjectS3.PNG,
-    ): Promise<CustomResponse> {
+    ): Promise<
+        CustomResponse<Omit<IResponseUrlS3, 'uploadId'> & { albumId: string }>
+    > {
         try {
-            const currentAlbum = await AlbumModel.getById(albumId);
-            console.log(currentAlbum);
+            const currentAlbum = await albumModel.getById(albumId);
             if (
                 !currentAlbum ||
                 (currentAlbum && currentAlbum.userReference !== userId)
@@ -234,10 +242,16 @@ export default class S3Service {
                 Key: keyObjectAlbum,
                 ContentType: contentType,
             });
+            if (currentAlbum.thumbnail) {
+                const deleteFileExist = await this.deleteFileOnS3(
+                    currentAlbum.thumbnail,
+                );
+                if (!deleteFileExist.success) return deleteFileExist;
+            }
             const url = await getSignedUrl(s3Client, command, {
                 expiresIn: this.expiredTime,
             });
-            await AlbumModel.updatedField(currentAlbum._id, {
+            await albumModel.updatedField(currentAlbum._id, {
                 thumbnail: {
                     bucketName: process.env.AWS_S3_BUCKET_IMAGES ?? '',
                     keyObject: keyObjectAlbum,
@@ -255,6 +269,7 @@ export default class S3Service {
                     contentType,
                     keyObjectAlbum,
                     albumId,
+                    userId,
                 },
             };
         } catch (error) {
@@ -274,15 +289,15 @@ export default class S3Service {
             | EContentTypeObjectS3.JPEG
             | EContentTypeObjectS3.JPG
             | EContentTypeObjectS3.PNG,
-    ): Promise<CustomResponse> {
+    ): Promise<CustomResponse<Omit<IResponseUrlS3, 'uploadId'>>> {
         try {
-            const currentUser = await UserModel.getById(userId);
+            const currentUser = await userModel.getById(userId);
             if (!currentUser)
                 return {
                     status: 400,
                     success: false,
                     message: 'BAD_REQUEST_UPLOAD',
-                };  
+                };
             const keyObjectUserAvatar = `${
                 EKeyObjectS3Thumbnail.AVATAR
             }/${generateRandomString(30)}.${contentType}`;
@@ -291,10 +306,16 @@ export default class S3Service {
                 Key: keyObjectUserAvatar,
                 ContentType: contentType,
             });
+            if (currentUser.avatarS3) {
+                const deleteFileExist = await this.deleteFileOnS3(
+                    currentUser.avatarS3,
+                );
+                if (!deleteFileExist.success) return deleteFileExist;
+            }
             const url = await getSignedUrl(s3Client, command, {
                 expiresIn: this.expiredTime,
             });
-            await UserModel.updateById(currentUser._id, {
+            await userModel.updateById(currentUser._id, {
                 avatarS3: {
                     bucketName: process.env.AWS_S3_BUCKET_IMAGES ?? '',
                     keyObject: keyObjectUserAvatar,

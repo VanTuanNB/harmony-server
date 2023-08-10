@@ -15,6 +15,7 @@ import SongService from '@/services/song.service';
 import { uploadFiledEnum } from '@/constraints/enums/index.enum';
 import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
 import { Readable } from 'stream';
+import { songService } from '@/instances/index.instance';
 
 const requirementFields = [
     'title',
@@ -24,9 +25,9 @@ const requirementFields = [
     'performers',
 ];
 export default class SongController {
-    constructor(private songService: SongService) {}
+    constructor() {}
     public async getAll(req: Request, res: Response): Promise<Response | void> {
-        const songs = await this.songService.getAll();
+        const songs = await songService.getAll();
         return res.status(songs.status).json(songs);
     }
 
@@ -36,7 +37,7 @@ export default class SongController {
         res: Response,
     ): Promise<Response | void> {
         const _id = req.params.id;
-        const song = await this.songService.getById(_id);
+        const song = await songService.getById(_id);
         return res.status(song.status).json(song);
     }
 
@@ -47,22 +48,26 @@ export default class SongController {
     ): Promise<Response | void> {
         const { id } = req.params;
         const range = req.headers.range;
-        const songService = await this.songService.getStreamSong(id, range);
-        if (!songService.success)
-            return res.status(songService.status).json(songService);
-        const { data } = songService;
+        const getStreamSongService = await songService.getStreamSong(id, range);
+        if (!getStreamSongService.success)
+            return res
+                .status(getStreamSongService.status)
+                .json(getStreamSongService);
+        const { data } = getStreamSongService;
         const streamData =
             data &&
             data.instanceContent &&
             (data.instanceContent.Body as Readable);
         if (streamData) {
-            res.writeHead(songService.status, {
+            res.writeHead(getStreamSongService.status, {
                 ...data?.resHeader,
             });
             streamData.pipe(res);
         } else {
-            delete songService.data;
-            return res.status(songService.status).json(songService);
+            delete getStreamSongService.data;
+            return res
+                .status(getStreamSongService.status)
+                .json(getStreamSongService);
         }
     }
 
@@ -82,7 +87,7 @@ export default class SongController {
         Object.assign(payload, {
             userReference: res.locals.memberDecoded?._id ?? '',
         });
-        const createSongService = await this.songService.create(payload);
+        const createSongService = await songService.create(payload);
         return res.status(createSongService.status).json(createSongService);
     }
 
@@ -106,7 +111,7 @@ export default class SongController {
             | 'publish'
             | 'title'
         > = req.body;
-        const updateSongService = await this.songService.update(id, payload);
+        const updateSongService = await songService.update(id, payload);
         return res.status(updateSongService.status).json(updateSongService);
     }
 
@@ -117,7 +122,7 @@ export default class SongController {
     ): Promise<Response | void> {
         const { id } = req.params;
         const userId = res.locals.memberDecoded?._id;
-        const forceDeleteSongService = await this.songService.forceDelete(
+        const forceDeleteSongService = await songService.forceDelete(
             id,
             userId ?? '',
         );
@@ -125,112 +130,4 @@ export default class SongController {
             .status(forceDeleteSongService.status)
             .json(forceDeleteSongService);
     }
-
-    // @IsRequirementTypeId('id', 'params')
-    // public static async getStreamSong(
-    //     req: Request,
-    //     res: Response,
-    // ): Promise<Response | void> {
-    //     const { id } = req.params;
-    //     const range = req.headers.range;
-    //     const songService = await SongService.getFsStreamSong(id, range);
-    //     if (!songService.success)
-    //         return res.status(songService.status).json(songService);
-    //     res.writeHead(songService.status, {
-    //         ...songService.data?.resHeader,
-    //     });
-    //     songService.data?.fileStream.pipe(res);
-    // }
-
-    // @IsRequirementReq(requirementFields, 'body')
-    // @IsRequirementTypeId(
-    //     ['userReference', 'genresReference', 'albumReference', 'performers'],
-    //     'body',
-    // )
-    // @IsRequirementFiles([uploadFiledEnum.FileSong, uploadFiledEnum.Thumbnail])
-    // public static async middlewareCreateSong(
-    //     req: CustomRequest,
-    //     res: Response,
-    //     next: NextFunction,
-    // ): Promise<Response | void> {
-    //     const { title, userReference } = req.body;
-    //     const { thumbnail, fileSong } = req.files as IFieldNameFiles;
-    //     const validate = await SongService.validateTitleUploadSong(
-    //         title,
-    //         userReference,
-    //         {
-    //             fileSong: fileSong[0],
-    //             thumbnail: thumbnail[0],
-    //         },
-    //     );
-    //     if (validate.success) {
-    //         return next();
-    //     }
-    //     return res.status(validate.status).json(validate);
-    // }
-
-    // public static async middlewareUpdateSong(
-    //     req: CustomRequest,
-    //     res: CustomResponseExpress,
-    // ): Promise<Response | void> {
-    //     console.log(req.files);
-    //     return res.status(400).json({ message: 'TESTING UPDATE' });
-    // }
-
-    // public static async create(
-    //     req: CustomRequest,
-    //     res: Response,
-    // ): Promise<Response | void> {
-    //     const payload: Pick<
-    //         ISong,
-    //         | 'title'
-    //         | 'publish'
-    //         | 'albumReference'
-    //         | 'userReference'
-    //         | 'genresReference'
-    //         | 'performers'
-    //     > = {
-    //         ...req.body,
-    //     };
-    //     const { thumbnail, fileSong } = req.files as IFieldNameFiles;
-    //     const createSong = await SongService.create(
-    //         {
-    //             thumbnail: thumbnail[0],
-    //             fileSong: fileSong[0],
-    //         },
-    //         payload,
-    //     );
-    //     return res.status(createSong.status).json(createSong);
-    // }
-
-    // @IsRequirementTypeId('id', 'params')
-    // public static async update(
-    //     req: CustomRequest,
-    //     res: CustomResponseExpress,
-    // ): Promise<Response | void> {
-    //     const { id } = req.params;
-    //     if (Object.keys(req.body).length === 0)
-    //         return res.status(400).json({
-    //             status: 400,
-    //             success: false,
-    //             message: 'PAYLOAD_IS_EMPTY',
-    //         });
-    //     const { thumbnail, fileSong } = req.files as IFieldNameFiles;
-    //     const updateSongService = await SongService.update(id, {
-    //         ...req.body,
-    //         thumbnail: thumbnail ? thumbnail[0] : undefined,
-    //         fileSong: fileSong ? fileSong[0] : undefined,
-    //     });
-    //     return res.status(updateSongService.status).json(updateSongService);
-    // }
-
-    // @IsRequirementReq('id', 'params')
-    // public static async delete(
-    //     req: CustomRequest,
-    //     res: CustomResponseExpress,
-    // ): Promise<Response | void> {
-    //     const { id } = req.params;
-    //     const deleteSong = await SongService.forceDelete(id);
-    //     return res.status(deleteSong.status).json(deleteSong);
-    // }
 }

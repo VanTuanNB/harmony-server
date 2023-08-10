@@ -5,22 +5,40 @@ import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware'
 import { authenticationUser } from '@/middlewares/authVerifyToken.middleware';
 
 const router: Router = Router();
-router.post('/checkGmail', UserController.checkGmail);
-router.post('/sendCode', UserController.createRequestAuthenticationEmail);
+const userControllerInstance = new UserController();
+router.post(
+    '/checkGmail',
+    userControllerInstance.checkGmail.bind(userControllerInstance),
+);
+router.post(
+    '/sendCode',
+    userControllerInstance.createRequestAuthenticationEmail.bind(
+        userControllerInstance,
+    ),
+);
 router.post(
     '/signupForm',
     verificationEmailWithForm,
-    UserController.signupForm,
+    userControllerInstance.signupForm.bind(userControllerInstance),
 );
 router.get(
     '/permissionComposer',
     authenticationUser,
-    UserController.permissionComposer,
+    userControllerInstance.permissionComposer.bind(userControllerInstance),
 );
 router.post(
     '/upgradeComposer',
     // authenticationUser, // authentication administrator
-    UserController.AskForPermissionUpgradeComposer,
+    userControllerInstance.AskForPermissionUpgradeComposer.bind(
+        userControllerInstance,
+    ),
 );
+
+router
+    .route('/profile')
+    .put(
+        authenticationUser,
+        userControllerInstance.updateProfileUser.bind(userControllerInstance),
+    );
 
 export default router;

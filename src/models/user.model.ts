@@ -3,20 +3,20 @@ import userSchema from '@/database/schemas/user.schema';
 import { UpdateWriteOpResult } from 'mongoose';
 
 export default class UserModel {
-    public static async getById(_id: string): Promise<IUser | null> {
+    public async getById(_id: string): Promise<IUser | null> {
         const user = await userSchema.findById(_id);
         return user;
     }
-    public static async getByEmail(email: string): Promise<IUser | null> {
+    public async getByEmail(email: string): Promise<IUser | null> {
         const user = await userSchema.findOne({ email });
         return user;
     }
-    public static async create(payload: IUser): Promise<IUser> {
+    public async create(payload: IUser): Promise<IUser> {
         const created = await userSchema.create(payload);
         return created;
     }
 
-    public static async updateById(
+    public async updateById(
         _id: string,
         payload: Partial<Omit<IUser, '_id'>>,
     ): Promise<IUser | null> {
@@ -26,7 +26,7 @@ export default class UserModel {
         return updated;
     }
 
-    public static async updateIncreaseSongReferenceById(
+    public async updateIncreaseSongReferenceById(
         userId: string,
         songReference: string,
     ): Promise<ISong | null> {
@@ -39,7 +39,7 @@ export default class UserModel {
         );
     }
 
-    public static async updateDetachListSong(
+    public async updateDetachListSong(
         songReference: string,
     ): Promise<UpdateWriteOpResult> {
         return await userSchema.updateMany(
@@ -50,7 +50,7 @@ export default class UserModel {
         );
     }
 
-    public static async updateIncreaseAlbum(_id: string, albumId: string) {
+    public async updateIncreaseAlbum(_id: string, albumId: string) {
         return await userSchema.findOneAndUpdate(
             { _id },
             {

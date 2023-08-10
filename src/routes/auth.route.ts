@@ -6,8 +6,15 @@ import '@/configs/passportGoogle.config';
 import '@/configs/passportFacebook.config';
 
 const router: Router = Router();
-router.post('/refreshToken', AuthController.generateRefreshToken);
-router.post('/loginForm', AuthController.loginForm);
+const authControllerInstance = new AuthController();
+router.post(
+    '/refreshToken',
+    authControllerInstance.generateRefreshToken.bind(authControllerInstance),
+);
+router.post(
+    '/loginForm',
+    authControllerInstance.loginForm.bind(authControllerInstance),
+);
 
 router.get(
     '/google',
@@ -20,7 +27,7 @@ router.get(
 router.get(
     '/google/callback',
     passport.authenticate('google', { session: false }),
-    AuthController.loginPassport,
+    authControllerInstance.loginPassport.bind(authControllerInstance),
 );
 
 router.get(
@@ -34,7 +41,7 @@ router.get(
 router.get(
     '/facebook/callback',
     passport.authenticate('facebook', { session: false }),
-    AuthController.loginPassport,
+    authControllerInstance.loginPassport.bind(authControllerInstance),
 );
 
 export default router;

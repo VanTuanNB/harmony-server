@@ -1,0 +1,21 @@
+import AlbumService from '@/services/album.service';
+import AuthService from '@/services/auth.service';
+import FavoriteService from '@/services/favorite.service';
+import GenreService from '@/services/genre.service';
+import HistoryService from '@/services/history.service';
+import S3Service from '@/services/s3.service';
+import SongService from '@/services/song.service';
+import SongDraftService from '@/services/songDraffs.service';
+import ThumbnailService from '@/services/thumbnail.service';
+import UserService from '@/services/user.service';
+
+export const songService = new SongService();
+export const albumService = new AlbumService();
+export const authService = new AuthService();
+export const favoriteService = new FavoriteService();
+export const genreService = new GenreService();
+export const historyService = new HistoryService();
+export const s3Service = new S3Service();
+export const songDraftService = new SongDraftService();
+export const thumbnailService = new ThumbnailService();
+export const userService = new UserService();
