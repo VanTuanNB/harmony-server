@@ -69,16 +69,24 @@ export default class AlbumModel {
     ): Promise<UpdateWriteOpResult> {
         switch (options) {
             case EnumActionUpdate.REMOVE:
-                const removeUpdated = await albumSchema
-                    .find({ _id })
-                    .updateMany({
-                        $pull: { listSong: songReference },
-                    });
+                const removeUpdated = await albumSchema.updateMany(
+                    {
+                        _id: { $in: _id },
+                    },
+                    {
+                        $pull: { listSong: { $in: songReference } },
+                    },
+                );
                 return removeUpdated;
             case EnumActionUpdate.PUSH:
-                const pushUpdated = await albumSchema.find({ _id }).updateMany({
-                    $push: { listSong: songReference },
-                });
+                const pushUpdated = await albumSchema.updateMany(
+                    {
+                        _id: { $in: _id },
+                    },
+                    {
+                        $push: { listSong: songReference },
+                    },
+                );
                 return pushUpdated;
             default:
                 throw new Error('INVALID ACTION TYPE UPDATE');

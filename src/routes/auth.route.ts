@@ -7,14 +7,6 @@ import '@/configs/passportFacebook.config';
 
 const router: Router = Router();
 const authControllerInstance = new AuthController();
-router.post(
-    '/refreshToken',
-    authControllerInstance.generateRefreshToken.bind(authControllerInstance),
-);
-router.post(
-    '/loginForm',
-    authControllerInstance.loginForm.bind(authControllerInstance),
-);
 
 router.get(
     '/google',
@@ -42,6 +34,21 @@ router.get(
     '/facebook/callback',
     passport.authenticate('facebook', { session: false }),
     authControllerInstance.loginPassport.bind(authControllerInstance),
+);
+
+router.post(
+    '/refreshToken',
+    authControllerInstance.generateRefreshToken.bind(authControllerInstance),
+);
+
+router.post(
+    '/loginForm',
+    authControllerInstance.loginForm.bind(authControllerInstance),
+);
+
+router.post(
+    '/admin',
+    authControllerInstance.loginAdmin.bind(authControllerInstance),
 );
 
 export default router;

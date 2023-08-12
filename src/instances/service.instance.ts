@@ -1,3 +1,4 @@
+import AdminService from '@/services/admin.service';
 import AlbumService from '@/services/album.service';
 import AuthService from '@/services/auth.service';
 import FavoriteService from '@/services/favorite.service';
@@ -19,3 +20,4 @@ export const s3Service = new S3Service();
 export const songDraftService = new SongDraftService();
 export const thumbnailService = new ThumbnailService();
 export const userService = new UserService();
+export const adminService = new AdminService();

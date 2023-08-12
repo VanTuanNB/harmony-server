@@ -1,10 +1,15 @@
-import { v4 as uuidv4 } from 'uuid';
 import s3Client from '@/configs/s3.config';
 import {
     EContentTypeObjectS3,
     EKeyObjectS3Thumbnail,
 } from '@/constraints/enums/s3.enum';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import {
+    albumModel,
+    songDraftModel,
+    songModel,
+    userModel,
+} from '@/instances/index.instance';
 import generateRandomString from '@/utils/generateRandomKey.util';
 import {
     DeleteObjectCommand,
@@ -13,11 +18,7 @@ import {
     PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import {
-    albumModel,
-    songDraftModel,
-    userModel,
-} from '@/instances/index.instance';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IResponseUrlS3 {
     uploadId: string;
@@ -333,6 +334,68 @@ export default class S3Service {
                     contentType,
                     keyObjectUserAvatar,
                     userId,
+                },
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPLOAD_FILE_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getSignUrlForUploadThumbnailSong(
+        songId: string,
+        contentType:
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG,
+    ): Promise<CustomResponse<Omit<IResponseUrlS3, 'uploadId'>>> {
+        try {
+            const currentSong = await songModel.getById(songId);
+            if (!currentSong)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST_UPLOAD',
+                };
+            const keyObjectThumbnail = `${
+                EKeyObjectS3Thumbnail.SONG
+            }/${generateRandomString(30)}.${contentType}`;
+            const command = new PutObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                Key: keyObjectThumbnail,
+                ContentType: contentType,
+            });
+            if (currentSong.thumbnail) {
+                const deleteFileExist = await this.deleteFileOnS3(
+                    currentSong.thumbnail,
+                );
+                if (!deleteFileExist.success) return deleteFileExist;
+            }
+            const url = await getSignedUrl(s3Client, command, {
+                expiresIn: this.expiredTime,
+            });
+            await songModel.updateThumbnailById(currentSong._id, {
+                thumbnail: {
+                    bucketName: process.env.AWS_S3_BUCKET_IMAGES ?? '',
+                    keyObject: keyObjectThumbnail,
+                    contentType,
+                },
+            });
+            return {
+                status: 200,
+                success: true,
+                message: 'UPLOAD_FILE_SUCCESSFULLY',
+                data: {
+                    privateUrl: url,
+                    expired: this.expiredTime,
+                    contentType,
+                    keyObjectThumbnail,
+                    userId: currentSong.userReference,
                 },
             };
         } catch (error) {

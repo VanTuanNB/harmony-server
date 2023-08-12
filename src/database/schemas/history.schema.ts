@@ -4,6 +4,7 @@ import mongoose, { Schema } from 'mongoose';
 const historySchema = new Schema<IHistory>(
     {
         _id: { type: String, required: true },
+        userReference: { type: String, required: true },
         listSong: [
             {
                 type: String,

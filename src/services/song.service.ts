@@ -1,13 +1,12 @@
 import { config } from 'dotenv';
 config();
 
-import { v4 as uuidv4 } from 'uuid';
-import { ISong } from '@/constraints/interfaces/index.interface';
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { ISong } from '@/constraints/interfaces/index.interface';
 import SongFilter from '@/filters/song.filter';
 import ValidatePayload from '@/helpers/validate.helper';
-import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import { GetObjectOutput } from '@aws-sdk/client-s3';
 import {
     albumModel,
     albumService,
@@ -21,6 +20,8 @@ import {
     songModel,
     userModel,
 } from '@/instances/index.instance';
+import { GetObjectOutput } from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface ITypeFiles {
     thumbnail: Express.Multer.File;
@@ -188,11 +189,23 @@ export default class SongService {
             | 'performers'
             | 'publish'
             | 'title'
-        >,
-    ): Promise<CustomResponse<ISong>> {
+        > & {
+            isNewUploadAvatar?: boolean;
+            contentType?:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.JPG
+                | EContentTypeObjectS3.PNG;
+        },
+    ): Promise<CustomResponse> {
         try {
-            const update = await songModel.updateField(_id, payload);
-            if (!update)
+            if (payload.isNewUploadAvatar && !payload.contentType)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            const updateInformation = await songModel.updateField(_id, payload);
+            if (!updateInformation)
                 return {
                     status: 400,
                     success: false,
@@ -208,11 +221,20 @@ export default class SongService {
                     payload.genresReference,
                     _id,
                 );
+            let updateThumbnail = undefined;
+            if (payload.isNewUploadAvatar && payload.contentType) {
+                updateThumbnail =
+                    await s3Service.getSignUrlForUploadThumbnailSong(
+                        _id,
+                        payload.contentType,
+                    );
+                if (!updateThumbnail.success) return updateThumbnail;
+            }
             return {
                 status: 200,
                 success: true,
                 message: 'PUT_SONG_SUCCESSFULLY',
-                data: update,
+                data: !!updateThumbnail ? updateThumbnail : updateInformation,
             };
         } catch (error) {
             console.log(error);
@@ -401,7 +423,7 @@ export default class SongService {
             return {
                 status: 200,
                 success: true,
-                message: 'UPDATE_ALBUM_SUCCESSFULLY',
+                message: 'UPDATE_LITS_SONG_BY_ALBUM_ID_SUCCESSFULLY',
             };
         } catch (error) {
             console.log(error);
@@ -409,6 +431,60 @@ export default class SongService {
                 status: 500,
                 success: false,
                 message: 'UPDATE_LITS_SONG_BY_ALBUM_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async updateByGenreEventUpdate(
+        listSongId: string[],
+        genreId: string,
+    ): Promise<CustomResponse> {
+        try {
+            const listSongByGenreId =
+                await songModel.getMultipleByGenreReference(
+                    listSongId,
+                    genreId,
+                );
+            const mapping = listSongByGenreId.map((song) => song._id);
+            const filterIdNotPercent = listSongId.filter(
+                (songId) => mapping.indexOf(songId) === -1,
+            );
+            if (filterIdNotPercent.length) {
+                await songModel.updateByAction(
+                    filterIdNotPercent,
+                    {
+                        genresReference: [genreId],
+                    },
+                    EnumActionUpdate.PUSH,
+                );
+            } else {
+                const listAllById = (
+                    await songModel.getListByGenreReference(genreId)
+                ).map((song) => song._id);
+                const listPullListSong = listAllById.filter(
+                    (songId) => listSongId.indexOf(songId) === -1,
+                );
+                if (listPullListSong.length)
+                    await songModel.updateByAction(
+                        listPullListSong,
+                        {
+                            genresReference: [genreId],
+                        },
+                        EnumActionUpdate.REMOVE,
+                    );
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_LITS_SONG_BY_GENRE_ID_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_LITS_SONG_BY_GENRE_ID_FAILED',
                 errors: error,
             };
         }

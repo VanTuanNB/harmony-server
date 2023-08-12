@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import { IFavorite } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { IFavorite } from '@/constraints/interfaces/index.interface';
 import FavoriteFilter from '@/filters/favorite.filter';
 import ValidatePayload from '@/helpers/validate.helper';
 import {
@@ -125,6 +125,7 @@ export default class FavoriteService {
             const favoriteFilter = new FavoriteFilter({
                 _id,
                 listSong: [songId],
+                userReference: userId,
             });
             const isInvalid = await ValidatePayload(
                 favoriteFilter,
@@ -185,3 +186,10 @@ export default class FavoriteService {
         }
     }
 }
+
+// ngày mai làm phần update favorite
+// update genres flow như album
+// update history
+// update song
+// delete cho từng collection
+// queue currency

@@ -84,11 +84,31 @@ export default class SongModel {
         return songs;
     }
 
+    public async getMultipleByGenreReference(
+        _id: string[],
+        genresReference: string,
+    ): Promise<ISong[]> {
+        const songs = await songSchema
+            .find({ _id })
+            .where('genresReference')
+            .equals(genresReference);
+        return songs;
+    }
+
     public async getListByAlbumReference(
         albumReference: string,
     ): Promise<ISong[]> {
         const songs = await songSchema.find({
             albumReference: albumReference,
+        });
+        return songs;
+    }
+
+    public async getListByGenreReference(
+        genreReference: string,
+    ): Promise<ISong[]> {
+        const songs = await songSchema.find({
+            genresReference: genreReference,
         });
         return songs;
     }
@@ -135,11 +155,11 @@ export default class SongModel {
     ): Promise<UpdateWriteOpResult> {
         switch (options) {
             case EnumActionUpdate.PUSH:
-                const pushUpdated = await songSchema
-                    .find({
-                        _id: listId,
-                    })
-                    .updateMany({
+                const pushUpdated = await songSchema.updateMany(
+                    {
+                        _id: { $in: listId },
+                    },
+                    {
                         $set: {
                             title: payload.title,
                             publish: payload.publish,
@@ -150,14 +170,15 @@ export default class SongModel {
                             albumReference: payload.albumReference,
                             genresReference: payload.genresReference,
                         },
-                    });
+                    },
+                );
                 return pushUpdated;
             case EnumActionUpdate.REMOVE:
-                const removeUpdated = await songSchema
-                    .find({
-                        _id: listId,
-                    })
-                    .updateMany({
+                const removeUpdated = await songSchema.updateMany(
+                    {
+                        _id: { $in: listId },
+                    },
+                    {
                         $set: {
                             title: payload.title,
                             publish: payload.publish,
@@ -165,10 +186,11 @@ export default class SongModel {
                             updatedAt: new Date().toUTCString(),
                         },
                         $pull: {
-                            albumReference: payload.albumReference,
-                            genresReference: payload.genresReference,
+                            albumReference: { $in: payload.albumReference },
+                            genresReference: { $in: payload.genresReference },
                         },
-                    });
+                    },
+                );
                 return removeUpdated;
             default:
                 throw new Error('Action not supported');
@@ -183,6 +205,21 @@ export default class SongModel {
             { _id: listId },
             {
                 $push: { albumReference: albumId },
+            },
+            { new: true },
+        );
+    }
+
+    public async updateThumbnailById(
+        _id: string,
+        payload: Pick<ISong, 'thumbnail'>,
+    ): Promise<ISong | null> {
+        return await songSchema.findByIdAndUpdate(
+            _id,
+            {
+                $set: {
+                    thumbnail: payload.thumbnail,
+                },
             },
             { new: true },
         );

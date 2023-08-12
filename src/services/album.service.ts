@@ -209,11 +209,17 @@ export default class AlbumService {
         },
     ): Promise<CustomResponse> {
         try {
+            if (payload.isNewUploadThumbnail && !payload.contentType)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
             const currentAlbum = await this.getById(_id);
             if (!currentAlbum.success) return currentAlbum;
             const updateAlbum = await albumModel.updatedField(_id, payload);
             if (!updateAlbum) throw new Error('CAN_NOT_UPDATE_ALBUM');
-            if (payload.listSong && payload.listSong.length) {
+            if (payload.listSong) {
                 await songService.updateByAlbumEventUpdate(
                     payload.listSong,
                     _id,

@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { IHistory } from '@/constraints/interfaces/index.interface';
 import HistoryFilter from '@/filters/history.filter';
 import ValidatePayload from '@/helpers/validate.helper';
-import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { historyModel, songModel, userModel } from '@/instances/index.instance';
 
 export default class HistoryService {
@@ -109,6 +109,7 @@ export default class HistoryService {
             const _id: string = uuidv4();
             const historyFilter = new HistoryFilter({
                 _id,
+                userReference: userId,
                 listSong: [songId],
             });
             const inValid = await ValidatePayload(

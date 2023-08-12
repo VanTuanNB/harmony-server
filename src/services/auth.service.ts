@@ -8,7 +8,12 @@ import {
 } from '@/constraints/interfaces/index.interface';
 import { generateToken } from '@/utils/jwtToken.util';
 import { RoleConstant } from '@/constraints/enums/role.enum';
-import { userModel, userService } from '@/instances/index.instance';
+import {
+    adminModel,
+    adminService,
+    userModel,
+    userService,
+} from '@/instances/index.instance';
 export default class AuthService {
     constructor() {}
     public async generateRefererToken(currentRefreshToken: string): Promise<
@@ -128,6 +133,7 @@ export default class AuthService {
                 success: true,
                 message: 'LOGIN_SUCCESSFULLY',
                 data: {
+                    userId: user._id,
                     accessToken,
                     refreshToken,
                 },
@@ -141,6 +147,66 @@ export default class AuthService {
             };
         }
     }
+
+    public async loginAdmin(payload: {
+        email: string;
+        password: string;
+    }): Promise<CustomResponse> {
+        try {
+            const currentAdmin = await adminService.getByEmail(payload.email);
+            if (!currentAdmin.data)
+                return {
+                    status: 403,
+                    success: false,
+                    message: 'FORBIDDEN',
+                };
+            const verifyPassword = await bcrypt.compare(
+                payload.password,
+                currentAdmin.data.password,
+            );
+            if (!verifyPassword)
+                return {
+                    status: 401,
+                    success: false,
+                    message: 'INCORRECT_PASSWORD',
+                };
+            const { accessToken, refreshToken } = generateToken({
+                _id: currentAdmin.data._id,
+                email: currentAdmin.data.email,
+                role: currentAdmin.data.role,
+            });
+            const updated = await adminService.updateById(
+                currentAdmin.data._id,
+                {
+                    refreshToken,
+                },
+            );
+            if (!updated)
+                return {
+                    status: 500,
+                    success: false,
+                    message: 'LOGIN_FAILED',
+                };
+            return {
+                status: 200,
+                success: true,
+                message: 'LOGIN_SUCCESSFULLY',
+                data: {
+                    adminId: currentAdmin.data._id,
+                    accessToken,
+                    refreshToken,
+                },
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'LOGIN_FORM_FAILED',
+                errors: error,
+            };
+        }
+    }
+
     public async loginGGFB(payload: Pick<IUser, 'email'>) {
         try {
             const user = await userModel.getByEmail(payload.email);

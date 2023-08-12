@@ -10,6 +10,7 @@ import {
 } from '@/decorators/index.decorator';
 import { IAlbum } from '@/constraints/interfaces/index.interface';
 import { albumService } from '@/instances/index.instance';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 
 export default class AlbumController {
     constructor() {}
@@ -58,7 +59,14 @@ export default class AlbumController {
         const payload = req.body as Pick<
             IAlbum,
             'title' | 'publish' | 'information' | 'listSong'
-        > & { isNewUploadThumbnail: boolean; userId: string };
+        > & {
+            isNewUploadThumbnail: boolean;
+            userId: string;
+            contentType:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.JPG
+                | EContentTypeObjectS3.PNG;
+        };
         Object.assign(payload, { userId });
         const updateService = await albumService.update(id, payload);
         return res.status(updateService.status).json(updateService);

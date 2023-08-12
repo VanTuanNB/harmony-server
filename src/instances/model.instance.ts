@@ -1,4 +1,5 @@
 import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
+import AdminModel from '@/models/admin.model';
 import AlbumModel from '@/models/album.model';
 import FavoriteModel from '@/models/favorite.model';
 import GenreModel from '@/models/genre.model';
@@ -17,3 +18,4 @@ export const playlistModel = new PlaylistModel();
 export const songModel = new SongModel();
 export const songDraftModel = new SongDraftModel();
 export const userModel = new UserModel();
+export const adminModel = new AdminModel();

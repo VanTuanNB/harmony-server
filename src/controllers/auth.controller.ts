@@ -36,6 +36,17 @@ export default class AuthController {
         return res.status(loginService.status).json(loginService);
     }
 
+    @IsRequirementReq(['email', 'password'], 'body')
+    @IsRequirementEmail('email')
+    public async loginAdmin(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const payload: { email: string; password: string } = req.body;
+        const loginAdminService = await authService.loginAdmin(payload);
+        return res.status(loginAdminService.status).json(loginAdminService);
+    }
+
     public async loginPassport(
         req: Request,
         res: Response,

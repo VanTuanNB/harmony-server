@@ -1,22 +1,22 @@
-import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 import transporter from '@/configs/nodemailer.config';
-import { generateToken } from '@/utils/jwtToken.util';
-import UserFilter from '@/filters/user.filter';
-import ValidatePayload from '@/helpers/validate.helper';
+import { RoleConstant } from '@/constraints/enums/role.enum';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import {
     IAccountPendingVerify,
     IUser,
 } from '@/constraints/interfaces/index.interface';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import { RoleConstant } from '@/constraints/enums/role.enum';
-import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
-import { s3Service } from '@/instances/service.instance';
+import UserFilter from '@/filters/user.filter';
+import ValidatePayload from '@/helpers/validate.helper';
 import {
     accountPendingVerifyModel,
     userModel,
 } from '@/instances/index.instance';
+import { s3Service } from '@/instances/service.instance';
+import { generateToken } from '@/utils/jwtToken.util';
 
 interface ISendMail {
     to: string;

@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { IGenre } from '@/constraints/interfaces/index.interface';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import { genreModel } from '@/instances/index.instance';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { IGenre } from '@/constraints/interfaces/index.interface';
+import { genreModel, songService } from '@/instances/index.instance';
 
 export default class GenreService {
     public async create(
@@ -39,20 +39,43 @@ export default class GenreService {
         }
     }
 
-    public async updateMultipleCollection(
-        listIdGenre: string[],
-        songId: string,
-    ): Promise<boolean> {
+    public async updateById(
+        _id: string,
+        payload: Omit<IGenre, '_id'>,
+    ): Promise<CustomResponse> {
         try {
-            listIdGenre.forEach(async (id: string) => {
-                await genreModel.updatedField(id, {
-                    listSong: [songId],
-                });
+            const currentGenre = await genreModel.getById(_id);
+            if (!currentGenre)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            const updated = await genreModel.updatedField(_id, {
+                title: payload.title,
+                listSong: payload.listSong,
             });
-            return true;
+            if (!updated) throw new Error('UPDATED_FAILED');
+            if (payload.listSong) {
+                const updateListSong =
+                    await songService.updateByGenreEventUpdate(
+                        payload.listSong,
+                        _id,
+                    );
+                if (!updateListSong.success) return updateListSong;
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_GENRE_SUCCESSFULLY',
+            };
         } catch (error) {
             console.log(error);
-            return false;
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_GENRE_FAILED',
+            };
         }
     }
     public async getAll(): Promise<CustomResponse<IGenre[] | []>> {

@@ -1,21 +1,14 @@
-import { NextFunction, Response, Request } from 'express';
+import { Request, Response } from 'express';
 
+import { CustomRequest, ISong } from '@/constraints/interfaces/index.interface';
 import {
-    CustomRequest,
-    ISong,
-    IFieldNameFiles,
-} from '@/constraints/interfaces/index.interface';
-import {
-    IsRequirementFiles,
-    IsRequirementTypeId,
     IsRequirementReq,
+    IsRequirementTypeId,
 } from '@/decorators/index.decorator';
 
-import SongService from '@/services/song.service';
-import { uploadFiledEnum } from '@/constraints/enums/index.enum';
 import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
-import { Readable } from 'stream';
 import { songService } from '@/instances/index.instance';
+import { Readable } from 'stream';
 
 const requirementFields = [
     'title',
@@ -110,7 +103,7 @@ export default class SongController {
             | 'performers'
             | 'publish'
             | 'title'
-        > = req.body;
+        > & { isNewUploadAvatar?: boolean } = req.body;
         const updateSongService = await songService.update(id, payload);
         return res.status(updateSongService.status).json(updateSongService);
     }

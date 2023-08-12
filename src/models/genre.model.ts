@@ -12,6 +12,10 @@ export default class GenreModel {
         return genreByTitle;
     }
 
+    public async getById(_id: string): Promise<IGenre | null> {
+        return await genreSchema.findById(_id);
+    }
+
     public async getMultipleBySongReference(
         _id: string[],
         songReference: string,
@@ -52,11 +56,13 @@ export default class GenreModel {
                 const removeUpdated = await genreSchema
                     .find({ _id })
                     .updateMany({
+                        $set: { updatedAt: new Date().toISOString() },
                         $pull: { listSong: songReference },
                     });
                 return removeUpdated;
             case EnumActionUpdate.PUSH:
                 const pushUpdated = await genreSchema.find({ _id }).updateMany({
+                    $set: { updatedAt: new Date().toISOString() },
                     $push: { listSong: songReference },
                 });
                 return pushUpdated;
@@ -72,9 +78,9 @@ export default class GenreModel {
         const updatedField = await genreSchema.findByIdAndUpdate(id, {
             $set: {
                 title: payload.title,
+                listSong: payload.listSong,
                 updatedAt: new Date().toUTCString(),
             },
-            $push: { listSong: payload.listSong },
         });
         return updatedField;
     }
