@@ -1,11 +1,9 @@
 import ThumbnailController from '@/controllers/thumbnail.controller';
-import S3Service from '@/services/s3.service';
-import ThumbnailService from '@/services/thumbnail.service';
 import { Router } from 'express';
 
 const router: Router = Router();
 const thumbnailControllerInstance: ThumbnailController =
-    new ThumbnailController(new ThumbnailService(new S3Service()));
+    new ThumbnailController();
 
 router
     .route('/avatar/:id')

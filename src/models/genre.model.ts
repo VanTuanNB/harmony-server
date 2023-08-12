@@ -5,14 +5,18 @@ import { IGenre } from '@/constraints/interfaces/index.interface';
 import genreSchema from '@/database/schemas/genre.schema';
 
 export default class GenreModel {
-    public static async getByTitle(title: string): Promise<IGenre | null> {
+    public async getByTitle(title: string): Promise<IGenre | null> {
         const genreByTitle = await genreSchema.findOne({
             title: { $regex: title, $options: 'i' },
         });
         return genreByTitle;
     }
 
-    public static async getMultipleBySongReference(
+    public async getById(_id: string): Promise<IGenre | null> {
+        return await genreSchema.findById(_id);
+    }
+
+    public async getMultipleBySongReference(
         _id: string[],
         songReference: string,
     ): Promise<IGenre[]> {
@@ -23,12 +27,26 @@ export default class GenreModel {
         return albums;
     }
 
-    public static async create(payload: IGenre): Promise<IGenre> {
+    public async getListId(_id: string[]): Promise<IGenre[]> {
+        const genre = await genreSchema.find({
+            _id,
+        });
+        return genre;
+    }
+
+    public async getListBySongId(songId: string): Promise<IGenre[]> {
+        const genres = await genreSchema.find({
+            listSong: songId,
+        });
+        return genres;
+    }
+
+    public async create(payload: IGenre): Promise<IGenre> {
         const created = await genreSchema.create(payload);
         return created;
     }
 
-    public static async updateManyActionSongReference(
+    public async updateManyActionSongReference(
         _id: string[],
         songReference: string,
         options: EnumActionUpdate,
@@ -38,11 +56,13 @@ export default class GenreModel {
                 const removeUpdated = await genreSchema
                     .find({ _id })
                     .updateMany({
+                        $set: { updatedAt: new Date().toISOString() },
                         $pull: { listSong: songReference },
                     });
                 return removeUpdated;
             case EnumActionUpdate.PUSH:
                 const pushUpdated = await genreSchema.find({ _id }).updateMany({
+                    $set: { updatedAt: new Date().toISOString() },
                     $push: { listSong: songReference },
                 });
                 return pushUpdated;
@@ -51,21 +71,21 @@ export default class GenreModel {
         }
     }
 
-    public static async updatedField(
+    public async updatedField(
         id: string,
         payload: Partial<Omit<IGenre, '_id'>>,
     ): Promise<IGenre | null> {
         const updatedField = await genreSchema.findByIdAndUpdate(id, {
             $set: {
                 title: payload.title,
+                listSong: payload.listSong,
                 updatedAt: new Date().toUTCString(),
             },
-            $push: { listSong: payload.listSong },
         });
         return updatedField;
     }
 
-    public static async updatedPullField(
+    public async updatedPullField(
         id: string,
         payload: Partial<Omit<IGenre, '_id'>>,
     ): Promise<IGenre | null> {
@@ -79,7 +99,7 @@ export default class GenreModel {
         return updatedField;
     }
 
-    public static async updateDetachListSong(
+    public async updateDetachListSong(
         songReference: string,
     ): Promise<UpdateWriteOpResult> {
         return await genreSchema.updateMany(
@@ -90,7 +110,7 @@ export default class GenreModel {
         );
     }
 
-    public static async getAll(): Promise<IGenre[]> {
+    public async getAll(): Promise<IGenre[]> {
         const genres = genreSchema.find().populate({
             path: 'listSong',
             strictPopulate: true,

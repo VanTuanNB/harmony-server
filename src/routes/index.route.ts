@@ -9,6 +9,7 @@ import thumbnailRouter from './thumbnail.route';
 import historyRouter from './history.route';
 import favoriteRouter from './favorite.route';
 import s3Router from './s3.route';
+import adminRouter from './admin.route'
 
 const rootRouter = Router();
 rootRouter.use('/signedUrlS3', s3Router);
@@ -20,6 +21,7 @@ rootRouter.use('/album', albumRouter);
 rootRouter.use('/song', songRouter);
 rootRouter.use('/auth', authRouter);
 rootRouter.use('/user', useRouter);
+rootRouter.use('/admin', adminRouter);
 rootRouter.use('/', (req, res) => res.end());
 
 export default rootRouter;

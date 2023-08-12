@@ -4,12 +4,12 @@ import historySchema from '@/database/schemas/history.schema';
 import { UpdateWriteOpResult } from 'mongoose';
 
 export default class HistoryModel {
-    public static async getById(_id: string): Promise<IHistory | null> {
+    public async getById(_id: string): Promise<IHistory | null> {
         const history = await historySchema.findById(_id);
         return history;
     }
 
-    public static async getByIdPoPulate(_id: string): Promise<IHistory | null> {
+    public async getByIdPoPulate(_id: string): Promise<IHistory | null> {
         const history = await historySchema.findById(_id).populate({
             path: 'listSong',
             strictPopulate: true,
@@ -18,12 +18,12 @@ export default class HistoryModel {
         return history;
     }
 
-    public static async create(payload: IHistory): Promise<IHistory> {
+    public async create(payload: IHistory): Promise<IHistory> {
         const create = await historySchema.create(payload);
         return create;
     }
 
-    public static async updateByAction(
+    public async updateByAction(
         _id: string,
         songId: string,
         action: EnumActionUpdate,
@@ -60,7 +60,7 @@ export default class HistoryModel {
         }
     }
 
-    public static async updateDetachListSong(
+    public async updateDetachListSong(
         songReference: string,
     ): Promise<UpdateWriteOpResult> {
         return await historySchema.updateMany(
@@ -71,7 +71,7 @@ export default class HistoryModel {
         );
     }
 
-    public static async removeFirstSongIntoListSong(
+    public async removeFirstSongIntoListSong(
         _id: string,
     ): Promise<IHistory | null> {
         const removeFirstSong = await historySchema.findByIdAndUpdate(
@@ -84,7 +84,7 @@ export default class HistoryModel {
         return removeFirstSong;
     }
 
-    public static async forceDelete(_id: string): Promise<IHistory | null> {
+    public async forceDelete(_id: string): Promise<IHistory | null> {
         const forceDelete = await historySchema.findByIdAndDelete(_id);
         return forceDelete;
     }

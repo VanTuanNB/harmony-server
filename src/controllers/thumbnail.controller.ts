@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { IsRequirementReq } from '@/decorators/index.decorator';
-import ThumbnailService from '@/services/thumbnail.service';
+import { thumbnailService } from '@/instances/index.instance';
 
 export default class ThumbnailController {
-    constructor(private thumbnailService: ThumbnailService) {}
+    constructor() {}
     @IsRequirementReq('id', 'params')
     public async getById(
         req: Request,
@@ -11,17 +11,19 @@ export default class ThumbnailController {
     ): Promise<Response | void> {
         const slugId: string = req.params.id;
         const resizeQuery = req.query.resize as string | undefined;
-        const thumbnailService = await this.thumbnailService.getThumbnailSong(
+        const getThumbnailService = await thumbnailService.getThumbnailSong(
             slugId,
             resizeQuery,
         );
-        if (!thumbnailService.success)
-            return res.status(thumbnailService.status).json(thumbnailService);
+        if (!getThumbnailService.success)
+            return res
+                .status(getThumbnailService.status)
+                .json(getThumbnailService);
 
         return res
-            .status(thumbnailService.status)
+            .status(getThumbnailService.status)
             .set('Content-Type', 'image/jpeg')
-            .send(thumbnailService.data);
+            .send(getThumbnailService.data);
     }
 
     @IsRequirementReq('id', 'params')
@@ -31,17 +33,19 @@ export default class ThumbnailController {
     ): Promise<Response | void> {
         const slugId: string = req.params.id;
         const resizeQuery = req.query.resize as string | undefined;
-        const thumbnailService = await this.thumbnailService.getThumbnailAlbum(
+        const getThumbnailService = await thumbnailService.getThumbnailAlbum(
             slugId,
             resizeQuery,
         );
-        if (!thumbnailService.success)
-            return res.status(thumbnailService.status).json(thumbnailService);
+        if (!getThumbnailService.success)
+            return res
+                .status(getThumbnailService.status)
+                .json(getThumbnailService);
 
         return res
-            .status(thumbnailService.status)
+            .status(getThumbnailService.status)
             .set('Content-Type', 'image/jpeg')
-            .send(thumbnailService.data);
+            .send(getThumbnailService.data);
     }
 
     @IsRequirementReq('id', 'params')
@@ -51,17 +55,16 @@ export default class ThumbnailController {
     ): Promise<Response | void> {
         const slugId: string = req.params.id;
         const resizeQuery = req.query.resize as string | undefined;
-        const thumbnailService =
-            await this.thumbnailService.getThumbnailUserAvatar(
-                slugId,
-                resizeQuery,
-            );
-        if (!thumbnailService.success)
-            return res.status(thumbnailService.status).json(thumbnailService);
+        const getThumbnailService =
+            await thumbnailService.getThumbnailUserAvatar(slugId, resizeQuery);
+        if (!getThumbnailService.success)
+            return res
+                .status(getThumbnailService.status)
+                .json(thumbnailService);
 
         return res
-            .status(thumbnailService.status)
+            .status(getThumbnailService.status)
             .set('Content-Type', 'image/jpeg')
-            .send(thumbnailService.data);
+            .send(getThumbnailService.data);
     }
 }

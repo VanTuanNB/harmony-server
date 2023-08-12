@@ -2,9 +2,9 @@ import passport from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { v4 as uuidv4 } from 'uuid';
 import { config } from 'dotenv';
-import UserModel from '@/models/user.model';
 import { generateToken } from '@/utils/jwtToken.util';
 import { RoleConstant } from '@/constraints/enums/role.enum';
+import { userModel } from '@/instances/index.instance';
 config();
 
 passport.use(
@@ -17,7 +17,7 @@ passport.use(
         },
         async function (accessTokens, refreshTokens, profile, cb) {
             const email = profile._json.email as string;
-            const user = await UserModel.getByEmail(email);
+            const user = await userModel.getByEmail(email);
             if (!user) {
                 const _id: string = uuidv4();
                 const { accessToken, refreshToken } = generateToken({
@@ -25,7 +25,7 @@ passport.use(
                     email: email,
                     role: RoleConstant.USER,
                 });
-                const newUser = await UserModel.create({
+                const newUser = await userModel.create({
                     _id: _id,
                     name: profile._json.name as string,
                     email: profile._json.email as string,

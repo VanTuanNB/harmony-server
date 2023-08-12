@@ -1,14 +1,27 @@
+import { Router } from 'express';
 import AlbumController from '@/controllers/album.controller';
 import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
-import { Router } from 'express';
 
 const router: Router = Router();
-router
-    .route('/change/:id')
-    .put(authenticationComposer, AlbumController.updateChangesSong);
-router.route('/').post(authenticationComposer, AlbumController.create);
-router.route('/:id').get( AlbumController.getById);
+const albumControllerInstance = new AlbumController();
 
-router.route('/newWeek').get(AlbumController.getAlbumNewWeek)
+router
+    .route('/newWeek')
+    .get(albumControllerInstance.getAlbumNewWeek.bind(albumControllerInstance));
+
+router
+    .route('/:id')
+    .get(albumControllerInstance.getById.bind(albumControllerInstance))
+    .put(
+        authenticationComposer,
+        albumControllerInstance.update.bind(albumControllerInstance),
+    );
+
+router
+    .route('/')
+    .post(
+        authenticationComposer,
+        albumControllerInstance.create.bind(albumControllerInstance),
+    );
 
 export default router;

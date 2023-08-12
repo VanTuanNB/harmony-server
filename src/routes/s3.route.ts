@@ -1,11 +1,10 @@
+import { Router } from 'express';
 import S3Controller from '@/controllers/s3.controller';
 import {
     authenticationComposer,
     authenticationUser,
 } from '@/middlewares/authVerifyToken.middleware';
-import S3Service from '@/services/s3.service';
-import { Router } from 'express';
-const s3ControllerInstance = new S3Controller(new S3Service());
+const s3ControllerInstance = new S3Controller();
 const router: Router = Router();
 
 router

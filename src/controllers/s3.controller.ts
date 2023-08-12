@@ -5,19 +5,20 @@ import {
     CustomResponseExpress,
 } from '@/constraints/interfaces/custom.interface';
 import { IsRequirementReq } from '@/decorators/IsRequirementRequest.decorator';
-import S3Service from '@/services/s3.service';
+import { s3Service } from '@/instances/index.instance';
 import { Response } from 'express';
 
 export default class S3Controller {
-    constructor(private s3Service: S3Service) {}
+    constructor() {}
 
     public async postSignedUrlS3Audio(
         req: CustomRequest,
         res: CustomResponseExpress,
     ): Promise<Response | void> {
         const userId = res.locals.memberDecoded?._id;
-        const signedUrlS3Service =
-            await this.s3Service.getSignUrlForUploadAudioS3(userId ?? '');
+        const signedUrlS3Service = await s3Service.getSignUrlForUploadAudioS3(
+            userId ?? '',
+        );
         return res.status(200).json(signedUrlS3Service);
     }
 
@@ -35,7 +36,7 @@ export default class S3Controller {
                 | EContentTypeObjectS3.JPG;
         };
         const signedUrlS3Service =
-            await this.s3Service.getSignUrlForUploadThumbnailS3(
+            await s3Service.getSignUrlForUploadThumbnailS3(
                 userId ?? '',
                 uploadId,
                 contentType,
@@ -56,12 +57,11 @@ export default class S3Controller {
                 | EContentTypeObjectS3.PNG
                 | EContentTypeObjectS3.JPG;
         };
-        const signedUrlS3Service =
-            await this.s3Service.getSignUrlForUploadAlbum(
-                userId ?? '',
-                albumId,
-                contentType,
-            );
+        const signedUrlS3Service = await s3Service.getSignUrlForUploadAlbum(
+            userId ?? '',
+            albumId,
+            contentType,
+        );
         return res.status(200).json(signedUrlS3Service);
     }
 
@@ -78,7 +78,7 @@ export default class S3Controller {
                 | EContentTypeObjectS3.JPG;
         };
         const signedUrlS3Service =
-            await this.s3Service.getSignUrlForUploadUserAvatar(
+            await s3Service.getSignUrlForUploadUserAvatar(
                 userId ?? '',
                 contentType,
             );

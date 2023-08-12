@@ -1,14 +1,9 @@
 import { Router } from 'express';
 
 import SongController from '@/controllers/song.controller';
-import { uploadSong } from '@/middlewares/uploadSong.middleware';
 import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
-import SongService from '@/services/song.service';
-import S3Service from '@/services/s3.service';
 const router: Router = Router();
-const songControllerInstance = new SongController(
-    new SongService(new S3Service()),
-);
+const songControllerInstance = new SongController();
 router
     .route('/stream/:id')
     .get(songControllerInstance.getStreamSong.bind(songControllerInstance));

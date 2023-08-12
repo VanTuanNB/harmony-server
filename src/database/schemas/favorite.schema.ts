@@ -4,6 +4,7 @@ import mongoose, { Schema } from 'mongoose';
 const favoriteSchema = new Schema<IFavorite>(
     {
         _id: { type: String, required: true },
+        userReference: { type: String, required: true },
         listSong: [
             {
                 type: String,
