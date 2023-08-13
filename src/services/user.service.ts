@@ -1,18 +1,22 @@
-import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 import transporter from '@/configs/nodemailer.config';
-import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
-import UserModel from '@/models/user.model';
-import { generateToken } from '@/utils/jwtToken.util';
-import UserFilter from '@/filters/user.filter';
-import ValidatePayload from '@/helpers/validate.helper';
+import { RoleConstant } from '@/constraints/enums/role.enum';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import {
     IAccountPendingVerify,
     IUser,
 } from '@/constraints/interfaces/index.interface';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import { RoleConstant } from '@/constraints/enums/role.enum';
+import UserFilter from '@/filters/user.filter';
+import ValidatePayload from '@/helpers/validate.helper';
+import {
+    accountPendingVerifyModel,
+    userModel,
+} from '@/instances/index.instance';
+import { s3Service } from '@/instances/service.instance';
+import { generateToken } from '@/utils/jwtToken.util';
 
 interface ISendMail {
     to: string;
@@ -20,9 +24,8 @@ interface ISendMail {
     message: string;
 }
 export default class UserService {
-    public static async getById(
-        _id: string,
-    ): Promise<CustomResponse<IUser | null>> {
+    constructor() {}
+    public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await UserModel.getByIdPopulate(_id);
             return {
@@ -60,9 +63,9 @@ export default class UserService {
             };
         }
     }
-    public static async checkEmail(email: string): Promise<CustomResponse> {
+    public async checkEmail(email: string): Promise<CustomResponse> {
         try {
-            const userInDb = await UserModel.getByEmail(email);
+            const userInDb = await userModel.getByEmail(email);
             const isExitUser: boolean = !!userInDb;
             if (isExitUser)
                 return {
@@ -85,7 +88,7 @@ export default class UserService {
         }
     }
 
-    public static async handleCreateAndSendMail(
+    public async handleCreateAndSendMail(
         payload: Pick<IAccountPendingVerify, 'email' | 'password' | 'username'>,
     ): Promise<CustomResponse> {
         try {
@@ -100,7 +103,7 @@ export default class UserService {
                 verificationCode,
                 password: hashPassword,
             };
-            const created = await AccountPendingVerifyModel.create(
+            const created = await accountPendingVerifyModel.create(
                 payloadToModel,
             );
             this.sendMailToUser({
@@ -123,12 +126,12 @@ export default class UserService {
         }
     }
 
-    public static async signupForm(
+    public async signupForm(
         payload: Pick<IAccountPendingVerify, 'email' | 'verificationCode'>,
     ): Promise<CustomResponse> {
         try {
             const collectionValidateUser =
-                await AccountPendingVerifyModel.getByEmail(payload.email);
+                await accountPendingVerifyModel.getByEmail(payload.email);
             if (!collectionValidateUser)
                 return {
                     status: 400,
@@ -157,9 +160,9 @@ export default class UserService {
                 true,
             );
             if (validation) return validation;
-            await UserModel.create(dataUser);
+            await userModel.create(dataUser);
             const deletedCollectionVerifyEmail =
-                await AccountPendingVerifyModel.deleteById(
+                await accountPendingVerifyModel.deleteById(
                     collectionValidateUser._id,
                 );
             if (!deletedCollectionVerifyEmail)
@@ -187,7 +190,7 @@ export default class UserService {
         }
     }
 
-    public static sendMailToUser({ to, subject, message }: ISendMail) {
+    public sendMailToUser({ to, subject, message }: ISendMail) {
         transporter.sendMail({
             from: process.env.GMAIL_SERVER,
             to,
@@ -196,12 +199,12 @@ export default class UserService {
         });
     }
 
-    public static async updateFiled(
+    public async updateFiled(
         _id: string,
         payload: Partial<Omit<IUser, '_id'>>,
     ): Promise<CustomResponse<IUser | null>> {
         try {
-            const updatedUser = await UserModel.updateById(_id, payload);
+            const updatedUser = await userModel.updateById(_id, payload);
             return {
                 status: 200,
                 success: true,
@@ -219,11 +222,11 @@ export default class UserService {
         }
     }
 
-    public static async pendingUpgradeComposer(
+    public async pendingUpgradeComposer(
         userId: string,
     ): Promise<CustomResponse> {
         try {
-            const user = await UserModel.getById(userId);
+            const user = await userModel.getById(userId);
             if (!user || user.role === RoleConstant.COMPOSER)
                 return {
                     status: 400,
@@ -246,11 +249,9 @@ export default class UserService {
         }
     }
 
-    public static async upgradeComposer(
-        userId: string,
-    ): Promise<CustomResponse> {
+    public async upgradeComposer(userId: string): Promise<CustomResponse> {
         try {
-            const user = await UserModel.getById(userId);
+            const user = await userModel.getById(userId);
             if (
                 !user ||
                 user.role === RoleConstant.COMPOSER ||
@@ -295,6 +296,63 @@ export default class UserService {
                 status: 500,
                 success: false,
                 message: 'ASK_PERMISSION_UPGRADE_COMPOSER_BY_USER_FAILED',
+            };
+        }
+    }
+
+    public async updateProfile(
+        payload: Pick<IUser, 'name'> & {
+            userId: string;
+            isNewUploadAvatar?: boolean;
+            contentType?:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.PNG
+                | EContentTypeObjectS3.JPG;
+        },
+    ): Promise<CustomResponse> {
+        try {
+            let nickname: string | undefined = undefined;
+            if (payload.name) {
+                let randomEntryPointSlug: number = 0;
+                do {
+                    randomEntryPointSlug = Math.floor(Math.random() * 10000);
+                } while (randomEntryPointSlug < 1000);
+                nickname =
+                    (payload.name
+                        .normalize('NFD')
+                        .replace(/[^a-z0-9\s]/gi, '')
+                        .toLocaleLowerCase()
+                        .replace(/\s+/g, '') ?? '') +
+                    (randomEntryPointSlug < 1000
+                        ? randomEntryPointSlug * 10
+                        : randomEntryPointSlug);
+            }
+            let responseData = undefined;
+            if (payload.isNewUploadAvatar) {
+                const response = await s3Service.getSignUrlForUploadUserAvatar(
+                    payload.userId,
+                    payload.contentType || EContentTypeObjectS3.JPEG,
+                );
+                responseData = response.data;
+            }
+            await userModel.updateById(payload.userId, {
+                name: payload.name,
+                nickname,
+            });
+
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_PROFILE_SUCCESSFULLY',
+                data: responseData ? responseData : {},
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_PROFILE_FAILED',
+                errors: error,
             };
         }
     }

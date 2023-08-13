@@ -1,7 +1,6 @@
 import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 import {
     ISong,
-    IComposer,
     IAlbum,
 } from '@/constraints/interfaces/index.interface';
 import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
@@ -48,7 +47,7 @@ export default class SongFilter implements TypeProps {
         contentType: EContentTypeObjectS3.AUDIO;
     };
 
-    @IsGenerateCollection<IComposer>({
+    @IsGenerateCollection({
         message: 'Property composerId missing key _id',
     })
     userReference: string;

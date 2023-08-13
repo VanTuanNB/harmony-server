@@ -1,4 +1,4 @@
-import { RoleConstant } from '../enums/role.enum';
+import { RoleConstant } from '../enums/index.enum';
 import { EContentTypeObjectS3 } from '../enums/s3.enum';
 
 export interface ISong {
@@ -36,6 +36,7 @@ export interface IGenre {
 export interface IHistory {
     _id: string;
     listSong: string[];
+    userReference: string;
     createdAt?: string;
     updatedAt?: Date;
 }
@@ -43,6 +44,7 @@ export interface IHistory {
 export interface IFavorite {
     _id: string;
     listSong: string[];
+    userReference: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -131,6 +133,18 @@ export interface ISongDraftUpload {
         contentType: EContentTypeObjectS3.AUDIO;
     };
     userReference: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+export interface IAdmin {
+    _id: string;
+    name: string;
+    email: string;
+    password: string;
+    refreshToken: string;
+    role: RoleConstant.ROOT_ADMIN;
+    avatar?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

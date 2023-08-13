@@ -5,7 +5,7 @@ import { IAlbum } from '@/constraints/interfaces/index.interface';
 import albumSchema from '@/database/schemas/album.schema';
 
 export default class AlbumModel {
-    public static async getByComposerAndTitle(
+    public async getByComposerAndTitle(
         idComposer: string,
         title: string,
     ): Promise<IAlbum | null> {
@@ -16,7 +16,21 @@ export default class AlbumModel {
         return albumByComposer;
     }
 
-    public static async getBySongReference(
+    public async getListId(_id: string[]): Promise<IAlbum[]> {
+        const album = await albumSchema.find({
+            _id,
+        });
+        return album;
+    }
+
+    public async getListBySongId(songId: string): Promise<IAlbum[]> {
+        const album = await albumSchema.find({
+            listSong: songId,
+        });
+        return album;
+    }
+
+    public async getBySongReference(
         _id: string,
         songReference: string,
     ): Promise<IAlbum | null> {
@@ -27,7 +41,7 @@ export default class AlbumModel {
         return album;
     }
 
-    public static async getMultipleBySongReference(
+    public async getMultipleBySongReference(
         _id: string[],
         songReference: string,
     ): Promise<IAlbum[]> {
@@ -38,40 +52,48 @@ export default class AlbumModel {
         return albums;
     }
 
-    public static async getById(_id: string): Promise<IAlbum | null> {
+    public async getById(_id: string): Promise<IAlbum | null> {
         const album = await albumSchema.findById(_id);
         return album;
     }
 
-    public static async create(payload: IAlbum): Promise<IAlbum> {
+    public async create(payload: IAlbum): Promise<IAlbum> {
         const created = await albumSchema.create(payload);
         return created;
     }
 
-    public static async updateManyActionSongReference(
+    public async updateManyActionSongReference(
         _id: string[],
         songReference: string,
         options: EnumActionUpdate,
     ): Promise<UpdateWriteOpResult> {
         switch (options) {
             case EnumActionUpdate.REMOVE:
-                const removeUpdated = await albumSchema
-                    .find({ _id })
-                    .updateMany({
-                        $pull: { listSong: songReference },
-                    });
+                const removeUpdated = await albumSchema.updateMany(
+                    {
+                        _id: { $in: _id },
+                    },
+                    {
+                        $pull: { listSong: { $in: songReference } },
+                    },
+                );
                 return removeUpdated;
             case EnumActionUpdate.PUSH:
-                const pushUpdated = await albumSchema.find({ _id }).updateMany({
-                    $push: { listSong: songReference },
-                });
+                const pushUpdated = await albumSchema.updateMany(
+                    {
+                        _id: { $in: _id },
+                    },
+                    {
+                        $push: { listSong: songReference },
+                    },
+                );
                 return pushUpdated;
             default:
                 throw new Error('INVALID ACTION TYPE UPDATE');
         }
     }
 
-    public static async updatedField(
+    public async updatedField(
         id: string,
         payload: Partial<Omit<IAlbum, '_id'>>,
     ): Promise<IAlbum | null> {
@@ -86,15 +108,15 @@ export default class AlbumModel {
                     thumbnail: payload.thumbnail,
                     thumbnailUrl: payload.thumbnailUrl,
                     updatedAt: payload.updatedAt,
+                    listSong: payload.listSong,
                 },
-                $push: { listSong: payload.listSong },
             },
             { new: true },
         );
         return updatedField;
     }
 
-    public static async updatedFieldByActionRemove(
+    public async updatedFieldByActionRemove(
         id: string,
         payload: Partial<Omit<IAlbum, '_id'>>,
     ): Promise<IAlbum | null> {
@@ -117,7 +139,14 @@ export default class AlbumModel {
         return updatedField;
     }
 
-    public static async updateDetachListSong(
+    public async updateMultiAlbumListSong(
+        listId: string,
+        songId: string,
+    ): Promise<any> {
+        // return await albumSchema.find({ _id: listId }, {  })
+    }
+
+    public async updateDetachListSong(
         songReference: string,
     ): Promise<UpdateWriteOpResult> {
         return await albumSchema.updateMany(
@@ -128,7 +157,7 @@ export default class AlbumModel {
         );
     }
 
-    public static async getAlbumNewWeek(): Promise<IAlbum[]> {
+    public async getAlbumNewWeek(): Promise<IAlbum[]> {
         const albumNew = await albumSchema
             .find({
                 updatedAt: {

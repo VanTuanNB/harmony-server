@@ -1,6 +1,8 @@
-import AccountPendingVerifyModel from '@/models/accountPendingVerify.model';
-import UserModel from '@/models/user.model';
 import { NextFunction, Request, Response } from 'express';
+import {
+    accountPendingVerifyModel,
+    userModel,
+} from '@/instances/index.instance';
 
 export default async function verificationEmailWithForm(
     req: Request,
@@ -15,7 +17,7 @@ export default async function verificationEmailWithForm(
                 success: false,
                 message: 'BAD_REQUEST_PAYLOAD_EMPTY',
             });
-        const collectionUser = await UserModel.getByEmail(payload.email);
+        const collectionUser = await userModel.getByEmail(payload.email);
         if (
             collectionUser &&
             collectionUser.email === payload.email &&
@@ -26,7 +28,7 @@ export default async function verificationEmailWithForm(
                 success: false,
                 message: 'GMAIL_ALREADY_EXISTS',
             });
-        const currentGmail = await AccountPendingVerifyModel.getByEmail(
+        const currentGmail = await accountPendingVerifyModel.getByEmail(
             payload.email,
         );
         if (!currentGmail)

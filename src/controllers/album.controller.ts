@@ -9,30 +9,32 @@ import {
     IsRequirementTypeId,
 } from '@/decorators/index.decorator';
 import { IAlbum } from '@/constraints/interfaces/index.interface';
-import AlbumService from '@/services/album.service';
+import { albumService } from '@/instances/index.instance';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 
 export default class AlbumController {
-    @IsRequirementTypeId('id', 'params')
-    @IsRequirementReq(['songReference', 'typeAction'], 'body')
-    public static async updateChangesSong(
+    constructor() {}
+
+    public async getAlbumNewWeek(
         req: CustomRequest,
-        res: CustomResponseExpress,
+        res: Response,
     ): Promise<Response | void> {
-        const { id } = req.params;
-        const { songReference, typeAction } = req.body;
-        const changeSongAlbumService = await AlbumService.updateChangesSong(
-            id,
-            songReference,
-            typeAction,
-        );
-        return res
-            .status(changeSongAlbumService.status)
-            .json(changeSongAlbumService);
+        const albums = await albumService.getAlbumNewWeek();
+        return res.status(albums.status).json(albums);
+    }
+    @IsRequirementTypeId('id', 'params')
+    public async getById(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const _id = req.params.id;
+        const album = await albumService.getById(_id);
+        return res.status(album.status).json(album);
     }
 
     @IsRequirementReq(['title', 'publish'], 'body')
     @IsRequirementTypeId(['userReference', 'listSong'], 'body')
-    public static async create(
+    public async create(
         req: CustomRequest,
         res: CustomResponseExpress,
     ): Promise<Response | void> {
@@ -43,24 +45,30 @@ export default class AlbumController {
         Object.assign(payload, {
             userReference: res.locals.memberDecoded?._id ?? '',
         });
-        const createAlbumService = await AlbumService.create(payload);
+        const createAlbumService = await albumService.create(payload);
         return res.status(createAlbumService.status).json(createAlbumService);
     }
 
-    public static async getAlbumNewWeek(
-        req: CustomRequest,
-        res: Response,
-    ): Promise<Response | void> {
-        const albums = await AlbumService.getAlbumNewWeek();
-        return res.status(albums.status).json(albums);
-    }
-    @IsRequirementTypeId('id', 'params')
-    public static async getById(
+    @IsRequirementReq('id', 'params')
+    public async update(
         req: Request,
-        res: Response,
+        res: CustomResponseExpress,
     ): Promise<Response | void> {
-        const _id = req.params.id;
-        const album = await AlbumService.getById(_id);
-        return res.status(album.status).json(album);
+        const id: string = req.params.id;
+        const userId: string = res.locals.memberDecoded?._id ?? '';
+        const payload = req.body as Pick<
+            IAlbum,
+            'title' | 'publish' | 'information' | 'listSong'
+        > & {
+            isNewUploadThumbnail: boolean;
+            userId: string;
+            contentType:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.JPG
+                | EContentTypeObjectS3.PNG;
+        };
+        Object.assign(payload, { userId });
+        const updateService = await albumService.update(id, payload);
+        return res.status(updateService.status).json(updateService);
     }
 }

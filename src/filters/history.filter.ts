@@ -9,11 +9,16 @@ export default class HistoryFilter implements IHistoryFilter {
     @IsUUID()
     _id: string;
 
+    @IsNotEmpty()
+    @IsUUID()
+    userReference: string;
+
     @IsGenerateCollection()
     listSong: string[];
 
     constructor(props: IHistoryFilter) {
         this._id = props._id;
+        this.userReference = props.userReference;
         this.listSong = props.listSong;
     }
 }

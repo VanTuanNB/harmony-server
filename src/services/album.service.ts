@@ -2,15 +2,22 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { IAlbum } from '@/constraints/interfaces/index.interface';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import AlbumModel from '@/models/album.model';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
-import SongModel from '@/models/song.model';
-import UserModel from '@/models/user.model';
 import AlbumFilter from '@/filters/album.filter';
 import ValidatePayload from '@/helpers/validate.helper';
+import {
+    albumModel,
+    s3Service,
+    songModel,
+    songService,
+    userModel,
+    userService,
+} from '@/instances/index.instance';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 
 export default class AlbumService {
-    public static async create(
+    constructor() {}
+    public async create(
         payload: Pick<
             IAlbum,
             'title' | 'publish' | 'userReference' | 'listSong' | 'information'
@@ -18,14 +25,14 @@ export default class AlbumService {
     ): Promise<CustomResponse> {
         try {
             const _id: string = uuidv4();
-            const composer = await UserModel.getById(payload.userReference);
+            const composer = await userService.getById(payload.userReference);
             if (!composer)
                 return {
                     status: 400,
                     success: false,
                     message: 'BAD_REQUEST_COMPOSER_NOT_FOUND',
                 };
-            const albumByComposer = await AlbumModel.getByComposerAndTitle(
+            const albumByComposer = await albumModel.getByComposerAndTitle(
                 payload.userReference,
                 payload.title,
             );
@@ -47,12 +54,12 @@ export default class AlbumService {
                 true,
             );
             if (isInValidValidator) return isInValidValidator;
-            const newAlbum = await AlbumModel.create(albumFilter);
-            await UserModel.updateIncreaseAlbum(
+            const newAlbum = await albumModel.create(albumFilter);
+            await userModel.updateIncreaseAlbum(
                 payload.userReference,
                 newAlbum._id,
             );
-            await SongModel.updateIncreaseAlbumReference(
+            await songModel.updateIncreaseAlbumReference(
                 albumFilter.listSong,
                 albumFilter._id,
             );
@@ -73,98 +80,64 @@ export default class AlbumService {
         }
     }
 
-    public static async updateChangesSong(
-        id: string,
-        songReference: string,
-        typeAction: string,
+    public async updateBySongEventUpdate(
+        listAlbumId: string[],
+        songId: string,
     ): Promise<CustomResponse> {
         try {
-            const currentAlbum = await AlbumModel.getById(id);
-            if (!currentAlbum)
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'ALBUM_NOT_FOUND',
-                };
-            switch (typeAction) {
-                case EnumActionUpdate.PUSH:
-                    const albumHasSongReference =
-                        await AlbumModel.getBySongReference(id, songReference);
-                    if (albumHasSongReference)
-                        return {
-                            status: 400,
-                            success: false,
-                            message: 'SONG_NOT_EXIST_IN_THIS_ALBUM',
-                        };
-                    const updateThisAlbum = await AlbumModel.updatedField(id, {
-                        listSong: [songReference],
-                    });
-                    if (!updateThisAlbum)
-                        throw new Error('UPDATE_THIS_ALBUM_PUSH_FAILED');
-                    await SongModel.updateByAction(
-                        songReference,
-                        {
-                            albumReference: [updateThisAlbum._id],
-                        },
-                        EnumActionUpdate.PUSH,
-                    );
-                    return {
-                        status: 200,
-                        success: true,
-                        message: 'ALBUM_PUSH_SONG_SUCCESSFULLY',
-                    };
-                case EnumActionUpdate.REMOVE:
-                    const currentAlbumHasSongReference =
-                        await AlbumModel.getBySongReference(id, songReference);
-                    if (!currentAlbumHasSongReference)
-                        return {
-                            status: 400,
-                            success: false,
-                            message: 'SONG_NOT_ALREADY_EXISTS_IN_THIS_ALBUM',
-                        };
-                    const updatedListSongAlbum =
-                        await AlbumModel.updatedFieldByActionRemove(id, {
-                            listSong: songReference as any,
-                        });
-                    if (!updatedListSongAlbum)
-                        throw new Error('UPDATE_THIS_ALBUM_REMOVE_FAILED');
-                    await SongModel.updateByAction(
-                        songReference,
-                        {
-                            albumReference: updatedListSongAlbum._id as any,
-                        },
+            const listAlbumBySongId =
+                await albumModel.getMultipleBySongReference(
+                    listAlbumId,
+                    songId,
+                );
+            const mapping = listAlbumBySongId.map((album) => album._id);
+            const filterIdNotPercent = listAlbumId.filter(
+                (albumId) => mapping.indexOf(albumId) === -1,
+            );
+            if (filterIdNotPercent.length) {
+                await albumModel.updateManyActionSongReference(
+                    filterIdNotPercent,
+                    songId,
+                    EnumActionUpdate.PUSH,
+                );
+            } else {
+                const listAllById = (
+                    await albumModel.getListBySongId(songId)
+                ).map((album) => album._id);
+                const listPullListSong = listAllById.filter(
+                    (albumId) => listAlbumId.indexOf(albumId) === -1,
+                );
+                if (listPullListSong.length)
+                    await albumModel.updateManyActionSongReference(
+                        listPullListSong,
+                        songId,
                         EnumActionUpdate.REMOVE,
                     );
-                    return {
-                        status: 200,
-                        success: true,
-                        message: 'ALBUM_REMOVE_SONG_SUCCESSFULLY',
-                    };
-                default:
-                    return {
-                        status: 400,
-                        success: false,
-                        message: 'INVALID_ACTION_TYPE',
-                    };
             }
+
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_ALBUM_SUCCESSFULLY',
+            };
         } catch (error) {
             console.log(error);
             return {
                 status: 500,
                 success: false,
-                message: 'PUT_ALBUM_FAILED',
+                message: 'UPDATE_ALBUM_FAILED',
                 errors: error,
             };
         }
     }
 
-    public static async updateMultipleCollection(
+    public async updateMultipleCollection(
         listIdAlbum: string[],
         songId: string,
     ): Promise<boolean> {
         try {
             listIdAlbum.forEach(async (id: string) => {
-                await AlbumModel.updatedField(id, {
+                await albumModel.updatedField(id, {
                     listSong: [songId],
                 });
             });
@@ -175,9 +148,9 @@ export default class AlbumService {
         }
     }
 
-    public static async getAlbumNewWeek(): Promise<CustomResponse> {
+    public async getAlbumNewWeek(): Promise<CustomResponse> {
         try {
-            const albumNew = await AlbumModel.getAlbumNewWeek();
+            const albumNew = await albumModel.getAlbumNewWeek();
 
             return {
                 status: 200,
@@ -195,11 +168,9 @@ export default class AlbumService {
         }
     }
 
-    public static async getById(
-        _id: string,
-    ): Promise<CustomResponse<IAlbum | null>> {
+    public async getById(_id: string): Promise<CustomResponse<IAlbum | null>> {
         try {
-            const album = await AlbumModel.getById(_id);
+            const album = await albumModel.getById(_id);
             if (!album)
                 return {
                     status: 400,
@@ -219,6 +190,64 @@ export default class AlbumService {
                 status: 500,
                 success: false,
                 message: 'GET_ALBUM_BY_ID_FAILED',
+            };
+        }
+    }
+
+    public async update(
+        _id: string,
+        payload: Pick<
+            IAlbum,
+            'title' | 'publish' | 'information' | 'listSong'
+        > & {
+            isNewUploadThumbnail: boolean;
+            userId: string;
+            contentType:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.JPG
+                | EContentTypeObjectS3.PNG;
+        },
+    ): Promise<CustomResponse> {
+        try {
+            if (payload.isNewUploadThumbnail && !payload.contentType)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            const currentAlbum = await this.getById(_id);
+            if (!currentAlbum.success) return currentAlbum;
+            const updateAlbum = await albumModel.updatedField(_id, payload);
+            if (!updateAlbum) throw new Error('CAN_NOT_UPDATE_ALBUM');
+            if (payload.listSong) {
+                await songService.updateByAlbumEventUpdate(
+                    payload.listSong,
+                    _id,
+                );
+            }
+            let responseS3Data = undefined;
+            if (payload.isNewUploadThumbnail) {
+                const response = await s3Service.getSignUrlForUploadAlbum(
+                    payload.userId,
+                    _id,
+                    payload.contentType,
+                );
+                if (response.success) throw new Error('UPLOAD_THUMBNAIL_ALBUM');
+                responseS3Data = response.data;
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_ALBUM_SUCCESSFULLY',
+                data: responseS3Data ? responseS3Data : {},
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_ALBUM_FAILED',
+                errors: error,
             };
         }
     }

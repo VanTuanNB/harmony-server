@@ -4,14 +4,12 @@ import favoriteSchema from '@/database/schemas/favorite.schema';
 import { UpdateWriteOpResult } from 'mongoose';
 
 export default class FavoriteModel {
-    public static async getById(_id: string): Promise<IFavorite | null> {
+    public async getById(_id: string): Promise<IFavorite | null> {
         const favorite = await favoriteSchema.findById(_id);
         return favorite;
     }
 
-    public static async getByIdPoPulate(
-        _id: string,
-    ): Promise<IFavorite | null> {
+    public async getByIdPoPulate(_id: string): Promise<IFavorite | null> {
         const favorite = await favoriteSchema.findById(_id).populate({
             path: 'listSong',
             strictPopulate: true,
@@ -20,12 +18,12 @@ export default class FavoriteModel {
         return favorite;
     }
 
-    public static async create(payload: IFavorite): Promise<IFavorite> {
+    public async create(payload: IFavorite): Promise<IFavorite> {
         const create = await favoriteSchema.create(payload);
         return create;
     }
 
-    public static async updateByAction(
+    public async updateByAction(
         _id: string,
         songId: string,
         action: EnumActionUpdate,
@@ -62,7 +60,7 @@ export default class FavoriteModel {
         }
     }
 
-    public static async updateDetachListSong(
+    public async updateDetachListSong(
         songReference: string,
     ): Promise<UpdateWriteOpResult> {
         return await favoriteSchema.updateMany(
@@ -73,7 +71,7 @@ export default class FavoriteModel {
         );
     }
 
-    public static async forceDelete(_id: string): Promise<IFavorite | null> {
+    public async forceDelete(_id: string): Promise<IFavorite | null> {
         const forceDelete = await favoriteSchema.findByIdAndDelete(_id);
         return forceDelete;
     }

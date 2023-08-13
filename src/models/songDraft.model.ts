@@ -4,22 +4,22 @@ import {
 } from '@/constraints/interfaces/ICollection.interface';
 import songDraftSchema from '@/database/schemas/songDraft.schema';
 
-export default class songDraftModel {
-    public static async getById(_id: string): Promise<ISongDraftUpload | null> {
+export default class SongDraftModel {
+    public async getById(_id: string): Promise<ISongDraftUpload | null> {
         return await songDraftSchema.findById(_id);
     }
 
-    public static async getUserId(userReference: string): Promise<ISongDraftUpload | null> {
-        return await songDraftSchema.findOne({userReference: userReference});
+    public async getUserId(
+        userReference: string,
+    ): Promise<ISongDraftUpload | null> {
+        return await songDraftSchema.findOne({ userReference: userReference });
     }
 
-    public static async create(
-        payload: ISongDraftUpload,
-    ): Promise<ISongDraftUpload> {
+    public async create(payload: ISongDraftUpload): Promise<ISongDraftUpload> {
         return await songDraftSchema.create(payload);
     }
 
-    public static async updateField(
+    public async updateField(
         _id: string,
         payload: Partial<Omit<ISongDraftUpload, '_id'>>,
     ): Promise<ISongDraftUpload | null> {
@@ -62,7 +62,7 @@ export default class songDraftModel {
         );
     }
 
-    public static async forceDelete(_id: string): Promise<ISong | null> {
+    public async forceDelete(_id: string): Promise<ISong | null> {
         return await songDraftSchema.findByIdAndDelete(_id);
     }
 }

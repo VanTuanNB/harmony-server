@@ -1,15 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { IGenre } from '@/constraints/interfaces/index.interface';
+import { EnumActionUpdate } from '@/constraints/enums/action.enum';
 import { CustomResponse } from '@/constraints/interfaces/custom.interface';
-import GenreModel from '@/models/genre.model';
+import { IGenre } from '@/constraints/interfaces/index.interface';
+import { genreModel, songService } from '@/instances/index.instance';
 
 export default class GenreService {
-    public static async create(
+    public async create(
         payload: Pick<IGenre, 'title'>,
     ): Promise<CustomResponse> {
         try {
-            const genreByTitle = await GenreModel.getByTitle(payload.title);
+            const genreByTitle = await genreModel.getByTitle(payload.title);
             if (genreByTitle)
                 return {
                     status: 400,
@@ -17,7 +18,7 @@ export default class GenreService {
                     message: 'BAD_REQUEST_GENRE_TITLE_IS_EXISTING',
                 };
             const _id: string = uuidv4();
-            const create = await GenreModel.create({
+            const create = await genreModel.create({
                 _id,
                 ...payload,
             });
@@ -38,25 +39,48 @@ export default class GenreService {
         }
     }
 
-    public static async updateMultipleCollection(
-        listIdGenre: string[],
-        songId: string,
-    ): Promise<boolean> {
+    public async updateById(
+        _id: string,
+        payload: Omit<IGenre, '_id'>,
+    ): Promise<CustomResponse> {
         try {
-            listIdGenre.forEach(async (id: string) => {
-                await GenreModel.updatedField(id, {
-                    listSong: [songId],
-                });
+            const currentGenre = await genreModel.getById(_id);
+            if (!currentGenre)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'BAD_REQUEST',
+                };
+            const updated = await genreModel.updatedField(_id, {
+                title: payload.title,
+                listSong: payload.listSong,
             });
-            return true;
+            if (!updated) throw new Error('UPDATED_FAILED');
+            if (payload.listSong) {
+                const updateListSong =
+                    await songService.updateByGenreEventUpdate(
+                        payload.listSong,
+                        _id,
+                    );
+                if (!updateListSong.success) return updateListSong;
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_GENRE_SUCCESSFULLY',
+            };
         } catch (error) {
             console.log(error);
-            return false;
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_GENRE_FAILED',
+            };
         }
     }
-    public static async getAll(): Promise<CustomResponse<IGenre[] | []>> {
+    public async getAll(): Promise<CustomResponse<IGenre[] | []>> {
         try {
-            const genres = await GenreModel.getAll();
+            const genres = await genreModel.getAll();
             return {
                 status: 200,
                 success: true,
@@ -74,4 +98,54 @@ export default class GenreService {
         }
     }
 
+    public async updateBySongEventUpdate(
+        listGenreId: string[],
+        songId: string,
+    ): Promise<CustomResponse> {
+        try {
+            const listGenreBySongId =
+                await genreModel.getMultipleBySongReference(
+                    listGenreId,
+                    songId,
+                );
+            const mapping = listGenreBySongId.map((genre) => genre._id);
+            const filterIdNotPercent = listGenreId.filter(
+                (genreId) => mapping.indexOf(genreId) === -1,
+            );
+            if (filterIdNotPercent.length) {
+                await genreModel.updateManyActionSongReference(
+                    filterIdNotPercent,
+                    songId,
+                    EnumActionUpdate.PUSH,
+                );
+            } else {
+                const listAllById = (
+                    await genreModel.getListBySongId(songId)
+                ).map((genre) => genre._id);
+                const listPullListSong = listAllById.filter(
+                    (albumId) => listGenreId.indexOf(albumId) === -1,
+                );
+                if (listPullListSong.length)
+                    await genreModel.updateManyActionSongReference(
+                        listPullListSong,
+                        songId,
+                        EnumActionUpdate.REMOVE,
+                    );
+            }
+
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_GENRE_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
 }
