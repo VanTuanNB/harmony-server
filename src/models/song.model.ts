@@ -225,6 +225,11 @@ export default class SongModel {
         );
     }
 
+    public async increaseView(_id: string): Promise<ISong | null> {
+        return await songSchema.findByIdAndUpdate(_id, {
+            $inc: { views: 1 },
+        });
+    }
     public async forceDelete(id: string): Promise<ISong | null> {
         const forceDelete = await songSchema.findByIdAndDelete(id);
         return forceDelete;

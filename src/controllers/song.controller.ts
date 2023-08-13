@@ -123,4 +123,14 @@ export default class SongController {
             .status(forceDeleteSongService.status)
             .json(forceDeleteSongService);
     }
+
+    @IsRequirementTypeId('id', 'params')
+    public async increaseView(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const _id: string = req.params.id;
+        const increaseService = await songService.increaseViewQueue(_id);
+        return res.status(increaseService.status).json(increaseService);
+    }
 }
