@@ -6,6 +6,7 @@ import { authenticationUser } from '@/middlewares/authVerifyToken.middleware';
 
 const router: Router = Router();
 const userControllerInstance = new UserController();
+router.get('/:id', userControllerInstance.getById)
 router.post(
     '/checkGmail',
     userControllerInstance.checkGmail.bind(userControllerInstance),

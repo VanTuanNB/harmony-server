@@ -17,7 +17,6 @@ import {
 } from '@/instances/index.instance';
 import { s3Service } from '@/instances/service.instance';
 import { generateToken } from '@/utils/jwtToken.util';
-import UserModel from '@/models/user.model';
 
 interface ISendMail {
     to: string;
@@ -28,7 +27,7 @@ export default class UserService {
     constructor() {}
     public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
-            const user = await UserModel.getByIdPopulate(_id);
+            const user = await userModel.getByIdPopulate(_id);
             return {
                 status: 200,
                 success: true,
@@ -44,11 +43,11 @@ export default class UserService {
             };
         }
     }
-    public static async getByNickName(
+    public async getByNickName(
         nickname: string,
     ): Promise<CustomResponse<IUser | null>> {
         try {
-            const user = await UserModel.getByNickNamePopulate(nickname);
+            const user = await userModel.getByNickNamePopulate(nickname);
             return {
                 status: 200,
                 success: true,

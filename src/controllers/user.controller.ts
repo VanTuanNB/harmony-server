@@ -22,22 +22,22 @@ export default class UserController {
     }
 
     @IsRequirementReq('id', 'params')
-    public static async getByNickName(
+    public async getByNickName(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
         const nickname = req.params.id;
-        const user = await UserService.getByNickName(nickname);
+        const user = await userService.getByNickName(nickname);
         return res.status(user.status).json(user);
     }
 
     @IsRequirementReq('id', 'params')
-    public static async getById(
+    public async getById(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
         const id = req.params.id;
-        const user = await UserService.getById(id);
+        const user = await userService.getById(id);
         return res.status(user.status).json(user);
     }
 
