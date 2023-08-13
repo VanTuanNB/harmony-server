@@ -17,6 +17,7 @@ import {
 } from '@/instances/index.instance';
 import { s3Service } from '@/instances/service.instance';
 import { generateToken } from '@/utils/jwtToken.util';
+import UserModel from '@/models/user.model';
 
 interface ISendMail {
     to: string;
