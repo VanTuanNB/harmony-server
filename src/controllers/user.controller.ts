@@ -20,6 +20,26 @@ export default class UserController {
         return res.status(checkEmailService.status).json(checkEmailService);
     }
 
+    @IsRequirementReq('id', 'params')
+    public static async getByNickName(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const nickname = req.params.id;
+        const user = await UserService.getByNickName(nickname);
+        return res.status(user.status).json(user);
+    }
+
+    @IsRequirementReq('id', 'params')
+    public static async getById(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const id = req.params.id;
+        const user = await UserService.getById(id);
+        return res.status(user.status).json(user);
+    }
+
     @IsRequirementReq(['email', 'password', 'username'], 'body')
     public static async createRequestAuthenticationEmail(
         req: Request,

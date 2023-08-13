@@ -7,6 +7,40 @@ export default class UserModel {
         const user = await userSchema.findById(_id);
         return user;
     }
+    public static async getByIdPopulate(id: string): Promise<IUser | null> {
+        const user = await userSchema.findById(id).select('role albumsReference avatarUrl email name locale nickname playlistReference songsReference')
+            .populate({
+                path: 'songsReference',
+                strictPopulate: true,
+                select: '_id title publish thumbnailUrl albumsReference'
+            })
+            .populate({
+                path: 'favoriteListReference',
+                strictPopulate: true,
+            }).populate({
+                path: 'historyReference',
+                strictPopulate: true,
+            }).populate({
+                path: 'playlistReference',
+                strictPopulate: true,
+            }).populate({
+                path: 'albumsReference',
+                strictPopulate: true,
+            });
+        return user;
+    }
+    public static async getByNickNamePopulate(nickname: string): Promise<IUser | null> {
+        const user = await userSchema.findOne({ nickname: nickname }).select('albumsReference nickname name songsReference')
+            .populate({
+                path: 'songsReference',
+                strictPopulate: true,
+                select: '_id title publish thumbnailUrl'
+            }).populate({
+                path: 'albumsReference',
+                strictPopulate: true,
+            });
+        return user;
+    }
     public static async getByEmail(email: string): Promise<IUser | null> {
         const user = await userSchema.findOne({ email });
         return user;
