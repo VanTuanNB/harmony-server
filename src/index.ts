@@ -1,8 +1,8 @@
+import cors from 'cors';
+import { config } from 'dotenv';
 import express, { Express } from 'express';
 import 'module-alias/register';
-import { config } from 'dotenv';
 import morgan from 'morgan';
-import cors from 'cors';
 
 import rootRouter from '@/routes/index.route';
 import Database from './database/connect.db';
@@ -27,7 +27,6 @@ app.use(
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 // connect Database
 Database.connect();
 

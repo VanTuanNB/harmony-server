@@ -1,4 +1,6 @@
+import { GetObjectOutput } from '@aws-sdk/client-s3';
 import { config } from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 config();
 
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
@@ -20,13 +22,7 @@ import {
     songModel,
     userModel,
 } from '@/instances/index.instance';
-import { GetObjectOutput } from '@aws-sdk/client-s3';
-import { v4 as uuidv4 } from 'uuid';
-
-export interface ITypeFiles {
-    thumbnail: Express.Multer.File;
-    fileSong: Express.Multer.File;
-}
+import TaskQueue from '@/queues/index.queue';
 
 export interface IFsStreamSong {
     instanceContent: GetObjectOutput;
@@ -36,7 +32,10 @@ export interface IFsStreamSong {
 }
 
 export default class SongService {
-    constructor() {}
+    private taskQueue: TaskQueue;
+    constructor() {
+        this.taskQueue = new TaskQueue(10);
+    }
     public async getAll(): Promise<CustomResponse<ISong[] | []>> {
         try {
             const songs = await songModel.getAll();
@@ -485,6 +484,28 @@ export default class SongService {
                 status: 500,
                 success: false,
                 message: 'UPDATE_LITS_SONG_BY_GENRE_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async increaseViewQueue(_id: string): Promise<CustomResponse> {
+        try {
+            await this.taskQueue.add(async () => {
+                const increase = await songModel.increaseView(_id);
+                if (!increase) throw new Error('BAD_REQUEST');
+            });
+            return {
+                status: 200,
+                success: true,
+                message: 'UPDATE_VIEW_SONG_SUCCESSFULLY',
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'UPDATE_VIEW_SONG_FAILED',
                 errors: error,
             };
         }

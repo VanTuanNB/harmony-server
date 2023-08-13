@@ -7,6 +7,10 @@ const songControllerInstance = new SongController();
 router
     .route('/stream/:id')
     .get(songControllerInstance.getStreamSong.bind(songControllerInstance));
+
+router
+    .route('/increase/:id')
+    .post(songControllerInstance.increaseView.bind(songControllerInstance));
 router
     .route('/:id')
     .get(songControllerInstance.getById.bind(songControllerInstance))
@@ -18,18 +22,8 @@ router
         authenticationComposer,
         songControllerInstance.forceDelete.bind(songControllerInstance),
     );
-// .delete(authenticationComposer, SongController.delete);
-// router
-//     .route('/')
-//     .get(SongController.getAll)
-//     .post(
-//         authenticationComposer,
-//         uploadSong,
-//         SongController.middlewareCreateSong,
-//         SongController.create,
-//     );
 router
-    .route('')
+    .route('/')
     .post(
         authenticationComposer,
         songControllerInstance.create.bind(songControllerInstance),
