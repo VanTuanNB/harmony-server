@@ -83,6 +83,31 @@ export default class SongService {
         }
     }
 
+    public async getTopView(item: number): Promise<CustomResponse<ISong[] | []>>{
+        try {
+            const songs = await songModel.getSongTopView(item);
+            const getall = await songModel.getAll()
+            if (item === 0 || item > getall.length) return {
+                status: 400,
+                success: false,
+                message: 'SONG_LENGTH_NOT_EXIST',
+            };
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_TOP_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_TOP_FAILED',
+                errors: error,
+            };
+        }
+    }
+
     public async getById(_id: string): Promise<CustomResponse<ISong | null>> {
         try {
             const song = await songModel.getById(_id);
