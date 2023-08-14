@@ -5,6 +5,10 @@ import { IAlbum } from '@/constraints/interfaces/index.interface';
 import albumSchema from '@/database/schemas/album.schema';
 
 export default class AlbumModel {
+    public async getAll(): Promise<IAlbum[]> {
+        const album = await albumSchema.find();
+        return album;
+    }
     public async getByComposerAndTitle(
         idComposer: string,
         title: string,
@@ -157,7 +161,7 @@ export default class AlbumModel {
         );
     }
 
-    public async getAlbumNewWeek(): Promise<IAlbum[]> {
+    public async getAlbumNewWeek(item: number): Promise<IAlbum[]> {
         const albumNew = await albumSchema
             .find({
                 updatedAt: {
@@ -165,7 +169,7 @@ export default class AlbumModel {
                         new Date().setDate(new Date().getDate() - 7),
                     ),
                 },
-            })
+            }).limit(item)
             .populate({
                 path: 'userReference',
                 strictPopulate: true,

@@ -15,11 +15,13 @@ import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 export default class AlbumController {
     constructor() {}
 
+    @IsRequirementReq('item', 'query')
     public async getAlbumNewWeek(
         req: CustomRequest,
         res: Response,
     ): Promise<Response | void> {
-        const albums = await albumService.getAlbumNewWeek();
+        const item = req.query.item as string
+        const albums = await albumService.getAlbumNewWeek(parseInt(item));
         return res.status(albums.status).json(albums);
     }
     @IsRequirementTypeId('id', 'params')

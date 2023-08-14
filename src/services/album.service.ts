@@ -148,10 +148,15 @@ export default class AlbumService {
         }
     }
 
-    public async getAlbumNewWeek(): Promise<CustomResponse> {
+    public async getAlbumNewWeek(item: number): Promise<CustomResponse> {
         try {
-            const albumNew = await albumModel.getAlbumNewWeek();
-
+            const albumNew = await albumModel.getAlbumNewWeek(item);
+            const getall = await albumModel.getAll()
+            if (item === 0 || item > getall.length) return {
+                status: 400,
+                success: false,
+                message: 'Album_LENGTH_NOT_EXIST',
+            };
             return {
                 status: 200,
                 success: true,
