@@ -84,6 +84,17 @@ export default class SongController {
         }
     }
 
+    
+    @IsRequirementReq('title', 'query')
+    public async search(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const title = req.query.title as string
+        const song = await songService.search(title);
+        return res.status(song.status).json(song);
+    }
+
     @IsRequirementReq(requirementFields, 'body')
     public async create(
         req: CustomRequest,

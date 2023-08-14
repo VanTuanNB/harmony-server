@@ -133,6 +133,42 @@ export default class SongService {
         }
     }
 
+    public async search(
+        title: string,
+    ): Promise<CustomResponse<ISong | {}>> {
+        try {
+            const song = await songModel.search(title);
+            const album = await albumModel.search(title)
+            const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(title);
+
+            if (hasSpecialChar)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'INPUT_HAS_SECIAL_CHARACTER',
+                }
+
+            const data = {
+                songs: song,
+                albums: album,
+            }
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_AND_ALBUM_SEARCH_SUCCESSFULLY',
+                data: data,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_AND_ALBUM_FAILED',
+            };
+        }
+    }
+
     public async create(
         payload: Pick<
             ISong,

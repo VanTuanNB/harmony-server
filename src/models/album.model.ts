@@ -61,6 +61,23 @@ export default class AlbumModel {
         return album;
     }
 
+    public async search(title: string): Promise<IAlbum[]> {
+        const albumQuery = albumSchema.find({
+            $or: [
+                { title: { $regex: title, $options: 'i' } }
+            ]
+        }).populate({
+            path: 'userReference',
+            strictPopulate: true,
+            select: 'name nickname'
+        }).populate({
+            path: 'listSong',
+            strictPopulate: true,
+            select: 'title thumbnailUrl'
+        });
+        return albumQuery;
+    }
+
     public async create(payload: IAlbum): Promise<IAlbum> {
         const created = await albumSchema.create(payload);
         return created;
