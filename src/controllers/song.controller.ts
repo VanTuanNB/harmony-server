@@ -34,6 +34,16 @@ export default class SongController {
         return res.status(song.status).json(song);
     }
 
+    @IsRequirementReq('item', 'query')
+    public async getSongJustReleased(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const item = req.query.item as string
+        const songs = await songService.getJustReleased(parseInt(item));
+        return res.status(songs.status).json(songs);
+    }
+
     @IsRequirementReq('id', 'params')
     public async getStreamSong(
         req: Request,

@@ -56,6 +56,34 @@ export default class SongModel {
         return song;
     }
 
+    public async getSongJustReleasedPopulate(item: number): Promise<ISong[]> {
+        const songs = await songSchema
+            .find({
+                createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
+            }).limit(item)
+            .populate({
+                path: 'userReference',
+                strictPopulate: true,
+                select: 'name thumbnailUrl',
+            })
+            .populate({
+                path: 'albumReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'genresReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name thumbnailUrl',
+            });
+        return songs;
+    }
+
     public async getByArrayId(_id: string[]): Promise<ISong[] | null> {
         const songs = await songSchema.find({ _id });
         return songs;

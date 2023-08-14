@@ -4,6 +4,8 @@ import SongController from '@/controllers/song.controller';
 import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
 const router: Router = Router();
 const songControllerInstance = new SongController();
+
+router.route('/released').get(songControllerInstance.getSongJustReleased.bind(songControllerInstance))
 router
     .route('/stream/:id')
     .get(songControllerInstance.getStreamSong.bind(songControllerInstance));
