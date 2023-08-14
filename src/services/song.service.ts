@@ -59,8 +59,8 @@ export default class SongService {
     public async getJustReleased(item: number): Promise<CustomResponse<ISong[] | []>> {
         try {
             const songs = await songModel.getSongJustReleasedPopulate(item);
-
-            if (item == 0) return {
+            const getall = await songModel.getAll()
+            if (item == 0 || item > getall.length) return {
                 status: 400,
                 success: false,
                 message: 'LIST_SONG_QUERY_PARMAS_NOT_EXITS',
@@ -83,7 +83,7 @@ export default class SongService {
         }
     }
 
-    public async getTopView(item: number): Promise<CustomResponse<ISong[] | []>>{
+    public async getTopView(item: number): Promise<CustomResponse<ISong[] | []>> {
         try {
             const songs = await songModel.getSongTopView(item);
             const getall = await songModel.getAll()
