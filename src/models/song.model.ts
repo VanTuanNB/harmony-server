@@ -57,32 +57,36 @@ export default class SongModel {
     }
 
     public async getSongJustReleasedPopulate(item: number): Promise<ISong[]> {
-        const songs = await songSchema
-            .find({
-                createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
-            }).limit(item)
-            .populate({
-                path: 'userReference',
-                strictPopulate: true,
-                select: 'name thumbnailUrl',
-            })
-            .populate({
-                path: 'albumReference',
-                strictPopulate: true,
-                select: 'title',
-            })
-            .populate({
-                path: 'genresReference',
-                strictPopulate: true,
-                select: 'title',
-            })
-            .populate({
-                path: 'performers',
-                strictPopulate: true,
-                select: 'name thumbnailUrl',
-            });
+        const count = await songSchema.countDocuments({
+            createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
+        });
+        const random = Math.floor(Math.random() * count);
+        const songs = await songSchema.find({
+            createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
+        }).skip(random).limit(item)
+        .populate({
+            path: 'userReference',
+            strictPopulate: true,
+            select: 'name thumbnailUrl',
+        })
+        .populate({
+            path: 'albumReference',
+            strictPopulate: true,
+            select: 'title',
+        })
+        .populate({
+            path: 'genresReference',
+            strictPopulate: true,
+            select: 'title',
+        })
+        .populate({
+            path: 'performers',
+            strictPopulate: true,
+            select: 'name thumbnailUrl',
+        });
         return songs;
     }
+    
 
     public async getSongTopView(id: number): Promise<ISong[]> {
         const songs = await songSchema
@@ -101,12 +105,11 @@ export default class SongModel {
                 path: 'genresReference',
                 strictPopulate: true,
                 select: 'title',
-            })
-            .populate({
+            }).populate({
                 path: 'performers',
                 strictPopulate: true,
                 select: 'name thumbnailUrl',
-            });
+            })
         return songs;
     }
 
@@ -116,7 +119,7 @@ export default class SongModel {
                 { title: { $regex: title, $options: 'i' } },
             ]
         }).populate({
-            path: 'userReference',
+            path: 'composerReference',
             strictPopulate: true,
             select: 'name thumbnailUrl',
         }).populate({
@@ -128,7 +131,7 @@ export default class SongModel {
             strictPopulate: true,
             select: 'title',
         }).populate({
-            path: 'performers',
+            path: 'songsReference',
             strictPopulate: true,
             select: 'name thumbnailUrl',
         });
