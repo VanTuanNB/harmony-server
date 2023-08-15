@@ -5,6 +5,12 @@ export interface CustomResponse<T = any> {
     success: boolean;
     message: string;
     data?: T;
+    paging?: {
+        page: number;
+        size: number;
+        totalItems: number;
+        totalPages: number;
+    };
     errors?: unknown;
 }
 

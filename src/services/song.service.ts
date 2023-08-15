@@ -158,14 +158,48 @@ export default class SongService {
                 success: true,
                 message: 'GET_SONG_AND_ALBUM_SEARCH_SUCCESSFULLY',
                 data: data,
+            }
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_AND_ALBUM_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async suggest(
+        page: number,
+        size: number,
+    ): Promise<CustomResponse<ISong[]>> {
+        try {
+            page = page === 0 ? 1 : page;
+            size = size === 0 ? 10 : size;
+            const songs = await songModel.getAll();
+            const skip = size * (page - 1);
+            const totalPages = Math.ceil(songs.length / size);
+            const currentPage = songs.splice(skip, size);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SUGGEST_SONGS_SUCCESSFULLY',
+                data: currentPage,
+                paging: {
+                    page,
+                    size,
+                    totalItems: currentPage.length || 0,
+                    totalPages,
+                },
             };
         } catch (error) {
             console.log(error);
             return {
                 status: 500,
                 success: false,
-                message: 'GET_SONG_AND_ALBUM_FAILED',
-            };
+                message: 'GET_SUGGEST_SONGS_FAILED',
+                errors: error,
+            }
         }
     }
 

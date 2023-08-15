@@ -34,6 +34,7 @@ export default class SongController {
         return res.status(song.status).json(song);
     }
 
+
     @IsRequirementReq('item', 'query')
     public async getSongJustReleased(
         req: Request,
@@ -52,6 +53,21 @@ export default class SongController {
         const item = req.query.item as string;
         const song = await songService.getTopView(parseInt(item));
         return res.status(song.status).json(song);
+    }
+
+    public async suggest(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const { page, size } = req.query as {
+            page?: string;
+            size?: string;
+        };
+        const suggestService = await songService.suggest(
+            Number.parseInt(page || '1'),
+            Number.parseInt(size || '10'),
+        );
+        return res.status(suggestService.status).json(suggestService);
     }
 
     @IsRequirementReq('id', 'params')
