@@ -1,19 +1,18 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import {
-    CustomResponse,
-    IUser,
-    IPayloadToken,
-} from '@/constraints/interfaces/index.interface';
-import { generateToken } from '@/utils/jwtToken.util';
 import { RoleConstant } from '@/constraints/enums/role.enum';
 import {
-    adminModel,
+    CustomResponse,
+    IPayloadToken,
+    IUser,
+} from '@/constraints/interfaces/index.interface';
+import {
     adminService,
     userModel,
     userService,
 } from '@/instances/index.instance';
+import { generateToken } from '@/utils/jwtToken.util';
 export default class AuthService {
     constructor() {}
     public async generateRefererToken(currentRefreshToken: string): Promise<
@@ -245,6 +244,7 @@ export default class AuthService {
                 success: true,
                 message: 'LOGIN_SUCCESSFULLY',
                 data: {
+                    _id: user._id,
                     accessToken,
                     refreshToken,
                 },

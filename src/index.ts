@@ -5,6 +5,7 @@ import 'module-alias/register';
 import morgan from 'morgan';
 
 import rootRouter from '@/routes/index.route';
+import cookieParser from 'cookie-parser';
 import Database from './database/connect.db';
 
 config();
@@ -21,10 +22,23 @@ app.use(
         } else {
             corsOptions.origin = false;
         }
-        callback(null, corsOptions);
+        callback(null, {
+            ...corsOptions,
+            methods: [
+                'GET',
+                'HEAD',
+                'POST',
+                'PATCH',
+                'PUT',
+                'DELETE',
+                'OPTIONS',
+            ],
+            credentials: true,
+        });
     }),
 );
 app.use(morgan('dev'));
+app.use(cookieParser()); // process.env.COOKIE_SECRET
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // connect Database

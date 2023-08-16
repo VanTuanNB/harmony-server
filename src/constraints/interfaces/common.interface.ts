@@ -14,3 +14,12 @@ export interface IPayloadToken {
 export interface IFieldNameFiles {
     [fieldname: string]: Express.Multer.File[];
 }
+
+export interface IEnvironment {
+    ORIGIN: string;
+    VERSION: string;
+    PREFIX: string;
+    CLIENT_URL: string;
+    IS_PRODUCTION: boolean;
+    DOMAIN_CLIENT: string;
+}
