@@ -1,10 +1,11 @@
+import { RoleConstant } from '@/constraints/enums/role.enum';
+import { environment } from '@/environments/environment';
+import { userModel } from '@/instances/index.instance';
+import { generateToken } from '@/utils/jwtToken.util';
+import { config } from 'dotenv';
 import passport from 'passport';
 import { Strategy } from 'passport-google-oauth20';
 import { v4 as uuidv4 } from 'uuid';
-import { config } from 'dotenv';
-import { generateToken } from '@/utils/jwtToken.util';
-import { RoleConstant } from '@/constraints/enums/role.enum';
-import { userModel } from '@/instances/index.instance';
 config();
 
 passport.use(
@@ -12,7 +13,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            callbackURL: 'http://localhost:5000/api/v1/auth/google/callback',
+            callbackURL: `${environment.ORIGIN}/${environment.PREFIX}/${environment.VERSION}/auth/google/callback`,
             scope: ['profile'],
         },
         async function (accessTokens, refreshTokens, profile, cb) {
@@ -36,12 +37,6 @@ passport.use(
                     avatarS3: null,
                 });
                 cb(null, newUser);
-            } else if (user?.isRegistrationForm) {
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'The account you have registered by form',
-                };
             } else {
                 cb(null, user);
             }

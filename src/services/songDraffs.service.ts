@@ -1,6 +1,6 @@
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { currentStep } from '@/constraints/enums/currentStep.enum';
 import { ISongDraftUpload } from '@/constraints/interfaces/ICollection.interface';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { songDraftModel } from '@/instances/index.instance';
 
 export default class SongDraftService {
@@ -26,7 +26,7 @@ export default class SongDraftService {
                     message: 'GET_SONG_DRAFT_SUCCESSFULLY',
                     data: {
                         ...songDraft,
-                        currentStep: currentStep.THUMNAIL,
+                        currentStep: currentStep.THUMBNAIL,
                     },
                 };
             } else {

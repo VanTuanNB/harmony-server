@@ -1,4 +1,4 @@
-export enum currentStep{
-    THUMNAIL = 'STEP_THUMNAIL',
-    INFORMATION = 'STEP_INFORMATION'
+export enum currentStep {
+    THUMBNAIL = 'STEP_THUMBNAIL',
+    INFORMATION = 'STEP_INFORMATION',
 }

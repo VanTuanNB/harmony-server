@@ -1,10 +1,11 @@
+import { RoleConstant } from '@/constraints/enums/role.enum';
+import { environment } from '@/environments/environment';
+import { userModel } from '@/instances/index.instance';
+import { generateToken } from '@/utils/jwtToken.util';
+import { config } from 'dotenv';
 import passport from 'passport';
 import { Strategy } from 'passport-facebook';
 import { v4 as uuidv4 } from 'uuid';
-import { config } from 'dotenv';
-import { generateToken } from '@/utils/jwtToken.util';
-import { RoleConstant } from '@/constraints/enums/role.enum';
-import { userModel } from '@/instances/index.instance';
 config();
 
 passport.use(
@@ -12,7 +13,7 @@ passport.use(
         {
             clientID: process.env.FACEBOOK_CLIENT_ID as string,
             clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
-            callbackURL: '/api/v1/auth/facebook/callback',
+            callbackURL: `${environment.ORIGIN}/${environment.PREFIX}/${environment.VERSION}/auth/facebook/callback`,
             profileFields: ['id', 'displayName', 'photos', 'email'],
         },
         async function (accessTokens, refreshTokens, profile, cb) {
@@ -35,12 +36,6 @@ passport.use(
                     avatarS3: null,
                 });
                 cb(null, newUser);
-            } else if (user?.isRegistrationForm) {
-                return {
-                    status: 400,
-                    success: false,
-                    message: 'The account you have registered by form',
-                };
             } else {
                 cb(null, user);
             }
