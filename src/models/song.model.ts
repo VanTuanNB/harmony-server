@@ -67,7 +67,7 @@ export default class SongModel {
         .populate({
             path: 'userReference',
             strictPopulate: true,
-            select: 'name thumbnailUrl',
+            select: 'name nickname thumbnailUrl',
         })
         .populate({
             path: 'albumReference',
@@ -82,7 +82,7 @@ export default class SongModel {
         .populate({
             path: 'performers',
             strictPopulate: true,
-            select: 'name thumbnailUrl',
+            select: 'name nickname thumbnailUrl',
         });
         return songs;
     }
@@ -94,7 +94,7 @@ export default class SongModel {
             .populate({
                 path: 'userReference',
                 strictPopulate: true,
-                select: 'name thumbnailUrl',
+                select: 'name nickname thumbnailUrl',
             })
             .populate({
                 path: 'albumReference',
@@ -108,7 +108,7 @@ export default class SongModel {
             }).populate({
                 path: 'performers',
                 strictPopulate: true,
-                select: 'name thumbnailUrl',
+                select: 'name nickname thumbnailUrl',
             })
         return songs;
     }
