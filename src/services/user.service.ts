@@ -27,7 +27,27 @@ export default class UserService {
     constructor() {}
     public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
-            const user = await userModel.getById(_id);
+            const user = await userModel.getByIdPopulate(_id);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 404,
+                success: false,
+                message: 'GET_USER_BY_ID_FAILED',
+                errors: error,
+            };
+        }
+    }
+    public async getByNickName(
+        nickname: string,
+    ): Promise<CustomResponse<IUser | null>> {
+        try {
+            const user = await userModel.getByNickNamePopulate(nickname);
             return {
                 status: 200,
                 success: true,

@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { IAlbum } from '@/constraints/interfaces/index.interface';
-import { CustomResponse } from '@/constraints/interfaces/custom.interface';
 import { EnumActionUpdate } from '@/constraints/enums/action.enum';
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
+import { CustomResponse } from '@/constraints/interfaces/custom.interface';
+import { IAlbum } from '@/constraints/interfaces/index.interface';
 import AlbumFilter from '@/filters/album.filter';
 import ValidatePayload from '@/helpers/validate.helper';
 import {
@@ -13,10 +14,9 @@ import {
     userModel,
     userService,
 } from '@/instances/index.instance';
-import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 
 export default class AlbumService {
-    constructor() {}
+    constructor() { }
     public async create(
         payload: Pick<
             IAlbum,
@@ -148,10 +148,15 @@ export default class AlbumService {
         }
     }
 
-    public async getAlbumNewWeek(): Promise<CustomResponse> {
+    public async getAlbumNewWeek(item: number): Promise<CustomResponse> {
         try {
-            const albumNew = await albumModel.getAlbumNewWeek();
-
+            const albumNew = await albumModel.getAlbumNewWeek(item);
+            const getall = await albumModel.getAll()
+            if (item === 0 || item > getall.length) return {
+                status: 400,
+                success: false,
+                message: 'Album_LENGTH_NOT_EXIST',
+            };
             return {
                 status: 200,
                 success: true,
@@ -203,9 +208,9 @@ export default class AlbumService {
             isNewUploadThumbnail: boolean;
             userId: string;
             contentType:
-                | EContentTypeObjectS3.JPEG
-                | EContentTypeObjectS3.JPG
-                | EContentTypeObjectS3.PNG;
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG;
         },
     ): Promise<CustomResponse> {
         try {
@@ -232,14 +237,15 @@ export default class AlbumService {
                     _id,
                     payload.contentType,
                 );
-                if (response.success) throw new Error('UPLOAD_THUMBNAIL_ALBUM');
+                if (!response.success) throw new Error('UPLOAD_THUMBNAIL_ALBUM');
                 responseS3Data = response.data;
+
             }
             return {
                 status: 200,
                 success: true,
                 message: 'UPDATE_ALBUM_SUCCESSFULLY',
-                data: responseS3Data ? responseS3Data : {},
+                data: responseS3Data ? responseS3Data : updateAlbum,
             };
         } catch (error) {
             console.log(error);
@@ -248,6 +254,32 @@ export default class AlbumService {
                 success: false,
                 message: 'UPDATE_ALBUM_FAILED',
                 errors: error,
+            };
+        }
+    }
+
+    public async getByIdPopulate(_id: string): Promise<CustomResponse<IAlbum | null>> {
+        try {
+            const album = await albumModel.getByIdPopulate(_id);
+            if (!album)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'GET_ALBUM_BY_ID_EXISTS',
+                };
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALBUM_BY_ID_SUCCESSFULLY',
+                data: album,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALBUM_BY_ID_FAILED',
             };
         }
     }

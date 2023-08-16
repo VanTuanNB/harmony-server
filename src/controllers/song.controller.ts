@@ -34,6 +34,27 @@ export default class SongController {
         return res.status(song.status).json(song);
     }
 
+
+    @IsRequirementReq('item', 'query')
+    public async getSongJustReleased(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const item = req.query.item as string
+        const songs = await songService.getJustReleased(parseInt(item));
+        return res.status(songs.status).json(songs);
+    }
+
+    @IsRequirementReq('item', 'query')
+    public async getSongTop(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const item = req.query.item as string;
+        const song = await songService.getTopView(parseInt(item));
+        return res.status(song.status).json(song);
+    }
+
     public async suggest(
         req: Request,
         res: Response,
@@ -77,6 +98,17 @@ export default class SongController {
                 .status(getStreamSongService.status)
                 .json(getStreamSongService);
         }
+    }
+
+    
+    @IsRequirementReq('title', 'query')
+    public async search(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const title = req.query.title as string
+        const song = await songService.search(title);
+        return res.status(song.status).json(song);
     }
 
     @IsRequirementReq(requirementFields, 'body')

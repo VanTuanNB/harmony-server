@@ -1,25 +1,27 @@
 import { Request, Response } from 'express';
 
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 import {
     CustomRequest,
     CustomResponseExpress,
 } from '@/constraints/interfaces/custom.interface';
+import { IAlbum } from '@/constraints/interfaces/index.interface';
 import {
     IsRequirementReq,
     IsRequirementTypeId,
 } from '@/decorators/index.decorator';
-import { IAlbum } from '@/constraints/interfaces/index.interface';
 import { albumService } from '@/instances/index.instance';
-import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 
 export default class AlbumController {
-    constructor() {}
+    constructor() { }
 
+    @IsRequirementReq('item', 'query')
     public async getAlbumNewWeek(
         req: CustomRequest,
         res: Response,
     ): Promise<Response | void> {
-        const albums = await albumService.getAlbumNewWeek();
+        const item = req.query.item as string
+        const albums = await albumService.getAlbumNewWeek(parseInt(item));
         return res.status(albums.status).json(albums);
     }
     @IsRequirementTypeId('id', 'params')
@@ -28,12 +30,13 @@ export default class AlbumController {
         res: Response,
     ): Promise<Response | void> {
         const _id = req.params.id;
-        const album = await albumService.getById(_id);
+        const album = await albumService.getByIdPopulate(_id);
         return res.status(album.status).json(album);
     }
 
+    
+
     @IsRequirementReq(['title', 'publish'], 'body')
-    @IsRequirementTypeId(['userReference', 'listSong'], 'body')
     public async create(
         req: CustomRequest,
         res: CustomResponseExpress,
@@ -63,9 +66,9 @@ export default class AlbumController {
             isNewUploadThumbnail: boolean;
             userId: string;
             contentType:
-                | EContentTypeObjectS3.JPEG
-                | EContentTypeObjectS3.JPG
-                | EContentTypeObjectS3.PNG;
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG;
         };
         Object.assign(payload, { userId });
         const updateService = await albumService.update(id, payload);

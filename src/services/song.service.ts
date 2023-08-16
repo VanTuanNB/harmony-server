@@ -56,6 +56,58 @@ export default class SongService {
         }
     }
 
+    public async getJustReleased(item: number): Promise<CustomResponse<ISong[] | []>> {
+        try {
+            const songs = await songModel.getSongJustReleasedPopulate(item);
+            const getall = await songModel.getAll()
+            if (item == 0 || item > getall.length) return {
+                status: 400,
+                success: false,
+                message: 'LIST_SONG_QUERY_PARMAS_NOT_EXITS',
+            }
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALL_SONG_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_JUST_RELEASED_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getTopView(item: number): Promise<CustomResponse<ISong[] | []>> {
+        try {
+            const songs = await songModel.getSongTopView(item);
+            const getall = await songModel.getAll()
+            if (item === 0 || item > getall.length) return {
+                status: 400,
+                success: false,
+                message: 'SONG_LENGTH_NOT_EXIST',
+            };
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_TOP_SUCCESSFULLY',
+                data: songs,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_TOP_FAILED',
+                errors: error,
+            };
+        }
+    }
+
     public async getById(_id: string): Promise<CustomResponse<ISong | null>> {
         try {
             const song = await songModel.getById(_id);
@@ -77,6 +129,42 @@ export default class SongService {
                 status: 500,
                 success: false,
                 message: 'GET_SONG_BY_ID_FAILED',
+            };
+        }
+    }
+
+    public async search(
+        title: string,
+    ): Promise<CustomResponse<ISong | {}>> {
+        try {
+            const song = await songModel.search(title);
+            const album = await albumModel.search(title)
+            const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(title);
+
+            if (hasSpecialChar)
+                return {
+                    status: 400,
+                    success: false,
+                    message: 'INPUT_HAS_SECIAL_CHARACTER',
+                }
+
+            const data = {
+                songs: song,
+                albums: album,
+            }
+
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_SONG_AND_ALBUM_SEARCH_SUCCESSFULLY',
+                data: data,
+            }
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_SONG_AND_ALBUM_FAILED',
+                errors: error,
             };
         }
     }
@@ -111,7 +199,7 @@ export default class SongService {
                 success: false,
                 message: 'GET_SUGGEST_SONGS_FAILED',
                 errors: error,
-            };
+            }
         }
     }
 
@@ -225,9 +313,9 @@ export default class SongService {
         > & {
             isNewUploadAvatar?: boolean;
             contentType?:
-                | EContentTypeObjectS3.JPEG
-                | EContentTypeObjectS3.JPG
-                | EContentTypeObjectS3.PNG;
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.JPG
+            | EContentTypeObjectS3.PNG;
         },
     ): Promise<CustomResponse> {
         try {

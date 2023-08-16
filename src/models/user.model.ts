@@ -7,10 +7,56 @@ export default class UserModel {
         const user = await userSchema.findById(_id);
         return user;
     }
+    public async getByIdPopulate(id: string): Promise<IUser | null> {
+        const user = await userSchema.findById(id)
+            .select('role albumsReference avatarUrl email name locale nickname playlistReference songsReference favoriteListReference historyReference playlistReference')
+            .populate({
+                path: 'songsReference',
+                strictPopulate: true,
+                select: '_id title publish thumbnailUrl albumsReference'
+            })
+            .populate({
+                path: 'favoriteListReference',
+                strictPopulate: true,
+                populate: {
+                    path: 'listSong',
+                    model: 'song'
+                }
+            }).populate({
+                path: 'historyReference',
+                strictPopulate: true,
+                populate: {
+                    path: 'listSong',
+                    model: 'song'
+                }
+            }).populate({
+                path: 'playlistReference',
+                strictPopulate: true,
+                
+            }).populate({
+                path: 'albumsReference',
+                strictPopulate: true,
+            });
+        return user;
+    }
+    public async getByNickNamePopulate(nickname: string): Promise<IUser | null> {
+        const user = await userSchema.findOne({ nickname: nickname }).select('albumsReference nickname name songsReference avatarUrl')
+            .populate({
+                path: 'songsReference',
+                strictPopulate: true,
+                select: '_id title publish thumbnailUrl'
+            }).populate({
+                path: 'albumsReference',
+                strictPopulate: true,
+            });
+        return user;
+    }
+
     public async getByEmail(email: string): Promise<IUser | null> {
         const user = await userSchema.findOne({ email });
         return user;
     }
+
     public async create(payload: IUser): Promise<IUser> {
         const created = await userSchema.create(payload);
         return created;

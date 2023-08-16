@@ -5,6 +5,10 @@ import { IAlbum } from '@/constraints/interfaces/index.interface';
 import albumSchema from '@/database/schemas/album.schema';
 
 export default class AlbumModel {
+    public async getAll(): Promise<IAlbum[]> {
+        const album = await albumSchema.find();
+        return album;
+    }
     public async getByComposerAndTitle(
         idComposer: string,
         title: string,
@@ -55,6 +59,37 @@ export default class AlbumModel {
     public async getById(_id: string): Promise<IAlbum | null> {
         const album = await albumSchema.findById(_id);
         return album;
+    }
+
+    public async getByIdPopulate(_id: string): Promise<IAlbum | null> {
+        const album = await albumSchema.findById(_id)
+        .populate({
+            path: "listSong",
+            strictPopulate: true,
+            select: 'title thumbnailUrl publish'
+        }) .populate({
+            path: "userReference",
+            strictPopulate: true,
+            select: 'name avatarUrl'
+        });
+        return album;
+    }
+
+    public async search(title: string): Promise<IAlbum[]> {
+        const albumQuery = albumSchema.find({
+            $or: [
+                { title: { $regex: title, $options: 'i' } }
+            ]
+        }).populate({
+            path: 'userReference',
+            strictPopulate: true,
+            select: 'name nickname'
+        }).populate({
+            path: 'listSong',
+            strictPopulate: true,
+            select: 'title thumbnailUrl'
+        });
+        return albumQuery;
     }
 
     public async create(payload: IAlbum): Promise<IAlbum> {
@@ -157,7 +192,7 @@ export default class AlbumModel {
         );
     }
 
-    public async getAlbumNewWeek(): Promise<IAlbum[]> {
+    public async getAlbumNewWeek(item: number): Promise<IAlbum[]> {
         const albumNew = await albumSchema
             .find({
                 updatedAt: {
@@ -165,7 +200,7 @@ export default class AlbumModel {
                         new Date().setDate(new Date().getDate() - 7),
                     ),
                 },
-            })
+            }).limit(item)
             .populate({
                 path: 'userReference',
                 strictPopulate: true,
