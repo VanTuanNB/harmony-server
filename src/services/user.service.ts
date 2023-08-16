@@ -28,6 +28,11 @@ export default class UserService {
     public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await userModel.getByIdPopulate(_id);
+            if(!user) return{
+                status: 400,
+                success: true,
+                message: 'GET_USER_BY_ID_EXISTS',
+            }
             return {
                 status: 200,
                 success: true,
@@ -48,6 +53,11 @@ export default class UserService {
     ): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await userModel.getByNickNamePopulate(nickname);
+            if(!user) return{
+                status: 400,
+                success: true,
+                message: 'GET_USER_BY_NICK_NAME_EXISTS',
+            }
             return {
                 status: 200,
                 success: true,
