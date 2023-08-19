@@ -12,6 +12,10 @@ export default class GenreModel {
         return genreByTitle;
     }
 
+    public async getAllPopulate(item: number): Promise<IGenre[] | null> {
+        return await genreSchema.find().limit(item);
+    }
+
     public async getById(_id: string): Promise<IGenre | null> {
         return await genreSchema.findById(_id);
     }
@@ -114,9 +118,53 @@ export default class GenreModel {
         const genres = genreSchema.find().populate({
             path: 'listSong',
             strictPopulate: true,
-            select: 'title thumbnail songPathReference',
+            select: 'title thumbnail performers',
+            populate: ({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name nickname avatarUrl',
+            })
         });
 
         return genres;
     }
+    public async getTopGenre(item: number): Promise<IGenre[]> {
+        const genres = genreSchema.find().sort({ 'listSong.0': -1 }).limit(item)
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title thumbnailUrl performers',
+                populate: ({
+                    path: 'performers',
+                    strictPopulate: true,
+                    select: 'name nickname avatarUrl',
+                })
+            });
+        return genres;
+    }
+
+    public async getByIdPopulate(id: string): Promise<IGenre | null> {
+        const genres = genreSchema.findById(id)
+            .populate({
+                path: 'listSong',
+                strictPopulate: true,
+                select: 'title thumbnailUrl performers albumReference',
+                populate: [
+                    {
+                        path: 'performers',
+                        strictPopulate: true,
+                        select: 'name nickname avatarUrl',
+                    },
+                    {
+                        path: 'albumReference',
+                        strictPopulate: true,
+                        select: 'title',
+                    },
+                    
+                ],
+
+            });
+        return genres;
+    }
+
 }

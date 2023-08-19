@@ -24,7 +24,25 @@ interface ISendMail {
     message: string;
 }
 export default class UserService {
-    constructor() {}
+    constructor() { }
+    public async getAllByComposer(): Promise<CustomResponse<IUser[] | []>> {
+        try {
+            const user = await userModel.getAllByComposer();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_COMPOSER_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_USER_COMPOSER_FAILED',
+                errors: error,
+            };
+        }
+    }
     public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await userModel.getByIdPopulate(_id);
@@ -305,9 +323,9 @@ export default class UserService {
             userId: string;
             isNewUploadAvatar?: boolean;
             contentType?:
-                | EContentTypeObjectS3.JPEG
-                | EContentTypeObjectS3.PNG
-                | EContentTypeObjectS3.JPG;
+            | EContentTypeObjectS3.JPEG
+            | EContentTypeObjectS3.PNG
+            | EContentTypeObjectS3.JPG;
         },
     ): Promise<CustomResponse> {
         try {

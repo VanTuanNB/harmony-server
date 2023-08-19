@@ -39,6 +39,8 @@ export default class GenreService {
         }
     }
 
+
+
     public async updateById(
         _id: string,
         payload: Omit<IGenre, '_id'>,
@@ -93,6 +95,52 @@ export default class GenreService {
                 status: 500,
                 success: false,
                 message: 'GET_ALL_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+    public async getTop4Item(item: number): Promise<CustomResponse<IGenre[] | null>> {
+        try {
+            const genres = await genreModel.getTopGenre(item);
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_ALL_GENRE_SUCCESSFULLY',
+                data: genres,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_ALL_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
+
+
+    public async getById(id: string): Promise<CustomResponse<IGenre | null>> {
+        try {
+            const genres = await genreModel.getByIdPopulate(id);
+            if (!genres) return {
+                status: 400,
+                success: false,
+                message: 'BAD_REQUEST',
+            }
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_GENRE_BY_ID_SUCCESSFULLY',
+                data: genres,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_GENRE_BY_ID_FAILED',
                 errors: error,
             };
         }

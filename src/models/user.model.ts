@@ -1,3 +1,4 @@
+import { RoleConstant } from '@/constraints/enums/role.enum';
 import { ISong, IUser } from '@/constraints/interfaces/index.interface';
 import userSchema from '@/database/schemas/user.schema';
 import { UpdateWriteOpResult } from 'mongoose';
@@ -7,13 +8,21 @@ export default class UserModel {
         const user = await userSchema.findById(_id);
         return user;
     }
+    public async getAllByComposer(): Promise<IUser[] | []> {
+        const user = await userSchema.find({ role: RoleConstant.COMPOSER }).select('_id name role');
+        return user;
+    }
     public async getByIdPopulate(id: string): Promise<IUser | null> {
         const user = await userSchema.findById(id)
             .select('role albumsReference avatarUrl email name locale nickname playlistReference songsReference favoriteListReference historyReference playlistReference')
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: '_id title publish thumbnailUrl albumsReference'
+                select: '_id title publish thumbnailUrl albumReference',
+                populate: ({
+                    path: 'albumReference',
+                    strictPopulate: true,
+                })
             })
             .populate({
                 path: 'favoriteListReference',
@@ -32,7 +41,7 @@ export default class UserModel {
             }).populate({
                 path: 'playlistReference',
                 strictPopulate: true,
-                
+
             }).populate({
                 path: 'albumsReference',
                 strictPopulate: true,

@@ -9,7 +9,14 @@ import { IsRequirementReq } from '@/decorators/index.decorator';
 import { userService } from '@/instances/index.instance';
 
 export default class UserController {
-    constructor() {}
+    constructor() { }
+    public async getAllByComposer(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const user = await userService.getAllByComposer();
+        return res.status(user.status).json(user);
+    }
     @IsRequirementReq('email', 'body')
     public async checkGmail(
         req: Request,
