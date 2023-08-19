@@ -133,6 +133,12 @@ export default class AuthService {
                 message: 'LOGIN_SUCCESSFULLY',
                 data: {
                     userId: user._id,
+                    avatarUrl: user.avatarUrl,
+                    email: user.email,
+                    name: user.name,
+                    locale: user.locale,
+                    role: user.role,
+                    nickname: user.nickname,
                     accessToken,
                     refreshToken,
                 },
