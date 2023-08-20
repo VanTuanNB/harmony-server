@@ -14,7 +14,7 @@ import {
 } from '@/instances/index.instance';
 import { generateToken } from '@/utils/jwtToken.util';
 export default class AuthService {
-    constructor() {}
+    constructor() { }
     public async generateRefererToken(currentRefreshToken: string): Promise<
         CustomResponse<{
             accessToken: string;

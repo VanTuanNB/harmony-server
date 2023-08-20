@@ -70,7 +70,12 @@ export default class AlbumModel {
         }) .populate({
             path: "userReference",
             strictPopulate: true,
-            select: 'name avatarUrl'
+            select: 'name avatarUrl songsReference',
+            populate: ({
+                path: "songsReference",
+                strictPopulate: true,
+                select: 'title'
+            })
         });
         return album;
     }
