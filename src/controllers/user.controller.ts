@@ -18,7 +18,9 @@ export default class UserController {
     ): Promise<Response | void> {
         const { email }: { email: string } = req.body;
         const checkEmailService = await userService.checkEmail(email);
-        return res.status(checkEmailService.status).json(checkEmailService);
+        if (!checkEmailService.success)
+            return res.status(checkEmailService.status).json(checkEmailService);
+        next();
     }
 
     @IsRequirementReq('id', 'params')
