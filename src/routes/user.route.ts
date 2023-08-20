@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
 import UserController from '@/controllers/user.controller';
-import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware';
 import { authenticationUser } from '@/middlewares/authVerifyToken.middleware';
+import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware';
 
 const router: Router = Router();
 const userControllerInstance = new UserController();
@@ -10,11 +10,8 @@ router.get('/composer', userControllerInstance.getAllByComposer.bind(userControl
 router.get('/:id', userControllerInstance.getById.bind(userControllerInstance))
 router.get('/composer/:id', userControllerInstance.getByNickName.bind(userControllerInstance))
 router.post(
-    '/checkGmail',
-    userControllerInstance.checkGmail.bind(userControllerInstance),
-);
-router.post(
     '/sendCode',
+    userControllerInstance.checkGmail.bind(userControllerInstance),
     userControllerInstance.createRequestAuthenticationEmail.bind(
         userControllerInstance,
     ),
