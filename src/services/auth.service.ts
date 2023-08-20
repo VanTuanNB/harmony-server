@@ -132,7 +132,7 @@ export default class AuthService {
                 success: true,
                 message: 'LOGIN_SUCCESSFULLY',
                 data: {
-                    userId: user._id,
+                    _id: user._id,
                     avatarUrl: user.avatarUrl,
                     email: user.email,
                     name: user.name,
