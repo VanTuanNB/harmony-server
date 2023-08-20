@@ -27,6 +27,27 @@ export default class GenreController {
         return res.status(genres.status).json(genres);
     }
 
+    @IsRequirementReq('item', 'query')
+    public async getGenreTop(
+        req: CustomRequest,
+        res: Response,
+    ): Promise<Response | void> {
+        const item = req.query.item as string
+        const genres = await genreService.getTop4Item(parseInt(item));
+        return res.status(genres.status).json(genres);
+    }
+
+    @IsRequirementReq('id', 'params')
+    public async getById(
+        req: CustomRequest,
+        res: Response,
+    ): Promise<Response | void> {
+        const {id} = req.params
+        console.log(id);
+        const genres = await genreService.getById(id)
+        return res.status(genres.status).json(genres);
+    }
+
     @IsRequirementTypeId('id', 'params')
     public async update(
         req: CustomRequest,

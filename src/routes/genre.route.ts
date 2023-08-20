@@ -1,14 +1,15 @@
 import { Router } from 'express';
 
-import { authenticationAdmin } from '@/middlewares/authVerifyToken.middleware'
 import GenreController from '@/controllers/genre.controller';
+import { authenticationAdmin } from '@/middlewares/authVerifyToken.middleware';
 
 const router: Router = Router();
 const genreControllerInstance = new GenreController();
 
+router.route('/top').get(genreControllerInstance.getGenreTop.bind(genreControllerInstance))
 router.route('/:id')
-        .put(authenticationAdmin, genreControllerInstance.update.bind(genreControllerInstance))
-
+    .get(genreControllerInstance.getById.bind(genreControllerInstance))
+    .put(authenticationAdmin, genreControllerInstance.update.bind(genreControllerInstance))
 router
     .route('/')
     .get(genreControllerInstance.getAll.bind(genreControllerInstance))
