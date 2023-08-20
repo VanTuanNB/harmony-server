@@ -1,8 +1,8 @@
 require('dotenv').config();
-import 'module-alias/register';
-import path from 'path';
 import fs from 'fs';
+
 import mongoose from 'mongoose';
+import path from 'path';
 
 export default class AlbumMigration {
     public static async create(db: mongoose.mongo.Db): Promise<boolean> {

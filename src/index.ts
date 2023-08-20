@@ -1,7 +1,7 @@
 import cors from 'cors';
 import { config } from 'dotenv';
 import express, { Express } from 'express';
-import 'module-alias/register';
+
 import morgan from 'morgan';
 
 import rootRouter from '@/routes/index.route';

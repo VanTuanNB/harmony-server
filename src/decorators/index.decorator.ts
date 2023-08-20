@@ -1,7 +1,6 @@
 export { default as IsGenerateCollection } from './IsGenerateCollection.decorator';
 export {
-    IsRequirementReq,
-    IsRequirementFiles,
     IsRequirementEmail,
+    IsRequirementReq,
     IsRequirementTypeId,
 } from './IsRequirementRequest.decorator';

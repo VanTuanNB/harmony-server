@@ -1,6 +1,6 @@
-import { Router } from 'express';
 import AlbumController from '@/controllers/album.controller';
 import { authenticationComposer } from '@/middlewares/authVerifyToken.middleware';
+import { Router } from 'express';
 
 const router: Router = Router();
 const albumControllerInstance = new AlbumController();

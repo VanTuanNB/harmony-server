@@ -7,7 +7,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node dist/src/index.js",
-        "build": "npx webpack",
+        "build": "rimraf dist && tsc",
         "dev": "nodemon src/index.ts",
         "insert-db": "ts-node src/migrations/index.migration.ts",
         "backup": "ts-node src/database/backups/index.backup.ts"
@@ -63,5 +63,10 @@
         "tsconfig-paths-webpack-plugin": "^4.1.0",
         "webpack": "^5.88.2",
         "webpack-cli": "^5.1.4"
-    }
+    },
+    "pre-commit": [
+        "ts.check",
+        "build",
+        "add-build"
+    ]
 }

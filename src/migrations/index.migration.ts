@@ -1,16 +1,16 @@
 require('dotenv').config();
-import 'module-alias/register';
+
 import { exit } from 'process';
 
+import Database from '@/database/connect.db';
+import AlbumMigration from '@/migrations/album.migration';
+import GenreMigration from '@/migrations/genre.migration';
 import SongMigration from '@/migrations/song.migration';
 import UserMigration from '@/migrations/user.migration';
-import GenreMigration from '@/migrations/genre.migration';
-import AlbumMigration from '@/migrations/album.migration';
-import Database from '@/database/connect.db';
-import SongDraftMigration from './songDraft.migration';
-import PlaylistMigration from './playlist.migration';
 import AccountPendingVerifyMigration from './accountPendingVerify.migration';
 import HistoryMigration from './history.migration';
+import PlaylistMigration from './playlist.migration';
+import SongDraftMigration from './songDraft.migration';
 
 const createCollection = async (): Promise<void> => {
     try {

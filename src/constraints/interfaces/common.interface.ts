@@ -11,10 +11,6 @@ export interface IPayloadToken {
     exp: number;
 }
 
-export interface IFieldNameFiles {
-    [fieldname: string]: Express.Multer.File[];
-}
-
 export interface IEnvironment {
     ORIGIN: string;
     VERSION: string;

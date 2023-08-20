@@ -1,17 +1,19 @@
 export type {
-    CustomResponse,
     CustomRequest,
+    CustomResponse,
     CustomResponseExpress,
 } from './custom.interface';
 
-export type { IPayloadToken, IFieldNameFiles } from './common.interface';
-export type { IGenre } from './ICollection.interface';
-export type { ISong } from './ICollection.interface';
-export type { IHistory } from './ICollection.interface';
-export type { IFavorite } from './ICollection.interface';
-export type { IUser } from './ICollection.interface';
-export type { IAccountPendingVerify } from './ICollection.interface';
-export type { IAlbum } from './ICollection.interface';
-export type { IPlaylist } from './ICollection.interface';
-export type { ISongDraftUpload } from './ICollection.interface';
-export type { IAdmin } from './ICollection.interface';
+export type {
+    IAccountPendingVerify,
+    IAdmin,
+    IAlbum,
+    IFavorite,
+    IGenre,
+    IHistory,
+    IPlaylist,
+    ISong,
+    ISongDraftUpload,
+    IUser,
+} from './ICollection.interface';
+export type { IPayloadToken } from './common.interface';

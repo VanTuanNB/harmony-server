@@ -1,4 +1,4 @@
-import 'module-alias/register';
+//
 import {
     IsBoolean,
     IsEmail,
@@ -9,13 +9,13 @@ import {
     MaxLength,
 } from 'class-validator';
 
-import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
+import { RoleConstant } from '@/constraints/enums/role.enum';
 import {
-    IHistory,
     IFavorite,
+    IHistory,
     IUser,
 } from '@/constraints/interfaces/index.interface';
-import { RoleConstant } from '@/constraints/enums/role.enum';
+import IsGenerateCollection from '@/decorators/IsGenerateCollection.decorator';
 
 interface TypeProps extends Omit<IUser, 'createdAt' | 'updatedAt'> {}
 export default class UserValidation implements TypeProps {
