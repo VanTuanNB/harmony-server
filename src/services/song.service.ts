@@ -138,6 +138,7 @@ export default class SongService {
         try {
             const song = await songModel.search(title);
             const album = await albumModel.search(title)
+            const performers = await userModel.search(title)
             const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(title);
 
             if (hasSpecialChar)
@@ -150,6 +151,7 @@ export default class SongService {
             const data = {
                 songs: song,
                 albums: album,
+                performers: performers,
             }
 
             return {

@@ -118,23 +118,7 @@ export default class SongModel {
             $or: [
                 { title: { $regex: title, $options: 'i' } },
             ]
-        }).populate({
-            path: 'composerReference',
-            strictPopulate: true,
-            select: 'name thumbnailUrl',
-        }).populate({
-            path: 'albumReference',
-            strictPopulate: true,
-            select: 'title',
-        }).populate({
-            path: 'genresReference',
-            strictPopulate: true,
-            select: 'title',
-        }).populate({
-            path: 'songsReference',
-            strictPopulate: true,
-            select: 'name thumbnailUrl',
-        });
+        }).select('title thumbnailUrl')
         return songQuery;
     }
 
