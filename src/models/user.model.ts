@@ -19,11 +19,18 @@ export default class UserModel {
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: '_id title publish thumbnailUrl albumReference',
-                populate: ({
-                    path: 'albumReference',
-                    strictPopulate: true,
-                })
+                select: '_id title publish thumbnailUrl albumReference performers',
+                populate: [
+                    {
+                        path: 'albumReference',
+                        strictPopulate: true,
+                    },
+                    {
+                        path: 'performers',
+                        strictPopulate: true,
+                        select: 'name nickname'
+                    }
+                ]
             })
             .populate({
                 path: 'favoriteListReference',
@@ -55,7 +62,18 @@ export default class UserModel {
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: '_id title publish thumbnailUrl'
+                select: '_id title publish thumbnailUrl albumReference performers',
+                populate: [
+                    {
+                        path: 'albumReference',
+                        strictPopulate: true,
+                    },
+                    {
+                        path: 'performers',
+                        strictPopulate: true,
+                        select: 'name nickname'
+                    }
+                ]
             }).populate({
                 path: 'albumsReference',
                 strictPopulate: true,
@@ -76,7 +94,7 @@ export default class UserModel {
         }).select('name avatarUrl nickname')
         return searchUser;
     }
-    
+
 
     public async getByEmail(email: string): Promise<IUser | null> {
         const user = await userSchema.findOne({ email });
