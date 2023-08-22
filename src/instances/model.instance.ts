@@ -4,7 +4,7 @@ import AlbumModel from '@/models/album.model';
 import FavoriteModel from '@/models/favorite.model';
 import GenreModel from '@/models/genre.model';
 import HistoryModel from '@/models/history.model';
-import PlaylistModel from '@/models/paylist.model';
+import PlaylistModel from '@/models/playlist.model';
 import SongModel from '@/models/song.model';
 import SongDraftModel from '@/models/songDraft.model';
 import UserModel from '@/models/user.model';

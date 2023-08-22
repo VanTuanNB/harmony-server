@@ -66,7 +66,12 @@ export default class AlbumModel {
         .populate({
             path: "listSong",
             strictPopulate: true,
-            select: 'title thumbnailUrl publish'
+            select: 'title thumbnailUrl publish performers',
+            populate: ({
+                path: "performers",
+                strictPopulate: true,
+                select: 'name nickname'
+            })
         }) .populate({
             path: "userReference",
             strictPopulate: true,
@@ -85,15 +90,7 @@ export default class AlbumModel {
             $or: [
                 { title: { $regex: title, $options: 'i' } }
             ]
-        }).populate({
-            path: 'userReference',
-            strictPopulate: true,
-            select: 'name nickname'
-        }).populate({
-            path: 'listSong',
-            strictPopulate: true,
-            select: 'title thumbnailUrl'
-        });
+        }).select('title thumbnailUrl')
         return albumQuery;
     }
 

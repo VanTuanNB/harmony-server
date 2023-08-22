@@ -13,12 +13,14 @@ export default class HistoryModel {
         const history = await historySchema.findById(_id).populate({
             path: 'listSong',
             strictPopulate: true,
-            select: 'title thumbnail performers songPathReference',
-            populate: {
-                path: 'performers',
-                strictPopulate: true,
-                select: '_id name nickname',
-            },
+            select: 'title thumbnail performers',
+            populate: (
+                {
+                    path: 'performers',
+                    strictPopulate: true,
+                    select: 'name nickname'
+                }
+            )
         });
         return history;
     }

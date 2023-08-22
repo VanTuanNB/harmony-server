@@ -64,29 +64,29 @@ export default class SongModel {
         const songs = await songSchema.find({
             createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 14)) }
         }).skip(random).limit(item)
-        .populate({
-            path: 'userReference',
-            strictPopulate: true,
-            select: 'name nickname thumbnailUrl',
-        })
-        .populate({
-            path: 'albumReference',
-            strictPopulate: true,
-            select: 'title',
-        })
-        .populate({
-            path: 'genresReference',
-            strictPopulate: true,
-            select: 'title',
-        })
-        .populate({
-            path: 'performers',
-            strictPopulate: true,
-            select: 'name nickname thumbnailUrl',
-        });
+            .populate({
+                path: 'userReference',
+                strictPopulate: true,
+                select: 'name nickname thumbnailUrl',
+            })
+            .populate({
+                path: 'albumReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'genresReference',
+                strictPopulate: true,
+                select: 'title',
+            })
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name nickname thumbnailUrl',
+            });
         return songs;
     }
-    
+
 
     public async getSongTopView(id: number): Promise<ISong[]> {
         const songs = await songSchema
@@ -118,23 +118,12 @@ export default class SongModel {
             $or: [
                 { title: { $regex: title, $options: 'i' } },
             ]
-        }).populate({
-            path: 'composerReference',
-            strictPopulate: true,
-            select: 'name thumbnailUrl',
-        }).populate({
-            path: 'albumReference',
-            strictPopulate: true,
-            select: 'title',
-        }).populate({
-            path: 'genresReference',
-            strictPopulate: true,
-            select: 'title',
-        }).populate({
-            path: 'songsReference',
-            strictPopulate: true,
-            select: 'name thumbnailUrl',
-        });
+        }).select('title thumbnailUrl performers')
+            .populate({
+                path: 'performers',
+                strictPopulate: true,
+                select: 'name nickname thumbnailUrl',
+            })
         return songQuery;
     }
 

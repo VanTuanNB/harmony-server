@@ -13,7 +13,14 @@ export default class FavoriteModel {
         const favorite = await favoriteSchema.findById(_id).populate({
             path: 'listSong',
             strictPopulate: true,
-            select: 'title thumbnail performers songPathReference',
+            select: 'title thumbnail performers',
+            populate: (
+                {
+                    path: 'performers',
+                    strictPopulate: true,
+                    select: 'name nickname'
+                }
+            )
         });
         return favorite;
     }
