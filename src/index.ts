@@ -9,7 +9,10 @@ import cookieParser from 'cookie-parser';
 import Database from './database/connect.db';
 
 config();
-const PORT_SERVER = process.env.PORT_SERVER || 5000;
+const ORIGIN_SERVER =
+    process.env.NODE_ENV === 'production'
+        ? process.env.PORT_SERVER_PRODUCTION
+        : `${process.env.SERVER_URL}:${process.env.PORT_SERVER || 5000}`;
 
 const app: Express = express();
 // use global middleware
@@ -46,6 +49,8 @@ Database.connect();
 
 app.use(`/api/${process.env.CURRENT_API_VERSION as string}`, rootRouter);
 
-app.listen(PORT_SERVER, () =>
-    console.log(`App listening on port http://localhost:${PORT_SERVER}`),
+app.listen(process.env.PORT_SERVER || 5000, () =>
+    console.log(`App listening on port ${ORIGIN_SERVER}`),
 );
+
+module.exports = app;
