@@ -24,6 +24,10 @@ rootRouter.use('/song', songRouter);
 rootRouter.use('/auth', authRouter);
 rootRouter.use('/user', useRouter);
 rootRouter.use('/admin', adminRouter);
-rootRouter.use('/', (req, res) => res.end());
+rootRouter.use('/', (req, res) =>
+    res.status(200).json({
+        message: 'Hello, Harmony music server api',
+    }),
+);
 
 export default rootRouter;
