@@ -56,7 +56,6 @@
         "@types/uuid": "^9.0.1",
         "morgan": "^1.10.0",
         "nodemon": "^2.0.22",
-        "pre-commit": "^1.2.2",
         "rimraf": "^5.0.1",
         "tsconfig-paths": "^4.2.0"
     }
