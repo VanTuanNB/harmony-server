@@ -14,6 +14,11 @@ export default class HistoryModel {
             path: 'listSong',
             strictPopulate: true,
             select: 'title thumbnail performers songPathReference',
+            populate: {
+                path: 'performers',
+                strictPopulate: true,
+                select: '_id name nickname',
+            },
         });
         return history;
     }

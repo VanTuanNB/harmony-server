@@ -48,7 +48,7 @@ export default class HistoryService {
     public async bothCreateUpdate(
         userId: string,
         songId: string,
-    ): Promise<CustomResponse<IHistory>> {
+    ): Promise<CustomResponse<IHistory | null>> {
         try {
             const user = await userModel.getById(userId);
             const song = await songModel.getById(songId);
@@ -63,12 +63,6 @@ export default class HistoryService {
                     user.historyReference,
                     songId,
                 );
-                if (!history)
-                    return {
-                        status: 400,
-                        success: false,
-                        message: 'UPDATE_HISTORY_FAILED',
-                    };
                 return {
                     status: 200,
                     success: true,
@@ -77,12 +71,6 @@ export default class HistoryService {
                 };
             } else {
                 const history = await this.create(user?._id ?? '', song._id);
-                if (!history)
-                    return {
-                        status: 400,
-                        success: false,
-                        message: 'CREATE_HISTORY_FAILED',
-                    };
                 return {
                     status: 201,
                     success: true,
