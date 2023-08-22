@@ -29,7 +29,7 @@ interface IResponseUrlS3 {
     keyObjectThumbnail?: string;
     keyObjectAlbum?: string;
     keyObjectUserAvatar?: string;
-    userId: string;
+    userId?: string;
 }
 
 export default class S3Service {
@@ -395,7 +395,6 @@ export default class S3Service {
                     expired: this.expiredTime,
                     contentType,
                     keyObjectThumbnail,
-                    userId: currentSong.userReference,
                 },
             };
         } catch (error) {

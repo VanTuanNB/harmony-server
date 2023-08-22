@@ -2,7 +2,7 @@ import { RoleConstant } from '@/constraints/enums/role.enum';
 import { IPayloadToken } from '@/constraints/interfaces/index.interface';
 import { adminService, userService } from '@/instances/index.instance';
 import { verifyToken } from '@/utils/jwtToken.util';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 export async function authenticationUser(
     req: Request,

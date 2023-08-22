@@ -6,6 +6,7 @@ import {
     IsRequirementTypeId,
 } from '@/decorators/index.decorator';
 
+import { EContentTypeObjectS3 } from '@/constraints/enums/s3.enum';
 import { CustomResponseExpress } from '@/constraints/interfaces/custom.interface';
 import { songService } from '@/instances/index.instance';
 import { Readable } from 'stream';
@@ -34,13 +35,12 @@ export default class SongController {
         return res.status(song.status).json(song);
     }
 
-
     @IsRequirementReq('item', 'query')
     public async getSongJustReleased(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
-        const item = req.query.item as string
+        const item = req.query.item as string;
         const songs = await songService.getJustReleased(parseInt(item));
         return res.status(songs.status).json(songs);
     }
@@ -100,13 +100,9 @@ export default class SongController {
         }
     }
 
-    
     @IsRequirementReq('title', 'query')
-    public async search(
-        req: Request,
-        res: Response,
-    ): Promise<Response | void> {
-        const title = req.query.title as string
+    public async search(req: Request, res: Response): Promise<Response | void> {
+        const title = req.query.title as string;
         const song = await songService.search(title);
         return res.status(song.status).json(song);
     }
@@ -150,7 +146,13 @@ export default class SongController {
             | 'performers'
             | 'publish'
             | 'title'
-        > & { isNewUploadAvatar?: boolean } = req.body;
+        > & {
+            isNewUploadAvatar?: boolean;
+            contentType?:
+                | EContentTypeObjectS3.JPEG
+                | EContentTypeObjectS3.JPG
+                | EContentTypeObjectS3.PNG;
+        } = req.body;
         const updateSongService = await songService.update(id, payload);
         return res.status(updateSongService.status).json(updateSongService);
     }
