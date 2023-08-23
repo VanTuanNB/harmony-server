@@ -1,0 +1,11 @@
+declare module '@types/bcrypt';
+declare module '@types/cookie-parser';
+declare module '@types/cors';
+declare module '@types/express';
+declare module '@types/fluent-ffmpeg';
+declare module '@types/jsonwebtoken';
+declare module '@types/morgan';
+declare module '@types/nodemailer';
+declare module '@types/passport-facebook';
+declare module '@types/passport-google-oauth20';
+declare module '@types/uuid';
