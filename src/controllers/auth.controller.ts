@@ -57,7 +57,11 @@ export default class AuthController {
         const email = req.user as IUser;
         const loginServiceGGFB = await authService.loginGGFB(email);
         if (!loginServiceGGFB.success)
-            return res.status(loginServiceGGFB.status).redirect('');
+            return res
+                .status(loginServiceGGFB.status)
+                .redirect(
+                    `${environment.CLIENT_URL}${ERedirect.REDIRECT_LOGIN_SOCIAL_ACCOUNT_EXIST}`,
+                );
         res.cookie(
             EClientCookie.HARMONY_USER_TOKEN,
             JSON.stringify(loginServiceGGFB.data),
