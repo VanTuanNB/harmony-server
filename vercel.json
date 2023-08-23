@@ -1,19 +1,20 @@
 {
+    "rewrites": [{ "source": "/(.*)", "dest": "/api" }],
     "version": 2,
     "buildCommand": "yarn build",
+    "startCommand": "yarn start",
     "devCommand": "yarn dev",
     "builds": [
         {
-            "src": "dist/src/index.js",
+            "src": "api/index.ts",
             "use": "@vercel/node",
-            "config": { "includeFiles": ["dist/**"] }
+            "config": { "includeFiles": ["api/**"] }
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/api"
         }
-    ],
-    "rewrites": [{ "source": "/(.*)", "dest": "/" }]
+    ]
 }

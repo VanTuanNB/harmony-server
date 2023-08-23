@@ -6,8 +6,8 @@
     "type": "commonjs",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node dist/src/index.js",
-        "build": "rimraf dist && tsc",
+        "start": "ts-node src/index.ts",
+        "build": "tsc",
         "dev": "nodemon src/index.ts",
         "insert-db": "ts-node src/migrations/index.migration.ts",
         "backup": "ts-node src/database/backups/index.backup.ts"

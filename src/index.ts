@@ -53,4 +53,4 @@ app.listen(process.env.PORT_SERVER || 5000, () =>
     console.log(`App listening on port ${ORIGIN_SERVER}`),
 );
 
-module.exports = app;
+export default app;
