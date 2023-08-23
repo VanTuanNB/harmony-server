@@ -10,11 +10,25 @@ import { userService } from '@/instances/index.instance';
 
 export default class UserController {
     constructor() { }
+    public async getAll(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const user = await userService.getAll();
+        return res.status(user.status).json(user);
+    }
     public async getAllByComposer(
         req: Request,
         res: Response,
     ): Promise<Response | void> {
         const user = await userService.getAllByComposer();
+        return res.status(user.status).json(user);
+    }
+    public async getAllByUser(
+        req: Request,
+        res: Response,
+    ): Promise<Response | void> {
+        const user = await userService.getAllByUser();
         return res.status(user.status).json(user);
     }
     @IsRequirementReq('email', 'body')

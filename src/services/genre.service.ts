@@ -120,6 +120,25 @@ export default class GenreService {
         }
     }
 
+    public async getTopListSong(): Promise<CustomResponse<IGenre[] | null>> {
+        try {
+            const genres = await genreModel.getTopListSong()
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_TOP_GENRE_SUCCESSFULLY',
+                data: genres,
+            };
+        } catch (error) {
+            console.log(error);
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_TOP_GENRE_FAILED',
+                errors: error,
+            };
+        }
+    }
 
     public async getById(id: string): Promise<CustomResponse<IGenre | null>> {
         try {

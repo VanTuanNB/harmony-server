@@ -6,6 +6,8 @@ import verificationEmailWithForm from '@/middlewares/verifyEmailForm.middleware'
 
 const router: Router = Router();
 const userControllerInstance = new UserController();
+router.get('/', userControllerInstance.getAll.bind(userControllerInstance))
+router.get('/byUser', userControllerInstance.getAllByUser.bind(userControllerInstance))
 router.get('/composer', userControllerInstance.getAllByComposer.bind(userControllerInstance))
 router.get('/:id', userControllerInstance.getById.bind(userControllerInstance))
 router.get('/composer/:id', userControllerInstance.getByNickName.bind(userControllerInstance))

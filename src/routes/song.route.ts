@@ -33,6 +33,7 @@ router
     );
 router
     .route('/')
+    .get(songControllerInstance.getAll.bind(songControllerInstance))
     .post(
         authenticationComposer,
         songControllerInstance.create.bind(songControllerInstance),

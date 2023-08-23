@@ -38,6 +38,12 @@ export default class GenreModel {
         return genre;
     }
 
+    public async getTopListSong(): Promise<IGenre[] | null> {
+        const genres = await genreSchema.find().sort({ listSong: -1 })
+            .limit(4)
+        return genres;
+    }
+
     public async getListBySongId(songId: string): Promise<IGenre[]> {
         const genres = await genreSchema.find({
             listSong: songId,
@@ -160,7 +166,7 @@ export default class GenreModel {
                         strictPopulate: true,
                         select: 'title',
                     },
-                    
+
                 ],
 
             });

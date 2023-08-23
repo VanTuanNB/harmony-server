@@ -9,6 +9,13 @@ import {
 import { genreService } from '@/instances/index.instance';
 
 export default class GenreController {
+    public async getGenreTopListSong(
+        req: CustomRequest,
+        res: Response,
+    ): Promise<Response | void> {
+        const genres = await genreService.getTopListSong()
+        return res.status(genres.status).json(genres);
+    }
     @IsRequirementReq('title', 'body')
     public async create(
         req: CustomRequest,
