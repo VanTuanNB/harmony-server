@@ -29,7 +29,7 @@ export default class UserModel {
             .populate({
                 path: 'songsReference',
                 strictPopulate: true,
-                select: '_id title publish thumbnailUrl albumReference performers genresReference',
+                select: '_id title publish thumbnailUrl albumReference performers genresReference ',
                 populate: [
                     {
                         path: 'albumReference',
@@ -46,6 +46,7 @@ export default class UserModel {
                         strictPopulate: true,
                         select: 'title'
                     }
+
                 ]
             })
             .populate({
