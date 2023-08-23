@@ -43,10 +43,46 @@ export default class UserService {
             };
         }
     }
+    public async getAllByUser(): Promise<CustomResponse<IUser[] | []>> {
+        try {
+            const user = await userModel.getAllByUser();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_USER_FAILED',
+                errors: error,
+            };
+        }
+    }
+    public async getAll(): Promise<CustomResponse<IUser[] | []>> {
+        try {
+            const user = await userModel.getAll();
+            return {
+                status: 200,
+                success: true,
+                message: 'GET_USER_ALL_SUCCESSFULLY',
+                data: user,
+            };
+        } catch (error) {
+            return {
+                status: 500,
+                success: false,
+                message: 'GET_USER_ALL_FAILED',
+                errors: error,
+            };
+        }
+    }
     public async getById(_id: string): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await userModel.getByIdPopulate(_id);
-            if(!user) return{
+            if (!user) return {
                 status: 400,
                 success: true,
                 message: 'GET_USER_BY_ID_EXISTS',
@@ -71,7 +107,7 @@ export default class UserService {
     ): Promise<CustomResponse<IUser | null>> {
         try {
             const user = await userModel.getByNickNamePopulate(nickname);
-            if(!user) return{
+            if (!user) return {
                 status: 400,
                 success: true,
                 message: 'GET_USER_BY_NICK_NAME_EXISTS',

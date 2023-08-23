@@ -4,6 +4,16 @@ import userSchema from '@/database/schemas/user.schema';
 import { UpdateWriteOpResult } from 'mongoose';
 
 export default class UserModel {
+    public async getAllByUser(): Promise<IUser[] | []> {
+        const user = await userSchema.find({ role: RoleConstant.USER })
+        return user;
+    }
+    public async getAll(): Promise<IUser[]> {
+        const user = await userSchema.find();
+        return user;
+    }
+
+
     public async getById(_id: string): Promise<IUser | null> {
         const user = await userSchema.findById(_id);
         return user;

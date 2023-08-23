@@ -6,6 +6,7 @@ import { authenticationAdmin } from '@/middlewares/authVerifyToken.middleware';
 const router: Router = Router();
 const genreControllerInstance = new GenreController();
 
+router.route('/topListsong').get(genreControllerInstance.getGenreTopListSong.bind(genreControllerInstance))
 router.route('/top').get(genreControllerInstance.getGenreTop.bind(genreControllerInstance))
 router.route('/:id')
     .get(genreControllerInstance.getById.bind(genreControllerInstance))
