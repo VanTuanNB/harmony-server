@@ -16,7 +16,7 @@ const ORIGIN_SERVER =
 
 const app: Express = express();
 // use global middleware
-const whitelist = ['http://localhost:3000'];
+const whitelist = ['http://localhost:3000', 'http://localhost:5173'];
 app.use(
     cors((req, callback) => {
         const corsOptions = { origin: false };
